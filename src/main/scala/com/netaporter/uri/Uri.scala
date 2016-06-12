@@ -5,7 +5,6 @@ import com.netaporter.uri.parsing.UriParser
 import com.netaporter.uri.config.UriConfig
 import com.netaporter.uri.Parameters.Param
 import scala.collection.GenTraversableOnce
-import scala.collection.Seq
 
 /**
  * http://tools.ietf.org/html/rfc3986
@@ -132,7 +131,7 @@ case class Uri (
    * @return String containing the path for this Uri
    */
   def path(implicit c: UriConfig = UriConfig.default) =
-    if(pathParts.isEmpty) ""
+    if (pathParts.isEmpty) ""
     else "/" + pathParts.map(_.partToString(c)).mkString("/")
 
   def queryStringRaw(implicit c: UriConfig = UriConfig.default) =
@@ -171,7 +170,7 @@ case class Uri (
    * @param f A function that returns a new Parameter when applied to each Parameter
    * @return
    */
-  def mapQuery(f: Param=>Param) =
+  def mapQuery(f: Param => Param) =
     copy(query = query.mapParams(f))
 
   /**
@@ -180,7 +179,7 @@ case class Uri (
    * @param f A function that returns a collection of Parameters when applied to each parameter
    * @return
    */
-  def flatMapQuery(f: Param=>GenTraversableOnce[Param]) =
+  def flatMapQuery(f: Param => GenTraversableOnce[Param]) =
     copy(query = query.flatMapParams(f))
 
   /**
@@ -189,7 +188,7 @@ case class Uri (
    * @param f A function that returns a new Parameter name when applied to each Parameter name
    * @return
    */
-  def mapQueryNames(f: String=>String) =
+  def mapQueryNames(f: String => String) =
     copy(query = query.mapParamNames(f))
 
   /**
@@ -198,7 +197,7 @@ case class Uri (
    * @param f A function that returns a new Parameter value when applied to each Parameter value
    * @return
    */
-  def mapQueryValues(f: String=>String) =
+  def mapQueryValues(f: String => String) =
     copy(query = query.mapParamValues(f))
 
   /**
@@ -207,7 +206,7 @@ case class Uri (
    * @param f
    * @return
    */
-  def filterQuery(f: Param=>Boolean) =
+  def filterQuery(f: Param => Boolean) =
     copy(query = query.filterParams(f))
 
   /**
@@ -216,7 +215,7 @@ case class Uri (
    * @param f
    * @return
    */
-  def filterQueryNames(f: String=>Boolean) =
+  def filterQueryNames(f: String => Boolean) =
     copy(query = query.filterParamsNames(f))
 
   /**
@@ -225,7 +224,7 @@ case class Uri (
    * @param f
    * @return
    */
-  def filterQueryValues(f: String=>Boolean) =
+  def filterQueryValues(f: String => Boolean) =
     copy(query = query.filterParamsValues(f))
 
   /**
@@ -312,7 +311,6 @@ object Uri {
   def parse(s: CharSequence)(implicit config: UriConfig = UriConfig.default): Uri =
     UriParser.parse(s.toString, config)
 
-
   def parseQuery(s: CharSequence)(implicit config: UriConfig = UriConfig.default): QueryString =
     UriParser.parseQuery(s.toString, config)
 
@@ -328,7 +326,7 @@ object Uri {
         Option(user),
         Option(password),
         Option(host),
-        if(port > 0) Some(port) else None,
+        if (port > 0) Some(port) else None,
         pathParts,
         query,
         Option(fragment)

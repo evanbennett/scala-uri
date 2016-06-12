@@ -1,7 +1,5 @@
 package com.netaporter.uri.encoding
 
-import scala.Array
-
 /**
  * Date: 28/08/2013
  * Time: 21:07

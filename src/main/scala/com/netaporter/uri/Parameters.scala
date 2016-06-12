@@ -2,9 +2,7 @@ package com.netaporter.uri
 
 import com.netaporter.uri.encoding.UriEncoder
 import com.netaporter.uri.Parameters._
-import scala.Some
 import scala.collection.GenTraversableOnce
-import scala.collection.Seq
 
 /**
  * Trait use to represent a list of key value parameters, such as query string parameters and matrix parameters

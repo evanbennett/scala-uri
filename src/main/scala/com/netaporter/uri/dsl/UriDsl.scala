@@ -34,7 +34,6 @@ class UriDsl(val uri: Uri) extends AnyVal {
    */
   def &(kv: (String, Any)) = uri.addParam(kv._1, kv._2)
 
-
   /**
    * Adds a fragment to the end of the uri
    * @param fragment String representing the fragment

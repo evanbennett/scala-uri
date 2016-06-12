@@ -1,7 +1,6 @@
 package com.netaporter.uri
 
-import org.scalatest.WordSpec
-import org.scalatest.Matchers
+import org.scalatest.{Matchers, WordSpec}
 import dsl._
 import java.net.URI
 import com.netaporter.uri.config.UriConfig
@@ -54,7 +53,7 @@ class ToUriTests extends WordSpec with Matchers {
       javaUri.toASCIIString() should equal(uri.toString)
     }
   }
-  
+
   "apply" should {
 
     "handle exotic/reserved characters in query string" in {

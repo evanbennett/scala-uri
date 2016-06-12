@@ -17,7 +17,7 @@ case class QueryString(params: ParamSeq) extends Parameters {
     QueryString(paramsIn)
 
   def queryToString(c: UriConfig) =
-    if(params.isEmpty) ""
+    if (params.isEmpty) ""
     else "?" + paramsToString(c.queryEncoder, c.charset)
 }
 

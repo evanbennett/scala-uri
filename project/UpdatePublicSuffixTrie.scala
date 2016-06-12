@@ -37,7 +37,7 @@ object UpdatePublicSuffixTrie {
     override def toString(): String = {
       s"""Trie(
             Map(${children.map(kv => s"'${kv._1}' -> ${kv._2.toString()}").mkString(",")})
-            ${if(wordEnd) ", wordEnd = true" else ""}
+            ${if (wordEnd) ", wordEnd = true" else ""}
           )
         """
     }

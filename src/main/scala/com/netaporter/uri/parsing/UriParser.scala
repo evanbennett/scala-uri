@@ -1,14 +1,12 @@
 package com.netaporter.uri.parsing
 
 import com.netaporter.uri.config.UriConfig
-import scala.util.Failure
+import scala.util.{Failure, Success}
 import org.parboiled2._
 import com.netaporter.uri.{StringPathPart, QueryString, PathPart}
 import com.netaporter.uri.decoding.UriDecoder
 import com.netaporter.uri.Parameters._
 import org.parboiled2.ParseError
-import scala.util.Success
-import scala.util.Failure
 
 trait UriParser {
 
@@ -56,8 +54,8 @@ trait UriParser {
 object UriParser {
   def parse(s: String, config: UriConfig) = {
     val parser =
-      if(config.matrixParams) new DefaultUriParser(s, config) with MatrixParamSupport
-      else                    new DefaultUriParser(s, config)
+      if (config.matrixParams) new DefaultUriParser(s, config) with MatrixParamSupport
+      else                     new DefaultUriParser(s, config)
 
     parser._uri.run() match {
       case Success(uri) =>
@@ -72,7 +70,7 @@ object UriParser {
   }
 
   def parseQuery(s: String, config: UriConfig) = {
-    val withQuestionMark = if(s.head == '?') s else "?" + s
+    val withQuestionMark = if (s.head == '?') s else "?" + s
     val parser = new DefaultUriParser(withQuestionMark, config)
 
     parser._queryString.run() match {

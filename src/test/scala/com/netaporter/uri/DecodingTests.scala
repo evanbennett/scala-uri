@@ -8,18 +8,18 @@ class DecodingTests extends FlatSpec with Matchers {
 
   "Reserved characters" should "be percent decoded during parsing" in {
     val uri = Uri.parse("http://theon.github.com/uris-in-scala.html?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
-    uri.toStringRaw() should equal ("http://theon.github.com/uris-in-scala.html?reserved=:/?#[]@!$&'()*+,;={}\\\n\r")
+    uri.toStringRaw() should equal("http://theon.github.com/uris-in-scala.html?reserved=:/?#[]@!$&'()*+,;={}\\\n\r")
   }
 
   it should "be percent decoded in the fragment" in {
     val uri = Uri.parse("http://theon.github.com/uris-in-scala.html#%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
-    uri.toStringRaw() should equal ("http://theon.github.com/uris-in-scala.html#:/?#[]@!$&'()*+,;={}\\\n\r")
+    uri.toStringRaw() should equal("http://theon.github.com/uris-in-scala.html#:/?#[]@!$&'()*+,;={}\\\n\r")
   }
 
   "Percent decoding" should "be disabled when requested" in {
     implicit val c = UriConfig(decoder = NoopDecoder)
     val uri = Uri.parse("http://theon.github.com/uris-in-scala.html?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
-    uri.toStringRaw() should equal ("http://theon.github.com/uris-in-scala.html?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
+    uri.toStringRaw() should equal("http://theon.github.com/uris-in-scala.html?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
   }
 
   it should "decode 2-byte groups" in {

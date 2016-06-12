@@ -36,7 +36,6 @@ object UriConfig {
                           matrixParams = false,
                           charset = "UTF-8")
 
-
   /**
    * Probably more than you need to percent encode. Wherever possible try to use a tighter Set of characters
    * to encode depending on your use case
