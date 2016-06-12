@@ -5,6 +5,8 @@ target/
 .idea/
 
 .project
+.classpath
+.settings/
 
 # OS X
 Icon
