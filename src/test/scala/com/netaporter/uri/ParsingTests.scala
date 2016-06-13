@@ -11,14 +11,14 @@ class ParsingTests extends FlatSpec with Matchers {
     val uri = parse("http://theon.github.com/uris-in-scala.html")
     uri.scheme should equal(Some("http"))
     uri.host should equal(Some("theon.github.com"))
-    uri.path should equal("/uris-in-scala.html")
+    uri.pathToString should equal("/uris-in-scala.html")
   }
 
   "Parsing a relative URI" should "result in a valid Uri object" in {
     val uri = parse("/uris-in-scala.html")
     uri.scheme should equal(None)
     uri.host should equal(None)
-    uri.path should equal("/uris-in-scala.html")
+    uri.pathToString should equal("/uris-in-scala.html")
   }
 
   "Parsing a URI with querystring parameters" should "result in a valid Uri object" in {

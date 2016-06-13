@@ -63,7 +63,7 @@ class ToUriTests extends WordSpec with Matchers {
       uri.host should equal(Some("www.example.com"))
       uri.user should equal(Some("user"))
       uri.password should equal(Some("password"))
-      uri.path should equal("/test")
+      uri.pathToString should equal("/test")
       uri.query.params should equal(Seq(("weird=&key", Some("strange%value")), ("arrow", Some("⇔"))))
       uri.toString(UriConfig.conservative) should equal(javaUri.toASCIIString())
     }

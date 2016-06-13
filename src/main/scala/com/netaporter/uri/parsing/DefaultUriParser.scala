@@ -32,18 +32,22 @@ class DefaultUriParser(val input: ParserInput, conf: UriConfig) extends Parser w
     capture(zeroOrMore(!anyOf("/?#") ~ ANY)) ~> extractPathPart
   }
 
-  /**
-   * A sequence of path parts that MUST start with a slash
-   */
-  def _abs_path: Rule1[Vector[PathPart]] = rule {
-    zeroOrMore("/" ~ _pathSegment) ~> extractPathParts
+  def _pathSegmentMandatory: Rule1[PathPart] = rule {
+    capture(oneOrMore(!anyOf("/?#") ~ ANY)) ~> extractPathPart
   }
 
   /**
-   * A sequence of path parts optionally starting with a slash
+   * A sequence of path parts that MUST start with a slash
    */
-  def _rel_path: Rule1[Vector[PathPart]] = rule {
-    optional("/") ~ zeroOrMore(_pathSegment).separatedBy("/") ~> extractPathParts
+  def _absolute_path: Rule1[AbsolutePath] = rule {
+    oneOrMore("/" ~ _pathSegment) ~> extractAbsolutePath
+  }
+
+  /**
+   * A sequence of path parts NOT starting with a slash
+   */
+  def _rootless_path: Rule1[RootlessPath] = rule {
+    _pathSegmentMandatory ~ zeroOrMore("/" ~ _pathSegment) ~> extractRootlessPath
   }
 
   def _queryParam: Rule1[Param] = rule {
@@ -62,49 +66,49 @@ class DefaultUriParser(val input: ParserInput, conf: UriConfig) extends Parser w
     "#" ~ capture(zeroOrMore(!anyOf("#") ~ ANY)) ~> extractFragment
   }
 
-  def _abs_uri: Rule1[Uri] = rule {
-    _scheme ~ "://" ~ optional(_authority) ~ _abs_path ~ optional(_queryString) ~ optional(_fragment) ~> extractAbsUri
+  def _absolute_uri: Rule1[Uri] = rule {
+    _scheme ~ "://" ~ optional(_authority) ~ optional(_absolute_path) ~ optional(_queryString) ~ optional(_fragment) ~> extractAbsUri
   }
 
-  def _protocol_rel_uri: Rule1[Uri] = rule {
-    "//" ~ optional(_authority) ~ _abs_path ~ optional(_queryString) ~ optional(_fragment) ~> extractProtocolRelUri
+  def _protocol_relative_uri: Rule1[Uri] = rule {
+    "//" ~ optional(_authority) ~ optional(_absolute_path) ~ optional(_queryString) ~ optional(_fragment) ~> extractProtocolRelUri
   }
 
   def _rel_uri: Rule1[Uri] = rule {
-    _rel_path ~ optional(_queryString) ~ optional(_fragment) ~> extractRelUri
+    optional(_absolute_path | _rootless_path) ~ optional(_queryString) ~ optional(_fragment) ~> extractRelUri
   }
 
   def _uri: Rule1[Uri] = rule {
-    (_abs_uri | _protocol_rel_uri | _rel_uri) ~ EOI
+    (_absolute_uri | _protocol_relative_uri | _rel_uri) ~ EOI
   }
 
-  val extractAbsUri = (scheme: String, authority: Option[Authority], pp: Seq[PathPart], qs: Option[QueryString], f: Option[String]) =>
+  val extractAbsUri = (scheme: String, authority: Option[Authority], path: Option[AbsolutePath], qs: Option[QueryString], f: Option[String]) =>
     extractUri (
       scheme = Some(scheme),
       authority = authority,
-      pathParts = pp,
+      path = path,
       query = qs,
       fragment = f
     )
 
-  val extractProtocolRelUri = (authority: Option[Authority], pp: Seq[PathPart], qs: Option[QueryString], f: Option[String]) =>
+  val extractProtocolRelUri = (authority: Option[Authority], path: Option[AbsolutePath], qs: Option[QueryString], f: Option[String]) =>
     extractUri (
       authority = authority,
-      pathParts = pp,
+      path = path,
       query = qs,
       fragment = f
     )
 
-  val extractRelUri = (pp: Seq[PathPart], qs: Option[QueryString], f: Option[String]) =>
+  val extractRelUri = (path: Option[Path], qs: Option[QueryString], f: Option[String]) =>
     extractUri (
-      pathParts = pp,
+      path = path,
       query = qs,
       fragment = f
     )
 
   def extractUri(scheme: Option[String] = None,
                  authority: Option[Authority] = None,
-                 pathParts: Seq[PathPart],
+                 path: Option[Path],
                  query: Option[QueryString],
                  fragment: Option[String]) =
     new Uri(
@@ -113,7 +117,7 @@ class DefaultUriParser(val input: ParserInput, conf: UriConfig) extends Parser w
       password = authority.flatMap(_.password),
       host = authority.map(_.host),
       port = authority.flatMap(_.port),
-      pathParts = pathParts,
+      path = path,
       query = query.getOrElse(EmptyQueryString),
       fragment = fragment
     )

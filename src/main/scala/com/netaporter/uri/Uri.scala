@@ -15,10 +15,17 @@ case class Uri (
   password: Option[String],
   host: Option[String],
   port: Option[Int],
-  pathParts: Seq[PathPart],
+  path: Option[Path],
   query: QueryString,
   fragment: Option[String]
 ) {
+
+  @deprecated("Use 'path' instead.", "1.0.0")
+  lazy val pathParts: Seq[PathPart] = path.map(_.segments).getOrElse(Seq.empty)
+  @deprecated("Use 'pathToStringRaw' instead.", "1.0.0")
+  def pathRaw(implicit c: UriConfig = UriConfig.default) = pathToStringRaw
+//  @deprecated("Use 'pathToString' instead.", "1.0.0")
+//  def path(implicit c: UriConfig = UriConfig.default) = pathToString
 
   lazy val hostParts: Seq[String] =
     host.map(h => h.split('.').toVector).getOrElse(Vector.empty)
@@ -26,27 +33,26 @@ case class Uri (
   def subdomain = hostParts.headOption
 
   def pathPartOption(name: String) =
-    pathParts.find(_.part == name)
+    path.map(_.segments).flatMap(_.find(_.part == name))
 
   def pathPart(name: String) =
     pathPartOption(name).head
 
+  // TODO: This makes no sense to me. If it took an `existingSegment` and returned the matrix parameters for that segment, but why only for the last segment?
   def matrixParams =
     pathParts.last match {
       case MatrixParams(_, p) => p
       case _ => Seq.empty
     }
 
-  def addMatrixParam(pp: String, k: String, v: String) = copy (
-    pathParts = pathParts.map {
-      case p: PathPart if p.part == pp => p.addParam(k -> Some(v))
-      case x => x
-    }
-  )
+  def addMatrixParam(existingSegment: String, key: String, value: String) =
+    path.map(path => copy(path = Some(path.addMatrixParam(existingSegment, key, value)))).getOrElse(this)
 
-  def addMatrixParam(k: String, v: String) = copy (
-    pathParts = pathParts.dropRight(1) :+ pathParts.last.addParam(k -> Some(v))
-  )
+  def addMatrixParam(key: String, value: String) =
+    path.map(path => copy(path = Some(path.addMatrixParam(key, value)))).getOrElse {
+      val segment = Seq(MatrixParams("", Seq((key, Option(value)))))
+      copy(path = Some(if (host.isEmpty) RootlessPath(segment) else AbsolutePath(segment)))
+    }
 
   /**
    * Adds a new Query String parameter key-value pair. If the value for the Query String parmeter is None, then this
@@ -123,16 +129,14 @@ case class Uri (
    * Returns the path with no encoders taking place (e.g. non ASCII characters will not be percent encoded)
    * @return String containing the raw path for this Uri
    */
-  def pathRaw(implicit c: UriConfig = UriConfig.default) =
-    path(c.withNoEncoding)
+  def pathToStringRaw(implicit c: UriConfig = UriConfig.default) =
+	 pathToString(c.withNoEncoding)
 
   /**
    * Returns the encoded path. By default non ASCII characters in the path are percent encoded.
    * @return String containing the path for this Uri
    */
-  def path(implicit c: UriConfig = UriConfig.default) =
-    if (pathParts.isEmpty) ""
-    else "/" + pathParts.map(_.partToString(c)).mkString("/")
+  def pathToString(implicit c: UriConfig = UriConfig.default) = path.map(_.toString).getOrElse("")
 
   def queryStringRaw(implicit c: UriConfig = UriConfig.default) =
     queryString(c.withNoEncoding)
@@ -285,7 +289,7 @@ case class Uri (
 
     hostStr.getOrElse("") +
       port.map(":" + _).getOrElse("") +
-      path(c) +
+      pathToString(c) +
       queryString(c) +
       fragment.map(f => "#" + c.fragmentEncoder.encode(f, c.charset)).getOrElse("")
   }
@@ -327,7 +331,7 @@ object Uri {
         Option(password),
         Option(host),
         if (port > 0) Some(port) else None,
-        pathParts,
+        if (pathParts.isEmpty) None else Some(AbsolutePath(pathParts)),
         query,
         Option(fragment)
       )

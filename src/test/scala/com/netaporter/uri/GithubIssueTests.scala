@@ -45,7 +45,7 @@ class GithubIssueTests extends FlatSpec with Matchers with OptionValues {
 
     uri.scheme should equal(None)
     uri.host should equal(None)
-    uri.path should equal("/abc")
+    uri.pathToString should equal("abc")
   }
 
   "Github Issue #15" should "now be fixed. Empty Query String values are parsed" in {
@@ -54,7 +54,7 @@ class GithubIssueTests extends FlatSpec with Matchers with OptionValues {
     uri.scheme.value should equal("http")
     uri.host.value should equal("localhost")
     uri.port.value should equal(8080)
-    uri.path should equal("/ping")
+    uri.pathToString should equal("/ping")
     uri.query.params("oi") should equal(Vector(Some("TscV16GUGtlU")))
     uri.query.params("ppc") should equal(Vector(Some("")))
     uri.query.params("bpc") should equal(Vector(Some("")))
@@ -67,7 +67,7 @@ class GithubIssueTests extends FlatSpec with Matchers with OptionValues {
       None,
       Some("xn--ls8h.example.net"),
       None,
-      List(PathPart(""), PathPart("path with spaces")),
+      Some(AbsolutePath(Seq(PathPart(""), PathPart("path with spaces")))),
       QueryString(Vector("a b" -> Some("c d"))),
       None
     )

@@ -1,6 +1,6 @@
 package com.netaporter.uri.dsl
 
-import com.netaporter.uri.{Uri, StringPathPart}
+import com.netaporter.uri._
 
 /**
  * Value class to add DSL functionality to Uris
@@ -46,7 +46,7 @@ class UriDsl(val uri: Uri) extends AnyVal {
    * @param pp The path part
    * @return A new Uri with this path part appended
    */
-  def /(pp: String) = uri.copy(pathParts = uri.pathParts :+ StringPathPart(pp))
+  def /(pp: String) = uri.copy(path = uri.path.map(_.appendSegment(StringPathPart(pp))).orElse(Some(AbsolutePath(Seq(StringPathPart(pp))))))
 
   /**
    * Operator precedence in Scala will mean that our DSL will not always be executed left to right.
@@ -70,12 +70,23 @@ class UriDsl(val uri: Uri) extends AnyVal {
    */
   private def merge(other: Uri) =
     uri.copy(
-      pathParts = uri.pathParts ++ other.pathParts,
+      path = uri.path.map(path => other.path.fold(path)(path.appendPath)).orElse(other.path),
       query = uri.query.addParams(other.query),
       fragment = other.fragment.orElse(uri.fragment)
     )
 
-  def /(other: Uri) = merge(other)
+  // NOTE: When using uri / "" ? ("", ""), `?` has precedence and converts the path to a RootlessPath which must be converted to an AbsolutePath.
+  def /(other: Uri) =
+    uri.copy(
+      path = uri.path.map(path => other.path.fold(path)(path.appendPath)).orElse {
+        other.path match {
+          case Some(path: RootlessPath) => Some(AbsolutePath(path.segments))
+          case pathOption => pathOption
+        }
+      },
+      query = uri.query.addParams(other.query),
+      fragment = other.fragment.orElse(uri.fragment)
+    )
   def ?(other: Uri) = merge(other)
   def `#`(other: Uri) = merge(other)
   def &(other: Uri) = merge(other)

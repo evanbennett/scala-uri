@@ -3,7 +3,7 @@ package com.netaporter.uri.parsing
 import com.netaporter.uri.config.UriConfig
 import scala.util.{Failure, Success}
 import org.parboiled2._
-import com.netaporter.uri.{StringPathPart, QueryString, PathPart}
+import com.netaporter.uri._
 import com.netaporter.uri.decoding.UriDecoder
 import com.netaporter.uri.Parameters._
 import org.parboiled2.ParseError
@@ -36,8 +36,11 @@ trait UriParser {
     StringPathPart(decodedPathPart)
   }
 
-  val extractPathParts = (pp: Seq[PathPart]) =>
-    pp.toVector
+  val extractAbsolutePath = (pp: Seq[PathPart]) =>
+    AbsolutePath(pp.toVector)
+
+  val extractRootlessPath = (pathPartMandatory: PathPart, pp: Seq[PathPart]) =>
+    RootlessPath(pathPartMandatory +: pp.toVector)
 
   val extractTuple = (k: String, v: String) =>
     k -> Some(v)

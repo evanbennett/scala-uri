@@ -8,7 +8,7 @@ class ApplyTests extends FlatSpec with Matchers {
     val uri = Uri(scheme = "http", host = "theon.github.com", pathParts = Seq(StringPathPart("blah")))
     uri.protocol should equal(Some("http"))
     uri.host should equal(Some("theon.github.com"))
-    uri.path should equal("/blah")
+    uri.pathToString should equal("/blah")
     uri.query should equal(EmptyQueryString)
   }
 
