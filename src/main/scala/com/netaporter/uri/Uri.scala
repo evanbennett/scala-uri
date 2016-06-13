@@ -55,7 +55,7 @@ case class Uri (
     }
 
   /**
-   * Adds a new Query String parameter key-value pair. If the value for the Query String parmeter is None, then this
+   * Adds a new Query String parameter key-value pair. If the value for the Query String parameter is None, then this
    * Query String parameter will not be rendered in calls to toString or toStringRaw
    * @param name name of the parameter
    * @param value value for the parameter
@@ -299,8 +299,8 @@ case class Uri (
    * (e.g. non ASCII characters will not be percent encoded)
    * @return String containing this Uri in it's raw form
    */
-  def toStringRaw(implicit config: UriConfig = UriConfig.default): String =
-    toString(config.withNoEncoding)
+  def toStringRaw(implicit c: UriConfig = UriConfig.default): String =
+    toString(c.withNoEncoding)
 
   /**
    * Converts to a Java URI.
@@ -312,11 +312,11 @@ case class Uri (
 
 object Uri {
 
-  def parse(s: CharSequence)(implicit config: UriConfig = UriConfig.default): Uri =
-    UriParser.parse(s.toString, config)
+  def parse(s: CharSequence)(implicit c: UriConfig = UriConfig.default): Uri =
+    UriParser.parse(s.toString, c)
 
-  def parseQuery(s: CharSequence)(implicit config: UriConfig = UriConfig.default): QueryString =
-    UriParser.parseQuery(s.toString, config)
+  def parseQuery(s: CharSequence)(implicit c: UriConfig = UriConfig.default): QueryString =
+    UriParser.parseQuery(s.toString, c)
 
   def apply(scheme: String = null,
             user: String = null,

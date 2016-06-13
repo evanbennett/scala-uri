@@ -22,7 +22,7 @@ class EncodingTests extends FlatSpec with Matchers {
     val uri: Uri = ("http://theon.github.com" / "üris-in-scàla.html") ? ("càsh" -> "£50")
     uri.toStringRaw should equal("http://theon.github.com/üris-in-scàla.html?càsh=£50")
   }
- 
+
   "URI path spaces" should "be percent encoded by default" in {
     val uri: Uri = "http://theon.github.com" / "uri with space"
     uri.toString should equal("http://theon.github.com/uri%20with%20space")
@@ -34,13 +34,13 @@ class EncodingTests extends FlatSpec with Matchers {
   }
 
   "URI path spaces" should "be plus encoded if configured" in {
-    implicit val config = UriConfig(encoder = percentEncode + spaceAsPlus)
+    implicit val c = UriConfig(encoder = percentEncode + spaceAsPlus)
     val uri: Uri = "http://theon.github.com" / "uri with space"
     uri.toString should equal("http://theon.github.com/uri+with+space")
   }
 
   "Path chars" should "be encoded as custom strings if configured" in {
-    implicit val config = UriConfig(encoder = percentEncode + encodeCharAs(' ', "_"))
+    implicit val c = UriConfig(encoder = percentEncode + encodeCharAs(' ', "_"))
     val uri: Uri = "http://theon.github.com" / "uri with space"
     uri.toString should equal("http://theon.github.com/uri_with_space")
   }
@@ -64,11 +64,11 @@ class EncodingTests extends FlatSpec with Matchers {
     val uri = "http://theon.github.com/uris-in-scala.html" ? ("chinese" -> "网址")
     uri.toString should equal("http://theon.github.com/uris-in-scala.html?chinese=%E7%BD%91%E5%9D%80")
   }
-  
+
   "Chinese characters with non-UTF8 encoding" should "be percent encoded" in {
+    implicit val c = UriConfig(charset = "GB2312")
     val uri = "http://theon.github.com/uris-in-scala.html" ? ("chinese" -> "网址")
-    val conf = UriConfig(charset = "GB2312")
-    uri.toString(conf) should equal("http://theon.github.com/uris-in-scala.html?chinese=%CD%F8%D6%B7")
+    uri.toString should equal("http://theon.github.com/uris-in-scala.html?chinese=%CD%F8%D6%B7")
   }
 
   "Russian characters" should "be percent encoded" in {
@@ -82,19 +82,19 @@ class EncodingTests extends FlatSpec with Matchers {
   }
 
   "Percent encoding with custom reserved characters" should "be easy" in {
-    implicit val config = UriConfig(encoder = percentEncode('#'))
+    implicit val c = UriConfig(encoder = percentEncode('#'))
     val uri = "http://theon.github.com/uris-in-scala.html" ? ("reserved" -> ":/?#[]@!$&'()*+,;={}\\")
     uri.toString should equal("http://theon.github.com/uris-in-scala.html?reserved=:/?%23[]@!$&'()*+,;={}\\")
   }
 
   "Percent encoding with a few less reserved characters that the defaults" should "be easy" in {
-    implicit val config = UriConfig(encoder = percentEncode -- '+')
+    implicit val c = UriConfig(encoder = percentEncode -- '+')
     val uri = "http://theon.github.com/uris-in-scala.html" ? ("reserved" -> ":/?#[]@!$&'()*+,;={}\\\n\r")
     uri.toString should equal("http://theon.github.com/uris-in-scala.html?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A+%2C%3B%3D%7B%7D%5C%0A%0D")
   }
 
   "Percent encoding with a few extra reserved characters on top of the defaults" should "be easy" in {
-    implicit val config = UriConfig(encoder = percentEncode() ++ ('a', 'b'))
+    implicit val c = UriConfig(encoder = percentEncode() ++ ('a', 'b'))
     val uri: Uri = "http://theon.github.com/abcde"
     uri.toString should equal("http://theon.github.com/%61%62cde")
   }

@@ -45,7 +45,7 @@ trait UriParser {
   val extractTuple = (k: String, v: String) =>
     k -> Some(v)
 
-  val extractTok = (k: String) => (k -> None):(String,Option[String])
+  val extractTok = (k: String) => (k -> None): (String, Option[String])
 
   /**
    * Used to made parsing easier to follow
@@ -55,10 +55,10 @@ trait UriParser {
 }
 
 object UriParser {
-  def parse(s: String, config: UriConfig) = {
+  def parse(s: String, c: UriConfig) = {
     val parser =
-      if (config.matrixParams) new DefaultUriParser(s, config) with MatrixParamSupport
-      else                     new DefaultUriParser(s, config)
+      if (c.matrixParams) new DefaultUriParser(s, c) with MatrixParamSupport
+      else                new DefaultUriParser(s, c)
 
     parser._uri.run() match {
       case Success(uri) =>
@@ -72,9 +72,9 @@ object UriParser {
     }
   }
 
-  def parseQuery(s: String, config: UriConfig) = {
+  def parseQuery(s: String, c: UriConfig) = {
     val withQuestionMark = if (s.head == '?') s else "?" + s
-    val parser = new DefaultUriParser(withQuestionMark, config)
+    val parser = new DefaultUriParser(withQuestionMark, c)
 
     parser._queryString.run() match {
       case Success(queryString) =>

@@ -5,7 +5,6 @@ import Uri._
 import com.netaporter.uri.decoding.PermissivePercentDecoder
 import com.netaporter.uri.config.UriConfig
 import com.netaporter.uri
-import org.parboiled2.ParseError
 
 /**
  * Test Suite to ensure that bugs raised by awesome github peeps NEVER come back
@@ -81,9 +80,9 @@ class GithubIssueTests extends FlatSpec with Matchers with OptionValues {
   }
 
   "Github Issue #26" should "now be fixed" in {
+    implicit val c = UriConfig(decoder = PermissivePercentDecoder)
     val uri = "http://lesswrong.com/index.php?query=abc%yum&john=hello"
-    val conf = UriConfig(decoder = PermissivePercentDecoder)
-    val u = parse(uri)(conf)
+    val u = parse(uri)
     u.query.param("query") should equal(Some("abc%yum"))
   }
 

@@ -5,7 +5,7 @@ import com.netaporter.uri._
 import com.netaporter.uri.config.UriConfig
 import Parameters._
 
-class DefaultUriParser(val input: ParserInput, conf: UriConfig) extends Parser with UriParser {
+class DefaultUriParser(val input: ParserInput, c: UriConfig) extends Parser with UriParser {
 
   def _scheme: Rule1[String] = rule {
     capture(CharPredicate.Alpha ~ zeroOrMore(CharPredicate.AlphaNum | anyOf("+-.")))
@@ -122,7 +122,7 @@ class DefaultUriParser(val input: ParserInput, conf: UriConfig) extends Parser w
       fragment = fragment
     )
 
-  def pathDecoder = conf.pathDecoder
-  def queryDecoder = conf.queryDecoder
-  def fragmentDecoder = conf.fragmentDecoder
+  def pathDecoder = c.pathDecoder
+  def queryDecoder = c.queryDecoder
+  def fragmentDecoder = c.fragmentDecoder
 }

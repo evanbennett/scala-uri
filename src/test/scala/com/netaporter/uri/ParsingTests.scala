@@ -162,7 +162,7 @@ class ParsingTests extends FlatSpec with Matchers {
   }
 
   "Path with matrix params" should "be parsed when configured" in {
-    implicit val config = UriConfig(matrixParams = true)
+    implicit val c = UriConfig(matrixParams = true)
     val uri = parse("http://stackoverflow.com/path;paramOne=value;paramTwo=value2/pathTwo;paramOne=value")
     uri.pathParts should equal(Vector(
       MatrixParams("path", Vector("paramOne" -> Some("value"), "paramTwo" -> Some("value2"))),
@@ -171,7 +171,7 @@ class ParsingTests extends FlatSpec with Matchers {
   }
 
   "Path with matrix params" should "accept empty params and trailing semi-colons" in {
-    implicit val config = UriConfig(matrixParams = true)
+    implicit val c = UriConfig(matrixParams = true)
     val uri = parse("http://stackoverflow.com/path;;paramOne=value;paramTwo=value2;;paramThree=;")
     uri.pathParts should equal(Vector(
       MatrixParams("path", Vector("paramOne"   -> Some("value"),
@@ -195,14 +195,14 @@ class ParsingTests extends FlatSpec with Matchers {
 
   "exotic/reserved characters in query string" should "be decoded" in {
     val q = "?weird%3D%26key=strange%25value&arrow=%E2%87%94"
-    val parsedQueryString = new DefaultUriParser(q, config.UriConfig.default)._queryString.run().get
+    val parsedQueryString = new DefaultUriParser(q, UriConfig.default)._queryString.run().get
     parsedQueryString.params("weird=&key") should equal(Seq(Some("strange%value")))
     parsedQueryString.params("arrow") should equal(Seq(Some("⇔")))
   }
 
   "exotic/reserved characters in user info" should "be decoded" in {
     val userInfo = "user%3A:p%40ssword%E2%87%94@"
-    val parsedUserInfo = new DefaultUriParser(userInfo, config.UriConfig.default)._userInfo.run().get
+    val parsedUserInfo = new DefaultUriParser(userInfo, UriConfig.default)._userInfo.run().get
     parsedUserInfo.user should equal("user:")
     parsedUserInfo.pass should equal(Some("p@ssword⇔"))
   }

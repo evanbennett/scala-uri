@@ -1,7 +1,5 @@
 package com.netaporter.uri.decoding
 
-import com.netaporter.uri.Uri
-
 class PermissiveDecoder(child: UriDecoder) extends UriDecoder {
   def decode(s: String) = {
     try {

@@ -1,7 +1,5 @@
 package com.netaporter.uri
 
-import com.netaporter.uri.config.UriConfig
-
 /**
  * Date: 28/08/2013
  * Time: 21:08
