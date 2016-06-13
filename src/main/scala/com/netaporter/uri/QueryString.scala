@@ -22,8 +22,7 @@ case class QueryString(params: ParamSeq) extends Parameters {
 }
 
 object QueryString {
-  // Cannot call this apply, as it conflicts with the case class constructor :(
-  def create(params: Param*) =
+  def apply(params: Param*)(implicit di: scala.Predef.DummyImplicit) =
     new QueryString(params)
 }
 

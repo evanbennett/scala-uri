@@ -220,11 +220,11 @@ class ParsingTests extends FlatSpec with Matchers {
 
   "Uri.parseQuery" should "parse a query string starting with a ?" in {
     val parsed = Uri.parseQuery("?a=b&c=d")
-    parsed should equal(QueryString.create("a" -> Some("b"), "c" -> Some("d")))
+    parsed should equal(QueryString("a" -> Some("b"), "c" -> Some("d")))
   }
 
   it should "parse a query string not starting with a ?" in {
     val parsed = Uri.parseQuery("a=b&c=d")
-    parsed should equal(QueryString.create("a" -> Some("b"), "c" -> Some("d")))
+    parsed should equal(QueryString("a" -> Some("b"), "c" -> Some("d")))
   }
 }
