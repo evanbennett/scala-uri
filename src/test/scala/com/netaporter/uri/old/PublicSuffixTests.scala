@@ -1,8 +1,9 @@
 package com.netaporter.uri
 
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.FlatSpec
+import org.scalatest.Matchers
 
-class PublicSuffixTests extends FlatSpec with Matchers {
+class OldPublicSuffixTests extends FlatSpec with Matchers {
 
   "Uri publicSuffix method" should "match the longest public suffix" in {
     val uri = Uri.parse("http://www.google.co.uk/blah")

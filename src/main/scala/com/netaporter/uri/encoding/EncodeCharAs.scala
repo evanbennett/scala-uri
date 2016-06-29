@@ -1,10 +1,13 @@
 package com.netaporter.uri.encoding
 
-/**
- * Date: 28/08/2013
- * Time: 21:07
- */
-case class EncodeCharAs(ch: Char, as: String) extends UriEncoder {
-  def shouldEncode(x: Char) = x == ch
-  def encodeChar(x: Char) = as
+case class EncodeCharAs(char: Char, asString: String) extends UriEncoder {
+
+  def shouldEncode(char: Char): Boolean = char == this.char
+
+  def encodeChar(char: Char): String = asString
+}
+
+object EncodeCharAs {
+
+  val spaceAsPlus = EncodeCharAs(' ', "+")
 }

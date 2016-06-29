@@ -1,24 +1,25 @@
 package com.netaporter.uri.encoding
 
-/**
- * Date: 28/08/2013
- * Time: 21:07
- */
 trait UriEncoder {
-  def shouldEncode(ch: Char): Boolean
-  def encodeChar(ch: Char): String
 
-  def encode(s: String, charset: String) = {
+  def shouldEncode(char: Char): Boolean
+
+  def encodeChar(char: Char): String
+
+  def encode(s: String, charset: String): String = {
     val chars = s.getBytes(charset).map(_.toChar)
-
-    val encChars = chars.flatMap(ch => {
-      if (shouldEncode(ch)) {
-        encodeChar(ch).getBytes(charset)
+    val encodedChars = chars.flatMap { char =>
+      if (shouldEncode(char)) {
+        encodeChar(char).getBytes(charset)
       } else {
-        Array(ch.toByte)
+        Array(char.toByte)
       }
-    })
-
-    new String(encChars, charset)
+    }
+    new String(encodedChars, charset)
   }
+
+  /**
+   * Prepend `encoder` to `this` as a `ChainedUriEncoder`.
+   */
+  def +(encoder: UriEncoder): ChainedUriEncoder = ChainedUriEncoder(Seq(encoder, this))
 }

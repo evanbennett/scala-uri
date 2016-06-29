@@ -1,16 +1,13 @@
 package com.netaporter.uri.encoding
 
-/**
- * Date: 28/08/2013
- * Time: 21:07
- */
 case class ChainedUriEncoder(encoders: Seq[UriEncoder]) extends UriEncoder {
-  def shouldEncode(ch: Char) = findFirstEncoder(ch).isDefined
-  def encodeChar(ch: Char) = findFirstEncoder(ch).getOrElse(NoopEncoder).encodeChar(ch)
 
-  def findFirstEncoder(ch: Char) = {
-    encoders.find(_.shouldEncode(ch))
-  }
+  def shouldEncode(char: Char): Boolean = findFirstEncoder(char).isDefined
 
-  def +(encoder: UriEncoder) = copy(encoders = encoder +: encoders)
+  def encodeChar(char: Char): String = findFirstEncoder(char).getOrElse(NoopEncoder).encodeChar(char)
+
+  // TODO: I think this method should be `protected`, but I would like to check if anyone is using it:
+  protected def findFirstEncoder(char: Char): Option[UriEncoder] = encoders.find(_.shouldEncode(char))
+
+  override def +(encoder: UriEncoder): ChainedUriEncoder = copy(encoders = encoder +: encoders)
 }

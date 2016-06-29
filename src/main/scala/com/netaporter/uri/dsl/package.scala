@@ -1,24 +1,21 @@
 package com.netaporter.uri
 
-import com.netaporter.uri.encoding.{ChainedUriEncoder, UriEncoder}
 import com.netaporter.uri.config.UriConfig
+import com.netaporter.uri.encoding.{ChainedUriEncoder, UriEncoder}
 
-/**
- * Date: 23/08/2013
- * Time: 09:10
- */
 package object dsl {
 
   import scala.language.implicitConversions
 
-  implicit def uriToUriOps(uri: Uri) = new UriDsl(uri)
+  implicit def uriToUriDsl(uri: Uri) = new UriDsl(uri)
 
+  @deprecated("Not needed anymore. `+` method added to `UriEncoder`", "1.0.0")
   implicit def encoderToChainedEncoder(enc: UriEncoder) = ChainedUriEncoder(enc :: Nil)
 
-  implicit def stringToUri(s: String)(implicit c: UriConfig = UriConfig.default) = Uri.parse(s)(c)
-  implicit def stringToUriDsl(s: String)(implicit c: UriConfig = UriConfig.default) = new UriDsl(stringToUri(s)(c))
+  implicit def stringToUri(s: String)(implicit c: UriConfig = UriConfig.default) = Uri.parse(s)
+  implicit def stringToUriDsl(s: String)(implicit c: UriConfig = UriConfig.default) = new UriDsl(stringToUri(s))
 
-  implicit def queryParamToUriDsl(kv: (String, Any))(implicit c: UriConfig = UriConfig.default) = new UriDsl(Uri.empty.addParam(kv._1, kv._2))
+  implicit def queryParamToUriDsl(keyValue: (String, Any))(implicit c: UriConfig = UriConfig.default) = new UriDsl(EmptyUri.queryAppend(keyValue._1, keyValue._2))
 
-  implicit def uriToString(uri: Uri)(implicit c: UriConfig = UriConfig.default): String = uri.toString(c)
+  implicit def uriToString(uri: Uri)(implicit c: UriConfig = UriConfig.default): String = uri.toString
 }

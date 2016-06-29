@@ -1,111 +1,112 @@
 package com.netaporter.uri
 
-import org.scalatest.{Matchers, FlatSpec}
 import com.netaporter.uri.config.UriConfig
+import com.netaporter.uri.encoding._
 
-class EncodingTests extends FlatSpec with Matchers {
+class EncodingTests extends TestSpec {
 
-  import dsl._
-  import encoding._
-
-  "URI paths" should "be percent encoded" in {
-    val uri: Uri = "http://theon.github.com" / "üris-in-scàla.html"
-    uri.toString should equal("http://theon.github.com/%C3%BCris-in-sc%C3%A0la.html")
+  "Default `PercentEncoder` in `Uri.toString(...)`" should "encode user" in {
+    val uri = Uri(None, Authority.option("üser", null, "test.com", 0), None, None, None)
+    uri.toString should equal("//%C3%BCser@test.com")
   }
 
-  "Raw paths" should "not be encoded" in {
-    val uri: Uri = "http://theon.github.com" / "üris-in-scàla.html"
-    uri.pathRaw should equal("/üris-in-scàla.html")
+  it should "encode password" in {
+    val uri = Uri(None, Authority.option("user", "p@ssword", "test.com", 0), None, None, None)
+    uri.toString should equal("//user:p%40ssword@test.com")
   }
 
-  "toStringRaw" should "not be encoded" in {
-    val uri: Uri = ("http://theon.github.com" / "üris-in-scàla.html") ? ("càsh" -> "£50")
-    uri.toStringRaw should equal("http://theon.github.com/üris-in-scàla.html?càsh=£50")
+  it should "encode absolute path" in {
+    val uri = Uri(None, None, AbsolutePath.option(StringSegment("üris-in-scàla.html")), None, None)
+    uri.toString should equal("/%C3%BCris-in-sc%C3%A0la.html")
   }
 
-  "URI path spaces" should "be percent encoded by default" in {
-    val uri: Uri = "http://theon.github.com" / "uri with space"
-    uri.toString should equal("http://theon.github.com/uri%20with%20space")
+  it should "encode relative path" in {
+    val uri = Uri(None, None, RootlessPath.option(StringSegment("uri with space")), None, None)
+    uri.toString should equal("uri%20with%20space")
   }
 
-  "URI path double quotes" should "be percent encoded when using conservative encoder" in {
-    val uri: Uri = "http://theon.github.com" / "what-she-said" / """"that""""
-    uri.toString(UriConfig.conservative) should equal("http://theon.github.com/what-she-said/%22that%22")
+  it should "encode query" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("càsh", Some("+£50")), Parameter("©opyright", Some("false"))), None)
+    uri.toString should equal("?c%C3%A0sh=%2B%C2%A350&%C2%A9opyright=false")
   }
 
-  "URI path spaces" should "be plus encoded if configured" in {
-    implicit val c = UriConfig(encoder = percentEncode + spaceAsPlus)
-    val uri: Uri = "http://theon.github.com" / "uri with space"
-    uri.toString should equal("http://theon.github.com/uri+with+space")
+  it should "encode fragment" in {
+    val uri = Uri(None, None, None, None, Fragment.option("fràgment"))
+    uri.toString should equal("#fr%C3%A0gment")
   }
 
-  "Path chars" should "be encoded as custom strings if configured" in {
-    implicit val c = UriConfig(encoder = percentEncode + encodeCharAs(' ', "_"))
-    val uri: Uri = "http://theon.github.com" / "uri with space"
-    uri.toString should equal("http://theon.github.com/uri_with_space")
-  }
-
-  "Querystring parameters" should "be percent encoded" in {
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("càsh" -> "+£50") & ("©opyright" -> "false")
-    uri.toString should equal("http://theon.github.com/uris-in-scala.html?c%C3%A0sh=%2B%C2%A350&%C2%A9opyright=false")
-  }
-
-  "Querystring double quotes" should "be percent encoded when using conservative encoder" in {
-    val uri: Uri = "http://theon.github.com" ? ("what-she-said" -> """"that"""")
-    uri.toString(UriConfig.conservative) should equal("http://theon.github.com?what-she-said=%22that%22")
-  }
-
-  "Reserved characters" should "be percent encoded when using conservative encoder" in {
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("reserved" -> ":/?#[]@!$&'()*+,;={}\\\n\r")
-    uri.toString(UriConfig.conservative) should equal("http://theon.github.com/uris-in-scala.html?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
-  }
-
-  "Chinese characters" should "be percent encoded" in {
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("chinese" -> "网址")
-    uri.toString should equal("http://theon.github.com/uris-in-scala.html?chinese=%E7%BD%91%E5%9D%80")
-  }
-
-  "Chinese characters with non-UTF8 encoding" should "be percent encoded" in {
-    implicit val c = UriConfig(charset = "GB2312")
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("chinese" -> "网址")
-    uri.toString should equal("http://theon.github.com/uris-in-scala.html?chinese=%CD%F8%D6%B7")
-  }
-
-  "Russian characters" should "be percent encoded" in {
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("russian" -> "Скала")
-    uri.toString should equal("http://theon.github.com/uris-in-scala.html?russian=%D0%A1%D0%BA%D0%B0%D0%BB%D0%B0")
-  }
-
-  "Fragments" should "be percent encoded" in {
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("chinese" -> "网址")
-    uri.toString should equal("http://theon.github.com/uris-in-scala.html?chinese=%E7%BD%91%E5%9D%80")
-  }
-
-  "Percent encoding with custom reserved characters" should "be easy" in {
-    implicit val c = UriConfig(encoder = percentEncode('#'))
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("reserved" -> ":/?#[]@!$&'()*+,;={}\\")
-    uri.toString should equal("http://theon.github.com/uris-in-scala.html?reserved=:/?%23[]@!$&'()*+,;={}\\")
-  }
-
-  "Percent encoding with a few less reserved characters that the defaults" should "be easy" in {
-    implicit val c = UriConfig(encoder = percentEncode -- '+')
-    val uri = "http://theon.github.com/uris-in-scala.html" ? ("reserved" -> ":/?#[]@!$&'()*+,;={}\\\n\r")
-    uri.toString should equal("http://theon.github.com/uris-in-scala.html?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A+%2C%3B%3D%7B%7D%5C%0A%0D")
-  }
-
-  "Percent encoding with a few extra reserved characters on top of the defaults" should "be easy" in {
-    implicit val c = UriConfig(encoder = percentEncode() ++ ('a', 'b'))
-    val uri: Uri = "http://theon.github.com/abcde"
-    uri.toString should equal("http://theon.github.com/%61%62cde")
-  }
-
-  "URI path pchars" should "not be encoded by default" in {
-    val uri: Uri = "http://example.com" / "-._~!$&'()*+,;=:@/test"
+  it should "NOT encode path pchars" in {
+    val uri = Uri(Scheme.option("http"), Authority.option(null, null, "example.com", 0), AbsolutePath.option(StringSegment("-._~!$&'()*+,;=:@"), StringSegment("test")), None, None)
     uri.toString should equal("http://example.com/-._~!$&'()*+,;=:@/test")
   }
 
-  "Query parameters" should "have control characters encoded" in {
-    val uri = "http://example.com/" ? ("control" -> "\u0019\u007F")
-    uri.toString should equal("http://example.com/?control=%19%7F")
+  it should "encode query with control characters" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("control", Some("\u0019\u007F"))), None)
+    uri.toString should equal("?control=%19%7F")
+  }
+
+  it should "encode query with Russian characters" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("russian", Some("Скала"))), None)
+    uri.toString should equal("?russian=%D0%A1%D0%BA%D0%B0%D0%BB%D0%B0")
+  }
+
+  it should "encode query with Chinese characters" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("chinese", Some("网址"))), None)
+    uri.toString should equal("?chinese=%E7%BD%91%E5%9D%80")
+  }
+
+  "Default `PercentEncoder` in `Uri.toString(...)` with non-UTF8 encoding" should "encode query with Chinese characters" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("chinese", Some("网址"))), None)
+    uri.toString(UriConfig(charset = "GB2312")) should equal("?chinese=%CD%F8%D6%B7")
+  }
+
+  "`Uri.toString(...)` with custom `PercentEncoder`" should "encode path with extra encoded characters easily" in {
+    val uri = Uri(None, None, AbsolutePath.option(StringSegment("abcde")), None, None)
+    uri.toString(UriConfig(encoder = PercentEncoder.default ++('a', 'b'))) should equal("/%61%62cde")
+  }
+
+  it should "encode query with less encoded characters easily" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("reserved", Some(":/?#[]@!$&'()*+,;={}\\\n\r"))), None)
+    uri.toString(UriConfig(encoder = PercentEncoder.default -- '+')) should equal("?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A+%2C%3B%3D%7B%7D%5C%0A%0D")
+  }
+
+  it should "encode query with custom encoded characters easily" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("reserved", Some(":/?#[]@!$&'()*+,;={}\\"))), None)
+    uri.toString(UriConfig(encoder = PercentEncoder('#'))) should equal("?reserved=:/?%23[]@!$&'()*+,;={}\\")
+  }
+
+  "`UriConfig.conservative` in `Uri.toString(...)`" should "encode query with reserved characters" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("reserved", Some(":/?#[]@!$&'()*+,;={}\\\n\r"))), None)
+    uri.toString(UriConfig.conservative) should equal("?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
+  }
+
+  it should "encode absolute path with '\"'" in {
+    val uri = Uri(None, None, AbsolutePath.option(StringSegment(""""that"""")), None, None)
+    uri.toString(UriConfig.conservative) should equal("/%22that%22")
+  }
+
+  "`NoopEncoder` in `Uri.toString(...)`" should "process query with reserved characters wihtout encoding" in {
+    val uri = Uri(None, None, None, Query.option(Parameter("reserved", Some(":/?#[]@!$&'()*+,;={}\\\n\r"))), None)
+    uri.toString(UriConfig(encoder = NoopEncoder)) should equal("?reserved=:/?#[]@!$&'()*+,;={}\\\n\r")
+  }
+
+  "`Uri.toString(...)` with `EncodeCharAs`" should "encode path ' ' as '+'" in {
+    val uri = Uri(None, None, AbsolutePath.option(StringSegment("uri with space")), None, None)
+    uri.toString(UriConfig(encoder = EncodeCharAs.spaceAsPlus)) should equal("/uri+with+space")
+  }
+
+  it should "encode path ' ' as '_'" in {
+    val uri = Uri(None, None, AbsolutePath.option(StringSegment("uri with space")), None, None)
+    uri.toString(UriConfig(encoder = EncodeCharAs(' ', "_"))) should equal("/uri_with_space")
+  }
+
+  "`Uri.toString(...)` with `ChainedUriEncoder`" should "encode path" in {
+    val uri = Uri(None, None, AbsolutePath.option(StringSegment("uri without space")), None, None)
+    uri.toString(UriConfig(encoder = EncodeCharAs(' ', "") + EncodeCharAs('w', "W") + EncodeCharAs('s', "S"))) should equal("/uriWithoutSpace")
+  }
+
+  // NOTE: This is covered elsewhere, but is not detected as such:
+  "`NoopEncoder`" should "encode a `Char` by returning it as a `String`" in {
+    NoopEncoder.encodeChar('e') should equal("e")
   }
 }

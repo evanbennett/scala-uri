@@ -4,20 +4,23 @@ import PercentEncoder._
 
 case class PercentEncoder(charsToEncode: Set[Char] = DEFAULT_CHARS_TO_ENCODE) extends UriEncoder {
 
-  def shouldEncode(ch: Char) = {
-    !ascii(ch) || charsToEncode.contains(ch)
-  }
+  def shouldEncode(char: Char): Boolean = !isAscii(char) || charsToEncode.contains(char)
 
-  def encodeChar(ch: Char) = "%" + toHex(ch)
-  def toHex(ch: Char) = "%04x".format(ch.toInt).substring(2).toUpperCase
+  def encodeChar(char: Char): String = "%" + toHex(char)
+
+  def toHex(char: Char): String = "%04x".format(char.toInt).substring(2).toUpperCase
+
+  @deprecated("Use `isAscii` instead.", "1.0.0")
+  def ascii(char: Char) = isAscii(char)
 
   /**
    * Determines if this character is in the ASCII range (excluding control characters)
    */
-  def ascii(ch: Char) = ch > 31 && ch < 127
+  def isAscii(char: Char): Boolean = char > 31 && char < 127
 
-  def --(chars: Char*) = new PercentEncoder(charsToEncode -- chars)
-  def ++(chars: Char*) = new PercentEncoder(charsToEncode ++ chars)
+  def --(chars: Char*): PercentEncoder = PercentEncoder(charsToEncode -- chars)
+
+  def ++(chars: Char*): PercentEncoder = PercentEncoder(charsToEncode ++ chars)
 }
 
 object PercentEncoder {
@@ -47,4 +50,9 @@ object PercentEncoder {
    * to encode depending on your use case
    */
   val DEFAULT_CHARS_TO_ENCODE = RESERVED ++ PATH_CHARS_TO_ENCODE ++ QUERY_CHARS_TO_ENCODE ++ EXCLUDED
+
+  // NOTE: Must have at least one Char so that the default value `DEFAULT_CHARS_TO_ENCODE` can be used when none are provided.
+  def apply(firstChar: Char, chars: Char*): PercentEncoder = apply(chars.toSet + firstChar)
+
+  val default = apply()
 }

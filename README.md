@@ -19,7 +19,7 @@
 To include it in your SBT project from maven central:
 
 ```scala
-"com.netaporter" %% "scala-uri" % "0.4.14"
+"com.netaporter" %% "scala-uri" % "1.0.0"
 ```
 
 There is also a [demo project](https://github.com/NET-A-PORTER/scala-uri-demo) to help you get up and running quickly, from scratch.
@@ -89,9 +89,9 @@ import com.netaporter.uri.Uri.parse
 val uri = parse("http://theon.github.com/scala-uri?param1=1&param2=2")
 ```
 
-There also exists a `import com.netaporter.uri.Uri.parseQuery` for instances when you wish to parse a query string, not a full URI.
-
 ## Transforming URIs
+
+TODO: This section needs to be updated.
 
 ### map
 
@@ -145,7 +145,7 @@ uri.filterQueryValues(_.length == 1) //Results in /scala-uri?p2=2
 
 ## URL Percent Encoding
 
-By Default, `scala-uri` will URL percent encode paths and query string parameters. To prevent this, you can call the `uri.toStringRaw` method:
+By Default, `scala-uri` will URL percent encode user info, paths, query strings and fragments. To prevent this, you can call the `uri.toStringRaw` method:
 
 ```scala
 import com.netaporter.uri.dsl._
@@ -162,21 +162,21 @@ Only percent encode the hash character:
 
 ```scala
 import com.netaporter.uri.encoding._
-implicit val config = UriConfig(encoder = percentEncode('#'))
+implicit val config = UriConfig(encoder = PercentEncoder('#'))
 ```
 
 Percent encode all the default chars, except the plus character:
 
 ```scala
 import com.netaporter.uri.encoding._
-implicit val config = UriConfig(encoder = percentEncode -- '+')
+implicit val config = UriConfig(encoder = PercentEncoder.default -- '+')
 ```
 
 Encode all the default chars, and also encode the letters a and b:
 
 ```scala
 import com.netaporter.uri.encoding._
-implicit val config = UriConfig(encoder = percentEncode ++ ('a', 'b'))
+implicit val config = UriConfig(encoder = PercentEncoder.default ++ ('a', 'b'))
 ```
 
 ### Encoding spaces as pluses
@@ -186,7 +186,7 @@ The default behaviour with scala uri, is to encode spaces as `%20`, however if y
 ```scala
 import com.netaporter.uri.dsl._
 import com.netaporter.uri.encoding._
-implicit val config = UriConfig(encoder = percentEncode + spaceAsPlus)
+implicit val config = UriConfig(encoder = PercentEncoder.default + EncodeCharAs.spaceAsPlus)
 
 val uri: Uri = "http://theon.github.com/uri with space"
 uri.toString //This is http://theon.github.com/uri+with+space
@@ -199,7 +199,7 @@ If you would like to do some custom encoding for specific characters, you can us
 ```scala
 import com.netaporter.uri.dsl._
 import com.netaporter.uri.encoding._
-implicit val config = UriConfig(encoder = percentEncode + encodeCharAs(' ', "_"))
+implicit val config = UriConfig(encoder = PercentEncoder.default + EncodeCharAs(' ', "_"))
 
 val uri: Uri = "http://theon.github.com/uri with space"
 uri.toString //This is http://theon.github.com/uri_with_space
@@ -232,6 +232,8 @@ uri.toStringRaw //This is: http://example.com/i-havent-%been%-percent-encoded
 
 ## Replacing Query String Parameters
 
+TODO: This section needs to be updated. Move it to [Transforming URIs](#transforming-uris)?
+
 If you wish to replace all existing query string parameters with a given name, you can use the `uri.replaceParams()` method:
 
 ```scala
@@ -244,6 +246,8 @@ newUri.toString //This is: http://example.com/path?param=2
 
 ## Removing Query String Parameters
 
+TODO: This section needs to be updated. Move it to [Transforming URIs](#transforming-uris)?
+
 If you wish to remove all existing query string parameters with a given name, you can use the `uri.removeParams()` method:
 
 ```scala
@@ -255,6 +259,8 @@ newUri.toString //This is: http://example.com/path?param2=2
 ```
 
 ## Get query string parameters
+
+TODO: This section needs to be updated.
 
 To get the query string parameters as a `Map[String,Seq[String]]` you can do the following:
 
@@ -304,6 +310,8 @@ uri.host //This is: Some("example.com")
 ```
 
 ## Matrix Parameters
+
+TODO: This section needs to be updated.
 
 [Matrix Parameters](http://www.w3.org/DesignIssues/MatrixURIs.html) are supported in `scala-uri`. Support is enabled
 using a`UriConfig` with `matrixParams = true` like so:
@@ -368,14 +376,14 @@ These methods return `None` and `Seq.empty`, respectively for relative URIs
 
 ## Including scala-uri your project
 
-`scala-uri` `0.4.x` is currently built with support for scala `2.10.x` and `2.11.x`
+`scala-uri` `1.0.x` is currently built with support for scala `2.10.x` and `2.11.x`
 
 For `2.9.x` support use `scala-uri` [`0.3.x`](https://github.com/net-a-porter/scala-uri/tree/0.3.x)
 
 Release builds are available in maven central. For SBT users just add the following dependency:
 
 ```scala
-"com.netaporter" %% "scala-uri" % "0.4.14"
+"com.netaporter" %% "scala-uri" % "1.0.0"
 ```
 
 For maven users you should use (for 2.11.x):
@@ -384,7 +392,7 @@ For maven users you should use (for 2.11.x):
 <dependency>
     <groupId>com.netaporter</groupId>
     <artifactId>scala-uri_2.11</artifactId>
-    <version>0.4.14</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 
@@ -399,7 +407,7 @@ resolvers += "Sonatype OSS" at "https://oss.sonatype.org/content/repositories/sn
 Add the following dependency:
 
 ```scala
-"com.netaporter" %% "scala-uri" % "0.4.15-SNAPSHOT"
+"com.netaporter" %% "scala-uri" % "1.0.0-SNAPSHOT"
 ```
 
 # Contributions
@@ -416,13 +424,33 @@ Contributions to `scala-uri` are always welcome. Good ways to contribute include
 
 The unit tests can be run from the sbt console by running the `test` command! Checking the unit tests all pass before sending pull requests will be much appreciated.
 
+TODO: `scct:test` does not work for me.
+
 Generate code coverage reports from the sbt console by running the `scct:test` command. The HTML reports should be generated at `target/scala-2.10/coverage-report/index.html`. Ideally pull requests shouldn't significantly decrease code coverage, but it's not the end of the world if they do. Contributions with no tests are better than no contributions :)
 
 ## Performance Tests
 
 For the `scala-uri` performance tests head to the [scala-uri-benchmarks](https://github.com/net-a-porter/scala-uri-benchmarks) github project
 
-# Migration guide from 0.3.x
+# Migration guide
+
+## From 1.0.x to 1.1.x
+
+ * Remove all deprecation warnings.
+
+## From 0.4.x to 1.0.x
+
+ * Incompatibility: A query with no parameters now `toString`s as "?", and `Uri` can have no query.
+ * `Uri` method changes:
+  * `scheme` use `protocol` instead
+  * `query` use `queryValue` instead
+  * `fragment` use `fragmentString` instead
+  * `copy` use `copyOld` instead
+  * `path` use `pathToString` instead
+  * `unapply` returns the new arguments
+ * Lots of deprecation warnings.
+
+## From 0.3.x to 0.4.x
 
  * Package changes / import changes
   * All code moved from `com.github.theon` package to `com.netaporter` package
