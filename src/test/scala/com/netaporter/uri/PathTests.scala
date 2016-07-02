@@ -10,7 +10,7 @@ class PathTests extends TestSpec {
   }
 
   it should "return empty when the path is empty" in {
-    EmptyUri.pathSegments should equal(Seq.empty)
+    EmptyRelativeReference.pathSegments should equal(Seq.empty)
   }
 
   "`Uri.pathSegmentOption`" should "return the specified path segment" in {
@@ -25,7 +25,7 @@ class PathTests extends TestSpec {
   }
 
   it should "return `None` when the path is empty" in {
-    EmptyUri.pathSegmentOption("path") should equal(None)
+    EmptyRelativeReference.pathSegmentOption("path") should equal(None)
   }
 
   "`Uri.pathSegment`" should "return the specified path segment" in {
@@ -43,7 +43,7 @@ class PathTests extends TestSpec {
 
   it should "fail when the path is empty" in {
     intercept[NoSuchElementException] {
-      EmptyUri.pathSegment("path") should equal(Seq.empty)
+      EmptyRelativeReference.pathSegment("path") should equal(Seq.empty)
     }
   }
 
@@ -63,7 +63,7 @@ class PathTests extends TestSpec {
   }
 
   it should "return `None` when the path is empty" in {
-    EmptyUri.matrixParameters("path2") should equal(Seq.empty)
+    EmptyRelativeReference.matrixParameters("path2") should equal(Seq.empty)
   }
 
   "`Uri.matrixParametersOfLastSegment`" should "return the matrix parameters of the last segment only" in {
@@ -82,13 +82,13 @@ class PathTests extends TestSpec {
   }
 
   it should "return `None` when the path is empty" in {
-    EmptyUri.matrixParametersOfLastSegment should equal(Seq.empty)
+    EmptyRelativeReference.matrixParametersOfLastSegment should equal(Seq.empty)
   }
 
   "`Uri.withPath`" should "change the path when provided a `Uri`" in {
     val path = AbsolutePath.option(Segment("path1"))
     val uri = Uri(None, None, path, None, None)
-    EmptyUri.withPath(uri).path should equal(path)
+    EmptyRelativeReference.withPath(uri).path should equal(path)
   }
 
   it should "change the authority when provided an `Path`" in {
@@ -118,7 +118,7 @@ class PathTests extends TestSpec {
   }
 
   it should "ignore the request when the path is empty" in {
-    EmptyUri.appendMatrixParameter("path4", "matrixParameterKey1", "matrixParameterValue1").path should equal(None)
+    EmptyRelativeReference.appendMatrixParameter("path4", "matrixParameterKey1", "matrixParameterValue1").path should equal(None)
   }
 
   "`Uri.appendMatrixParameter(String, String, Option[String])`" should "append the parameter to the last segment (not already a MatrixParameterSegment)" in {
@@ -135,7 +135,7 @@ class PathTests extends TestSpec {
 
   it should "ignore the request when the path is empty" in {
     val matrixParameter1 = Parameter("matrixParameterKey1", "matrixParameterValue1")
-    EmptyUri.appendMatrixParameter("", matrixParameter1.key, matrixParameter1.value).path should equal(None)
+    EmptyRelativeReference.appendMatrixParameter("", matrixParameter1.key, matrixParameter1.value).path should equal(None)
   }
 
   "`Uri.appendMatrixParameter(String, Parameter)`" should "append the parameter to the specified segment (not already a MatrixParameterSegment)" in {
@@ -159,7 +159,7 @@ class PathTests extends TestSpec {
 
   it should "ignore the request when the path is empty" in {
     val matrixParameter1 = Parameter("matrixParameterKey1", "matrixParameterValue1")
-    EmptyUri.appendMatrixParameter("", matrixParameter1).path should equal(None)
+    EmptyRelativeReference.appendMatrixParameter("", matrixParameter1).path should equal(None)
   }
 
   "`Uri.appendMatrixParameterToLastSegment(String, String)`" should "append the key and value to the last segment (not already a MatrixParameterSegment)" in {
@@ -175,7 +175,7 @@ class PathTests extends TestSpec {
   }
 
   it should "ignore the request when the path is empty" in {
-    EmptyUri.appendMatrixParameterToLastSegment("matrixParameterKey1", "matrixParameterValue1").path should equal(None)
+    EmptyRelativeReference.appendMatrixParameterToLastSegment("matrixParameterKey1", "matrixParameterValue1").path should equal(None)
   }
 
   "`Uri.appendMatrixParameterToLastSegment(String, Option[String])`" should "append the parameter to the last segment (not already a MatrixParameterSegment)" in {
@@ -192,7 +192,7 @@ class PathTests extends TestSpec {
 
   it should "ignore the request when the path is empty" in {
     val matrixParameter1 = Parameter("matrixParameterKey1", "matrixParameterValue1")
-    EmptyUri.appendMatrixParameterToLastSegment(matrixParameter1.key, matrixParameter1.value).path should equal(None)
+    EmptyRelativeReference.appendMatrixParameterToLastSegment(matrixParameter1.key, matrixParameter1.value).path should equal(None)
   }
 
   "`Uri.appendMatrixParameterToLastSegment(Parameter)`" should "append the parameter to the last segment (not already a MatrixParameterSegment)" in {
@@ -209,7 +209,7 @@ class PathTests extends TestSpec {
 
   it should "ignore the request when the path is empty" in {
     val matrixParameter1 = Parameter("matrixParameterKey1", "matrixParameterValue1")
-    EmptyUri.appendMatrixParameterToLastSegment(matrixParameter1).path should equal(None)
+    EmptyRelativeReference.appendMatrixParameterToLastSegment(matrixParameter1).path should equal(None)
   }
 
   "`Uri.pathToString` and therefore `Path.toString`" should "work with an abolute path with a single string segment" in {
@@ -274,7 +274,7 @@ class PathTests extends TestSpec {
   }
 
   it should "work without a path" in {
-    EmptyUri.pathToString should equal("")
+    EmptyRelativeReference.pathToString should equal("")
   }
 
   "`Uri.pathToStringRaw` and therefore `Path.toString`" should "work with an abolute path with a single string segment" in {
@@ -339,7 +339,7 @@ class PathTests extends TestSpec {
   }
 
   it should "work without a path" in {
-    EmptyUri.pathToStringRaw should equal("")
+    EmptyRelativeReference.pathToStringRaw should equal("")
   }
 
   "`Path.appendSegment`" should "succeed" in {

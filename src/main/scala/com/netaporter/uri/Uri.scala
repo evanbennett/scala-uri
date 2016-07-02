@@ -507,6 +507,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
 
   /**
    * Returns the encoded path. By default non ASCII characters in the path are percent encoded.
+   *
    * @return String containing the path for this Uri
    */
   def pathToString(implicit c: UriConfig = UriConfig.default): String =
@@ -517,6 +518,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
 
   /**
    * Returns the path with no encoders taking place (e.g. non ASCII characters will not be percent encoded)
+   *
    * @return String containing the raw path for this Uri
    */
   def pathToStringRaw(implicit c: UriConfig = UriConfig.default): String =
@@ -548,6 +550,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
   /**
    * Returns the string representation of this Uri with no encoders taking place
    * (e.g. non ASCII characters will not be percent encoded)
+   *
    * @return String containing this Uri in it's raw form
    */
   def toStringRaw(implicit c: UriConfig = UriConfig.default): String =
@@ -556,6 +559,8 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
   /**
    * Converts to a Java URI.
    * This involves a toString + URI.parse because the specific URI constructors do not deal properly with encoded elements
+   * TODO: All of the `java.net.URI` constructors build a `String` from the arguments and then parse it anyway.
+   *
    * @return a URI matching this Uri
    */
   def toURI(implicit c: UriConfig = UriConfig.conservative): java.net.URI = new java.net.URI(toString)
@@ -563,45 +568,64 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-case class AbsoluteUri(private val _scheme: Scheme, private val _authority: Authority, override val path: Option[AbsolutePath], override val query: Option[Query], override val fragment: Option[Fragment])
-  extends Uri(Some(_scheme), Some(_authority), path, query, fragment)
+sealed trait BaseUri {
 
-/** Protocol Relative URI */
-case class AuthorityReferenceUri(private val _authority: Authority, override val path: Option[AbsolutePath], override val query: Option[Query], override val fragment: Option[Fragment])
-  extends Uri(None, Some(_authority), path, query, fragment)
-
-case class AbsolutePathReferenceUri(private val _path: AbsolutePath, override val query: Option[Query], override val fragment: Option[Fragment])
-  extends Uri(None, None, Some(_path), query, fragment) {
-  if (_path.segments.length != 1 && _path.segments(0).segment.isEmpty) throw new IllegalArgumentException("First segment cannot be empty otherwise it would be an authority.")
+  // TODO: Implement RFC section 5 Reference Resolution???
+//  def resolve(relativeReference: RelativeReference): Uri = ???
 }
 
-case class RelativePathReferenceUri(private val _path: RootlessPath, override val query: Option[Query], override val fragment: Option[Fragment])
-  extends Uri(None, None, Some(_path), query, fragment) {
-  if (_path.segments(0).segment.contains(":")) throw new IllegalArgumentException("First segment cannot contain any ':' otherwise it would be a scheme.")
-}
+// TODO: RFC section 4.3: An absolute URI cannot have a `Fragment`:
+case class AbsoluteUri(private val _scheme: Scheme, private val _authority: Authority, override val path: Option[AbsolutePath], override val query: Option[Query])
+  extends Uri(Some(_scheme), Some(_authority), path, query, None) with BaseUri
 
-case class QueryReferenceUri(private val _query: Query, override val fragment: Option[Fragment])
-  extends Uri(None, None, None, Some(_query), fragment)
-
-/** Fragment Reference URI */
-case class SameDocumentUri(private val _fragment: Fragment)
-  extends Uri(None, None, None, None, Some(_fragment))
-
-case object EmptyUri extends Uri(None, None, None, None, None)
+case class SchemeWithAuthorityAndFragmentUri(private val _scheme: Scheme, private val _authority: Authority, override val path: Option[AbsolutePath], override val query: Option[Query], private val _fragment: Fragment)
+  extends Uri(Some(_scheme), Some(_authority), path, query, Some(_fragment)) with BaseUri
 
 case class SchemeWithAbsolutePathUri(private val _scheme: Scheme, private val _path: AbsolutePath, override val query: Option[Query], override val fragment: Option[Fragment])
-  extends Uri(Some(_scheme), None, Some(_path), query, fragment) {
+  extends Uri(Some(_scheme), None, Some(_path), query, fragment) with BaseUri {
   if (_path.segments.length != 1 && _path.segments(0).segment.isEmpty) throw new IllegalArgumentException("First segment cannot be empty otherwise it would be confused for an authority.")
 }
 
 case class SchemeWithRootlessPathUri(private val _scheme: Scheme, private val _path: RootlessPath, override val query: Option[Query], override val fragment: Option[Fragment])
-  extends Uri(Some(_scheme), None, Some(_path), query, fragment)
+  extends Uri(Some(_scheme), None, Some(_path), query, fragment) with BaseUri
 
 case class SchemeWithQueryUri(private val _scheme: Scheme, private val _query: Query, override val fragment: Option[Fragment])
-  extends Uri(Some(_scheme), None, None, Some(_query), fragment)
+  extends Uri(Some(_scheme), None, None, Some(_query), fragment) with BaseUri
 
 case class SchemeWithFragmentUri(private val _scheme: Scheme, private val _fragment: Fragment)
-  extends Uri(Some(_scheme), None, None, None, Some(_fragment))
+  extends Uri(Some(_scheme), None, None, None, Some(_fragment)) with BaseUri
+
+// TODO: A URI can be scheme only: "dav:"; "about:";
+case class SchemeUri(private val _scheme: Scheme)
+  extends Uri(Some(_scheme), None, None, None, None) with BaseUri
+
+/** In obsolete RFCs this was called a `RelativeUri`. */
+sealed abstract class RelativeReference(override val authority: Option[Authority], override val path: Option[Path], override val query: Option[Query], override val fragment: Option[Fragment])
+  extends Uri(None, authority, path, query, fragment)
+
+/** Protocol Relative URI */
+case class AuthorityRelativeReference(private val _authority: Authority, override val path: Option[AbsolutePath], override val query: Option[Query], override val fragment: Option[Fragment])
+  extends RelativeReference(Some(_authority), path, query, fragment)
+
+case class AbsolutePathRelativeReference(private val _path: AbsolutePath, override val query: Option[Query], override val fragment: Option[Fragment])
+  extends RelativeReference(None, Some(_path), query, fragment) {
+  if (_path.segments.length != 1 && _path.segments(0).segment.isEmpty) throw new IllegalArgumentException("First segment cannot be empty otherwise it would be an authority.")
+}
+
+case class RelativePathRelativeReference(private val _path: RootlessPath, override val query: Option[Query], override val fragment: Option[Fragment])
+  extends RelativeReference(None, Some(_path), query, fragment) {
+  // TODO: This is interesting, as a ':' could have been encoded. The default `pathDecoder` would decode it, but the default `pathEncoder` would not re-encode it as it is not in `PATH_CHARS_TO_ENCODE`.
+  //       This could be handled by overriding `pathToString`, `pathToStringRaw`, `toString`, `toString` and `toStringRaw` to include ':' in the `pathEncoder`, but should only be for the first segment.
+  if (_path.segments(0).segment.contains(":")) throw new IllegalArgumentException("First segment cannot contain any ':' otherwise it would be a scheme.")
+}
+
+case class QueryRelativeReference(private val _query: Query, override val fragment: Option[Fragment])
+  extends RelativeReference(None, None, Some(_query), fragment)
+
+case class FragmentRelativeReference(private val _fragment: Fragment)
+  extends RelativeReference(None, None, None, Some(_fragment))
+
+case object EmptyRelativeReference extends RelativeReference(None, None, None, None)
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -609,26 +633,32 @@ object Uri {
 
   def apply(scheme: Option[Scheme], authority: Option[Authority], path: Option[Path], query: Option[Query], fragment: Option[Fragment]): Uri = {
     (scheme, authority, path, query, fragment) match {
-      //case (Some(scheme), Some(authority), path: Option[AbsolutePath], _, _) => AbsoluteUri(scheme, authority, path, query, fragment) // NOTE: AbsolutePath is unchecked since it is eliminated by erasure.
-      case (Some(scheme), Some(authority), None, _, _) => AbsoluteUri(scheme, authority, None, query, fragment)
-      case (Some(scheme), Some(authority), Some(path: AbsolutePath), _, _) => AbsoluteUri(scheme, authority, Some(path), query, fragment)
-      //case (None, Some(authority), path: Option[AbsolutePath], _, _) => AuthorityReferenceUri(authority, path, query, fragment) // NOTE: AbsolutePath is unchecked since it is eliminated by erasure.
-      case (None, Some(authority), None, _, _) => AuthorityReferenceUri(authority, None, query, fragment)
-      case (None, Some(authority), Some(path: AbsolutePath), _, _) => AuthorityReferenceUri(authority, Some(path), query, fragment)
-      case (None, None, Some(path: AbsolutePath), _, _) => AbsolutePathReferenceUri(path, query, fragment)
-      case (None, None, Some(path: RootlessPath), _, _) => RelativePathReferenceUri(path, query, fragment)
-      case (None, None, None, Some(query), _) => QueryReferenceUri(query, fragment)
-      case (None, None, None, None, Some(fragment)) => SameDocumentUri(fragment: Fragment)
-      case (None, None, None, None, None) => EmptyUri
+      //case (Some(scheme), Some(authority), path: Option[AbsolutePath], _, None) => AbsoluteUri(scheme, authority, path, query) // NOTE: AbsolutePath is unchecked since it is eliminated by erasure.
+      case (Some(scheme), Some(authority), None, _, None) => AbsoluteUri(scheme, authority, None, query)
+      case (Some(scheme), Some(authority), Some(path: AbsolutePath), _, None) => AbsoluteUri(scheme, authority, Some(path), query)
+      //case (Some(scheme), Some(authority), path: Option[AbsolutePath], _, Some(fragment)) => SchemeWithAuthorityAndFragmentUri(scheme, authority, path, query, fragment) // NOTE: AbsolutePath is unchecked since it is eliminated by erasure.
+      case (Some(scheme), Some(authority), None, _, Some(fragment)) => SchemeWithAuthorityAndFragmentUri(scheme, authority, None, query, fragment)
+      case (Some(scheme), Some(authority), Some(path: AbsolutePath), _, Some(fragment)) => SchemeWithAuthorityAndFragmentUri(scheme, authority, Some(path), query, fragment)
       case (Some(scheme), None, Some(path: AbsolutePath), _, _) => SchemeWithAbsolutePathUri(scheme, path, query, fragment)
       case (Some(scheme), None, Some(path: RootlessPath), _, _) => SchemeWithRootlessPathUri(scheme, path, query, fragment)
       case (Some(scheme), None, None, Some(query), _) => SchemeWithQueryUri(scheme, query, fragment)
       case (Some(scheme), None, None, None, Some(fragment)) => SchemeWithFragmentUri(scheme, fragment)
-      case _ => throw new IllegalArgumentException("ERROR: Unsupported URI type:" + scheme + ":" + authority + ":" + path + ":" + query + ":" + fragment + ":")
+      case (Some(scheme), None, None, None, None) => SchemeUri(scheme)
+      //case (None, Some(authority), path: Option[AbsolutePath], _, _) => AuthorityRelativeReference(authority, path, query, fragment) // NOTE: AbsolutePath is unchecked since it is eliminated by erasure.
+      case (None, Some(authority), None, _, _) => AuthorityRelativeReference(authority, None, query, fragment)
+      case (None, Some(authority), Some(path: AbsolutePath), _, _) => AuthorityRelativeReference(authority, Some(path), query, fragment)
+      case (None, None, Some(path: AbsolutePath), _, _) => AbsolutePathRelativeReference(path, query, fragment)
+      case (None, None, Some(path: RootlessPath), _, _) => RelativePathRelativeReference(path, query, fragment)
+      case (None, None, None, Some(query), _) => QueryRelativeReference(query, fragment)
+      case (None, None, None, None, Some(fragment)) => FragmentRelativeReference(fragment: Fragment)
+      case (None, None, None, None, None) => EmptyRelativeReference
+      case _ =>
+        // NOTE: The only combinations that should get here have an `Authority` and a `RootlessPath` which is missing the '/' delimiter between them.
+        throw new IllegalArgumentException("ERROR: Unsupported URI type:" + scheme + ":" + authority + ":" + path + ":" + query + ":" + fragment + ":")
     }
   }
 
-  // TODO: I would like to deprecate this, and replace it with a couple of methods that relate better to the new structures. (e.g. Option[Path]; AbsoluePath; RootlessPath)
+  // TODO: I would like to deprecate this, and replace it with a few methods that relate better to the new structures. (e.g. Option[Host]; Option[Path]; AbsoluePath; RootlessPath)
   /**
    * A simpler way to create a Uri, optionally with an AbsolutePath.
    *
@@ -657,11 +687,7 @@ object Uri {
             pathParts: Seq[Segment],
             query: Query,
             fragment: Option[String]): Uri =
-    apply(scheme.map(Scheme.apply),
-          Authority.option(user.getOrElse(null), password.getOrElse(null), host.getOrElse(null), port.getOrElse(0)),
-          AbsolutePath.option(pathParts), // Previously, all paths were absolute.
-          Option(query),
-          fragment.map(Fragment.apply))
+    apply(scheme.getOrElse(null), user.getOrElse(null), password.getOrElse(null), host.getOrElse(null), port.getOrElse(0), pathParts, query, fragment.getOrElse((null)))
 
   def apply(javaUri: java.net.URI): Uri = parse(javaUri.toASCIIString)
 
@@ -679,6 +705,6 @@ object Uri {
   def parseQuery(s: CharSequence)(implicit c: UriConfig = UriConfig.default): QueryString =
     UriParser.parseQuery(s.toString, c)
 
-  @deprecated("Use `EmptyUri` instead.", "1.0.0")
-  def empty: Uri = EmptyUri
+  @deprecated("Use `EmptyRelativeReference` instead.", "1.0.0")
+  def empty: Uri = EmptyRelativeReference
 }

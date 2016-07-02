@@ -33,7 +33,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  "Replace param method" should "replace single parameters with a String argument" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.replaceParams("testOne", "2")
 //      newUri.toString should equal("/uris-in-scala.html?testOne=2")
 //    }
@@ -41,7 +41,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "replace multiple parameters with a String argument" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testOne" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.replaceParams("testOne", "2")
 //      newUri.toString should equal("/uris-in-scala.html?testOne=2")
 //    }
@@ -49,7 +49,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "replace parameters with a Some argument" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.replaceParams("testOne", Some("2"))
 //      newUri.toString should equal("/uris-in-scala.html?testOne=2")
 //    }
@@ -57,7 +57,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "not affect other parameters" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.replaceParams("testOne", "3")
 //      newUri.toString should equal("/uris-in-scala.html?testTwo=2&testOne=3")
 //    }
@@ -65,7 +65,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "remove multiple parameters" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testOne" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.removeParams("testOne")
 //      newUri.toString should equal("/uris-in-scala.html")
 //    }
@@ -73,7 +73,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "remove single parameters" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.removeParams("testOne")
 //      newUri.toString should equal("/uris-in-scala.html")
 //    }
@@ -81,7 +81,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "not remove other parameters" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.removeParams("testOne")
 //      newUri.toString should equal("/uris-in-scala.html?testTwo=2")
 //    }
@@ -89,7 +89,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "remove parameters contained in SeqLike" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.removeParams(List("testOne", "testTwo"))
 //      newUri.toString should equal("/uris-in-scala.html")
 //    }
@@ -97,7 +97,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "not remove parameters uncontained in List" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.removeParams(List("testThree", "testFour"))
 //      newUri.toString should equal("/uris-in-scala.html?testOne=1&testTwo=2")
 //    }
@@ -105,7 +105,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  it should "remove parameters contained in List and not remove parameters uncontained in List" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.removeParams(List("testOne", "testThree"))
 //      newUri.toString should equal("/uris-in-scala.html?testTwo=2")
 //    }
@@ -113,7 +113,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  "Replace all params method" should "replace all query params" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.replaceAllParams(("testThree", Some("3")), ("testFour", Some("4")))
 //      newUri.toString should equal("/uris-in-scala.html?testThree=3&testFour=4")
 //    }
@@ -121,7 +121,7 @@ class DslTests extends TestSpec { // TODO: This needs to be fully reviewed. It s
 //
 //  "Remove all params method" should "remove all query params" in {
 //    val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
-//    uri match { case uri: AbsolutePathReferenceUri =>
+//    uri match { case uri: AbsolutePathRelativeReference =>
 //      val newUri = uri.removeAllParams
 //      newUri.toString should equal("/uris-in-scala.html")
 //    }

@@ -12,7 +12,7 @@ class QueryTests extends TestSpec {
   }
 
   it should "return empty when the query is `None`" in {
-    EmptyUri.queryParameters should equal(Seq.empty)
+    EmptyRelativeReference.queryParameters should equal(Seq.empty)
   }
 
   "`Uri.queryValues(String)`" should "return the matching query parameters" in {
@@ -25,7 +25,7 @@ class QueryTests extends TestSpec {
   }
 
   it should "return empty when the query is `None`" in {
-    EmptyUri.queryValues("queryParamKey") should equal(Seq.empty)
+    EmptyRelativeReference.queryValues("queryParamKey") should equal(Seq.empty)
   }
 
   "`Uri.queryValueFirst(String)`" should "return the first matching query parameter" in {
@@ -38,7 +38,7 @@ class QueryTests extends TestSpec {
   }
 
   it should "return `None` when the query is `None`" in {
-    EmptyUri.queryValueFirst("queryParamKey1") should equal(None)
+    EmptyRelativeReference.queryValueFirst("queryParamKey1") should equal(None)
   }
 
   "`Uri.queryMap`" should "return all the query parameters" in {
@@ -55,12 +55,12 @@ class QueryTests extends TestSpec {
   }
 
   it should "return empty when the query is `None`" in {
-    EmptyUri.queryMap should equal(Map.empty)
+    EmptyRelativeReference.queryMap should equal(Map.empty)
   }
 
   "`Uri.withQuery`" should "change the query when provided a `Uri`" in {
     val query = Query.option(Parameter("queryParamKey", Some("queryParamValue")))
-    EmptyUri.withQuery(Uri(None, None, None, query, None)).query should equal(query)
+    EmptyRelativeReference.withQuery(Uri(None, None, None, query, None)).query should equal(query)
   }
 
   it should "change the query when provided a `Query`" in {
@@ -160,7 +160,7 @@ class QueryTests extends TestSpec {
 
   it should "append a parameter key and value without an existing query" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
-    EmptyUri.queryAppend("queryParamKey1", Some("queryParamValue1")).query.value should equal(Query(parameter1))
+    EmptyRelativeReference.queryAppend("queryParamKey1", Some("queryParamValue1")).query.value should equal(Query(parameter1))
   }
 
   it should "append a parameter sequence to an existing query" in {
@@ -174,7 +174,7 @@ class QueryTests extends TestSpec {
   it should "append a parameter sequence without an existing query" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter3 = Parameter("queryParamKey3", None)
-    EmptyUri.queryAppend(Seq(("queryParamKey1", "queryParamValue1"), ("queryParamKey3", None))).query.value should equal(Query(parameter1, parameter3))
+    EmptyRelativeReference.queryAppend(Seq(("queryParamKey1", "queryParamValue1"), ("queryParamKey3", None))).query.value should equal(Query(parameter1, parameter3))
   }
 
   it should "append parameters to an existing query" in {
@@ -197,7 +197,7 @@ class QueryTests extends TestSpec {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some(""))
     val parameter3 = Parameter("queryParamKey3", None)
-    EmptyUri.queryAppend(parameter1, parameter2, parameter3).query.value should equal(Query(parameter1, parameter2, parameter3))
+    EmptyRelativeReference.queryAppend(parameter1, parameter2, parameter3).query.value should equal(Query(parameter1, parameter2, parameter3))
   }
 
   it should "append query parameters" in {
@@ -223,11 +223,11 @@ class QueryTests extends TestSpec {
     Uri(query = EmptyQuery).queryAppend(query).query.value should equal(query)
   }
 
-  it should "use the other query when called on EmptyUri" in {
+  it should "use the other query when called on EmptyRelativeReference" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some(""))
     val query = Query(parameter1, parameter2)
-    EmptyUri.queryAppend(query).query.value should equal(query)
+    EmptyRelativeReference.queryAppend(query).query.value should equal(query)
   }
 
   "`Uri.queryMapParameters`" should "transform all parameters" in {
@@ -504,7 +504,7 @@ class QueryTests extends TestSpec {
   }
 
   it should "work without a query" in {
-    EmptyUri.queryToString should equal("")
+    EmptyRelativeReference.queryToString should equal("")
   }
 
   "`Uri.queryToStringRaw` and therefore `Query.toStringRaw`" should "work with a single query parameter with key and value" in {
@@ -528,7 +528,7 @@ class QueryTests extends TestSpec {
   }
 
   it should "work without a query" in {
-    EmptyUri.queryToStringRaw should equal("")
+    EmptyRelativeReference.queryToStringRaw should equal("")
   }
 
   "`Query.copy` and therfore `Query.apply`" should "succeed" in {

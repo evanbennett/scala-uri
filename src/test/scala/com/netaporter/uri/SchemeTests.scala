@@ -33,7 +33,7 @@ class SchemeTests extends TestSpec {
   }
 
   it should "work without a scheme" in {
-    EmptyUri.schemeToString should equal("")
+    EmptyRelativeReference.schemeToString should equal("")
   }
 
   it should "always output in lowercase" in {
@@ -51,7 +51,7 @@ class SchemeTests extends TestSpec {
   }
 
   it should "work without a scheme" in {
-    EmptyUri.schemeToStringRaw should equal("")
+    EmptyRelativeReference.schemeToStringRaw should equal("")
   }
 
   it should "always output in input case" in {

@@ -2,6 +2,7 @@ package com.netaporter.uri.encoding
 
 import PercentEncoder._
 
+// TODO: I think this should force '%' to be encoded, otherwise percent decoding will fail or change the value.
 case class PercentEncoder(charsToEncode: Set[Char] = DEFAULT_CHARS_TO_ENCODE) extends UriEncoder {
 
   def shouldEncode(char: Char): Boolean = !isAscii(char) || charsToEncode.contains(char)
@@ -16,6 +17,7 @@ case class PercentEncoder(charsToEncode: Set[Char] = DEFAULT_CHARS_TO_ENCODE) ex
   /**
    * Determines if this character is in the ASCII range (excluding control characters)
    */
+  // TODO: Forcing '%' to be encoded could be done here:
   def isAscii(char: Char): Boolean = char > 31 && char < 127
 
   def --(chars: Char*): PercentEncoder = PercentEncoder(charsToEncode -- chars)
@@ -26,18 +28,18 @@ case class PercentEncoder(charsToEncode: Set[Char] = DEFAULT_CHARS_TO_ENCODE) ex
 object PercentEncoder {
 
   val USER_INFO_CHARS_TO_ENCODE = Set (
-    ' ', '%', '<', '>', '[', ']', '#', '%', '{', '}', '^', '`', '|', '?', '@', ':', '/'
+    ' ', '%', '<', '>', '[', ']', '#', '{', '}', '^', '`', '|', '?', '@', ':', '/'
   )
 
   val PATH_CHARS_TO_ENCODE = Set (
-    ' ', '%', '<', '>', '[', ']', '#', '%', '{', '}', '^', '`', '|', '?'
+    ' ', '%', '<', '>', '[', ']', '#', '{', '}', '^', '`', '|', '?'
   )
 
   val QUERY_CHARS_TO_ENCODE = Set (
-    ' ', '%', '<', '>', '[', ']', '#', '%', '{', '}', '^', '`', '|', '&', '\\', '+', '='
+    ' ', '%', '<', '>', '[', ']', '#', '{', '}', '^', '`', '|', '&', '\\', '+', '='
   )
 
-  val FRAGMENT_CHARS_TO_ENCODE = Set('#')
+  val FRAGMENT_CHARS_TO_ENCODE = Set('%', '#') // TODO: This needs to encode '%' otherwise percent decoding will fail or change the value.
 
   val GEN_DELIMS = Set(':', '/', '?',  '#', '[', ']', '@')
   val SUB_DELIMS  = Set('!', '$', '&', '\'', '(', ')', '*', '+', ',', ';', '=')

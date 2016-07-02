@@ -285,7 +285,7 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`Uri.matrixParams` empty" in {
-    EmptyUri.matrixParams should equal(EmptyUri.matrixParametersOfLastSegment)
+    EmptyRelativeReference.matrixParams should equal(EmptyRelativeReference.matrixParametersOfLastSegment)
   }
 
   it should "`Uri.queryValue`" in {

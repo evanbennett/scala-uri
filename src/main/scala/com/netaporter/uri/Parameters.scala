@@ -235,7 +235,7 @@ trait Parameters {
    */
   def replaceMatching(existingKey: String, newValue: Option[Any]): Self = {
     val filteredParameters = parameters.filterNot(_.key == existingKey)
-    if (parameters.length == filteredParameters.length) withParameters(parameters) // TODO: I could not get `this` to work.
+    if (parameters.length == filteredParameters.length) withParameters(parameters) // TODO: `withParameters(parameters)` should be `this`, but I could not get it to work.
     else withParameters(filteredParameters :+ Parameter(existingKey, newValue.map(_.toString)))
   }
 

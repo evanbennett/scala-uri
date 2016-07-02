@@ -105,7 +105,7 @@ sealed abstract case class MatrixParametersSegment(segment: String, parameters: 
 object Segment {
 
   def apply(segment: String, matrixParameters: Seq[Parameter]): Segment = {
-    if (matrixParameters.isEmpty) StringSegment(segment) else MatrixParametersSegment(segment, matrixParameters)
+    if (matrixParameters == null || matrixParameters.isEmpty) StringSegment(segment) else MatrixParametersSegment(segment, matrixParameters)
   }
 
   def apply(segment: String, matrixParameters: Parameter*)(implicit di: DummyImplicit): Segment =

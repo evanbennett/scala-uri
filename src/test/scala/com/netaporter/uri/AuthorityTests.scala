@@ -10,7 +10,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyUri.userInfo should equal(None)
+    EmptyRelativeReference.userInfo should equal(None)
   }
 
   "`Uri.user` and therefore `Authority.user`" should "return the user" in {
@@ -19,7 +19,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyUri.user should equal(None)
+    EmptyRelativeReference.user should equal(None)
   }
 
   "`Uri.password` and therefore `Authority.password`" should "return the password" in {
@@ -28,7 +28,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyUri.password should equal(None)
+    EmptyRelativeReference.password should equal(None)
   }
 
   "`Uri.host`" should "return the host" in {
@@ -37,7 +37,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyUri.host should equal(None)
+    EmptyRelativeReference.host should equal(None)
   }
 
   "`Uri.hostParts`" should "return the dot separated host" in {
@@ -46,7 +46,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `Seq.empty` when the host is empty" in {
-    EmptyUri.hostParts should equal(Seq.empty)
+    EmptyRelativeReference.hostParts should equal(Seq.empty)
   }
 
   "`Uri.subdomain`" should "return the first dot separated part of the host" in {
@@ -55,7 +55,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return None when the host is empty" in {
-    EmptyUri.subdomain should equal(None)
+    EmptyRelativeReference.subdomain should equal(None)
   }
 
   "`Uri.publicSuffix`" should "match the longest public suffix" in {
@@ -64,7 +64,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return None when the host is empty" in {
-    EmptyUri.publicSuffix should equal(None)
+    EmptyRelativeReference.publicSuffix should equal(None)
   }
 
   it should "only return public suffixes that match full dot separated host parts" in {
@@ -79,7 +79,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `Seq.empty` when the host is empty" in {
-    EmptyUri.publicSuffixes should equal(Seq.empty)
+    EmptyRelativeReference.publicSuffixes should equal(Seq.empty)
   }
 
   "`Uri.port`" should "return the port" in {
@@ -88,13 +88,13 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyUri.port should equal(None)
+    EmptyRelativeReference.port should equal(None)
   }
 
   "`Uri.withAuthority`" should "change the authority when provided a `Uri`" in {
     val authority = Authority.option(host = "www.example.com")
     val uri = Uri(None, authority, None, None, None)
-    EmptyUri.withAuthority(uri).authority should equal(authority)
+    EmptyRelativeReference.withAuthority(uri).authority should equal(authority)
   }
 
   it should "change the authority when provided an `Authority`" in {
@@ -142,12 +142,12 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "not change the userInfo when userInfo was empty, and provided empty userInfo" in {
-    EmptyUri.withUser() should equal(EmptyUri)
+    EmptyRelativeReference.withUser() should equal(EmptyRelativeReference)
   }
 
   it should "fail when the host was empty, and userInfo is not empty" in {
     intercept[IllegalArgumentException] {
-      EmptyUri.withUserInfo(UserInfo("user"))
+      EmptyRelativeReference.withUserInfo(UserInfo("user"))
     }
   }
 
@@ -189,7 +189,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "not change the user when user was empty, and provided empty user" in {
-    EmptyUri.withUser() should equal(EmptyUri)
+    EmptyRelativeReference.withUser() should equal(EmptyRelativeReference)
   }
 
   it should "fail when the host was empty, and user is not empty" in {
@@ -208,13 +208,19 @@ class AuthorityTests extends TestSpec {
   it should "change the password when provided an `Authority`" in {
     val uri = Uri(None, Authority.option(user = "user", host = "www.example.com"), None, None, None)
     uri.password should equal(None)
-    uri.withPassword(Authority(user = "user", password = "password2", host = "www.example2.com")).password.value should equal("password2")
+    val uri2 = uri.withPassword(Authority(user = "user2", password = "password2", host = "www.example2.com"))
+    uri2.user.value should equal("user")
+    uri2.password.value should equal("password2")
+    uri2.host.value should equal("www.example.com")
   }
 
   it should "change the password when provided an `UserInfo`" in {
     val uri = Uri(None, Authority.option(user = "user", host = "www.example.com"), None, None, None)
     uri.password should equal(None)
-    uri.withPassword(UserInfo("user", "password2")).password.value should equal("password2")
+    val uri2 = uri.withPassword(UserInfo("user2", "password2"))
+    uri2.user.value should equal("user")
+    uri2.password.value should equal("password2")
+    uri2.host.value should equal("www.example.com")
   }
 
   it should "change the password when provided a `String`" in {
@@ -230,12 +236,12 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "not change the password when authority was empty, and provided empty password" in {
-    EmptyUri.withPassword() should equal(EmptyUri)
+    EmptyRelativeReference.withPassword() should equal(EmptyRelativeReference)
   }
 
   it should "fail when the authority was empty, and password is not empty" in {
     intercept[IllegalArgumentException] {
-      EmptyUri.withPassword("password")
+      EmptyRelativeReference.withPassword("password")
     }
   }
 
@@ -276,7 +282,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "change the host when authority was empty" in {
-    EmptyUri.withHost("www.example.com").host.value should equal("www.example.com")
+    EmptyRelativeReference.withHost("www.example.com").host.value should equal("www.example.com")
   }
 
   "`Uri.withPort`" should "change the port when provided a `Uri`" in {
@@ -305,12 +311,12 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "not change the port when port was empty, and provided 0" in {
-    EmptyUri.withPort(0) should equal(EmptyUri)
+    EmptyRelativeReference.withPort(0) should equal(EmptyRelativeReference)
   }
 
   it should "fail when the host was empty, and port is not 0" in {
     intercept[IllegalArgumentException] {
-      EmptyUri.withPort(8080)
+      EmptyRelativeReference.withPort(8080)
     }
   }
 
@@ -345,7 +351,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "work without an authority" in {
-    EmptyUri.authorityToString should equal("")
+    EmptyRelativeReference.authorityToString should equal("")
   }
 
   "`Uri.authorityToStringRaw` and therefore `Authority.toStringRaw`" should "work with host" in {
@@ -379,7 +385,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "work without an authority" in {
-    EmptyUri.authorityToStringRaw should equal("")
+    EmptyRelativeReference.authorityToStringRaw should equal("")
   }
 
   "`Authority.copy`" should "succeed with userInfo, host and port" in {

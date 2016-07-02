@@ -79,33 +79,11 @@ class DefaultUriParser(input: ParserInput, c: UriConfig) extends UriParser(input
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   def _absoluteUri: Rule1[Uri] = rule {
-    _scheme ~ _authority ~ optional(_pathAbEmpty) ~ optional(_query) ~ optional(_fragment) ~> extractAbsoluteUri
+    _scheme ~ _authority ~ optional(_pathAbEmpty) ~ optional(_query) ~> extractAbsoluteUri
   }
 
-  /** Protocol Relative URI */
-  def _authorityReferenceUri: Rule1[Uri] = rule {
-    _authority ~ optional(_pathAbEmpty) ~ optional(_query) ~ optional(_fragment) ~> extractAuthorityReferenceUri
-  }
-
-  def _absolutePathReferenceUri: Rule1[Uri] = rule {
-    _pathAbsolute ~ optional(_query) ~ optional(_fragment) ~> extractAbsolutePathReferenceUri
-  }
-
-  def _relativePathReferenceUri: Rule1[Uri] = rule {
-    _pathNoScheme ~ optional(_query) ~ optional(_fragment) ~> extractRelativePathReferenceUri
-  }
-
-  def _queryReferenceUri: Rule1[Uri] = rule {
-    _query ~ optional(_fragment) ~> extractQueryReferenceUri
-  }
-
-  /** Fragment Reference URI */
-  def _sameDocumentUri: Rule1[Uri] = rule {
-    _fragment ~> extractSameDocumentUri
-  }
-
-  def _emptyUri: Rule1[Uri] = rule {
-    capture("") ~> extractEmptyUri
+  def _schemeWithAuthorityAndFragmentUri: Rule1[Uri] = rule {
+    _scheme ~ _authority ~ optional(_pathAbEmpty) ~ optional(_query) ~ _fragment ~> extractSchemeWithAuthorityAndFragmentUri
   }
 
   def _schemeWithAbsolutePathUri: Rule1[Uri] = rule {
@@ -124,43 +102,77 @@ class DefaultUriParser(input: ParserInput, c: UriConfig) extends UriParser(input
     _scheme ~ _fragment ~> extractSchemeWithFragmentUri
   }
 
+  def _schemeUri: Rule1[Uri] = rule {
+    _scheme ~> extractSchemeUri
+  }
+
+  def _authorityRelativeReference: Rule1[Uri] = rule {
+    _authority ~ optional(_pathAbEmpty) ~ optional(_query) ~ optional(_fragment) ~> extractAuthorityRelativeReference
+  }
+
+  def _absolutePathRelativeReference: Rule1[Uri] = rule {
+    _pathAbsolute ~ optional(_query) ~ optional(_fragment) ~> extractAbsolutePathRelativeReference
+  }
+
+  def _relativePathRelativeReference: Rule1[Uri] = rule {
+    _pathNoScheme ~ optional(_query) ~ optional(_fragment) ~> extractRelativePathRelativeReference
+  }
+
+  def _queryRelativeReference: Rule1[Uri] = rule {
+    _query ~ optional(_fragment) ~> extractQueryRelativeReference
+  }
+
+  def _fragmentRelativeReference: Rule1[Uri] = rule {
+    _fragment ~> extractFragmentRelativeReference
+  }
+
+  def _emptyRelativeReference: Rule1[Uri] = rule {
+    capture("") ~> extractEmptyRelativeReference
+  }
+
   def _uri: Rule1[Uri] = rule {
-    (_absoluteUri | _schemeWithAbsolutePathUri | _schemeWithRootlessPathUri | _schemeWithQueryUri | _schemeWithFragmentUri |
-      _authorityReferenceUri | _absolutePathReferenceUri | _relativePathReferenceUri | _queryReferenceUri | _sameDocumentUri | _emptyUri) ~ EOI
+    (_schemeWithAuthorityAndFragmentUri | _absoluteUri | _schemeWithAbsolutePathUri | _schemeWithRootlessPathUri | _schemeWithQueryUri | _schemeWithFragmentUri | _schemeUri |
+      _authorityRelativeReference | _absolutePathRelativeReference | _relativePathRelativeReference | _queryRelativeReference | _fragmentRelativeReference | _emptyRelativeReference) ~ EOI
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  val extractAbsoluteUri = (scheme: Scheme, authority: Authority, path: Option[AbsolutePath], query: Option[Query], fragment: Option[Fragment]) =>
-    Uri(Option(scheme), Option(authority), path, query, fragment)
+  val extractAbsoluteUri = (scheme: Scheme, authority: Authority, path: Option[AbsolutePath], query: Option[Query]) =>
+    AbsoluteUri(scheme, authority, path, query)
 
-  val extractAuthorityReferenceUri = (authority: Authority, path: Option[AbsolutePath], query: Option[Query], fragment: Option[Fragment]) =>
-    Uri(None, Option(authority), path, query, fragment)
-
-  val extractAbsolutePathReferenceUri = (path: AbsolutePath, query: Option[Query], fragment: Option[Fragment]) =>
-    Uri(None, None, Option(path), query, fragment)
-
-  val extractRelativePathReferenceUri = (path: RootlessPath, query: Option[Query], fragment: Option[Fragment]) =>
-    Uri(None, None, Option(path), query, fragment)
-
-  val extractQueryReferenceUri = (query: Query, fragment: Option[Fragment]) =>
-    Uri(None, None, None, Option(query), fragment)
-
-  val extractSameDocumentUri = (fragment: Fragment) =>
-    Uri(None, None, None, None, Option(fragment))
-
-  val extractEmptyUri = (emptyString: String) =>
-    EmptyUri
+  val extractSchemeWithAuthorityAndFragmentUri = (scheme: Scheme, authority: Authority, path: Option[AbsolutePath], query: Option[Query], fragment: Fragment) =>
+    SchemeWithAuthorityAndFragmentUri(scheme, authority, path, query, fragment)
 
   val extractSchemeWithAbsolutePathUri = (scheme: Scheme, path: AbsolutePath, query: Option[Query], fragment: Option[Fragment]) =>
-    Uri(Option(scheme), None, Option(path), query, fragment)
+    SchemeWithAbsolutePathUri(scheme, path, query, fragment)
 
   val extractSchemeWithRootlessPathUri = (scheme: Scheme, path: RootlessPath, query: Option[Query], fragment: Option[Fragment]) =>
-    Uri(Option(scheme), None, Option(path), query, fragment)
+    SchemeWithRootlessPathUri(scheme, path, query, fragment)
 
   val extractSchemeWithQueryUri = (scheme: Scheme, query: Query, fragment: Option[Fragment]) =>
-    Uri(Option(scheme), None, None, Option(query), fragment)
+    SchemeWithQueryUri(scheme, query, fragment)
 
   val extractSchemeWithFragmentUri = (scheme: Scheme, fragment: Fragment) =>
-    Uri(Option(scheme), None, None, None, Option(fragment))
+    SchemeWithFragmentUri(scheme, fragment)
+
+  val extractSchemeUri = (scheme: Scheme) =>
+    SchemeUri(scheme)
+
+  val extractAuthorityRelativeReference = (authority: Authority, path: Option[AbsolutePath], query: Option[Query], fragment: Option[Fragment]) =>
+    AuthorityRelativeReference(authority, path, query, fragment)
+
+  val extractAbsolutePathRelativeReference = (path: AbsolutePath, query: Option[Query], fragment: Option[Fragment]) =>
+    AbsolutePathRelativeReference(path, query, fragment)
+
+  val extractRelativePathRelativeReference = (path: RootlessPath, query: Option[Query], fragment: Option[Fragment]) =>
+    RelativePathRelativeReference(path, query, fragment)
+
+  val extractQueryRelativeReference = (query: Query, fragment: Option[Fragment]) =>
+    QueryRelativeReference(query, fragment)
+
+  val extractFragmentRelativeReference = (fragment: Fragment) =>
+    FragmentRelativeReference(fragment)
+
+  val extractEmptyRelativeReference = (emptyString: String) =>
+    EmptyRelativeReference
 }

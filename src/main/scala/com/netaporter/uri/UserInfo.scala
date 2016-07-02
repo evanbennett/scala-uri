@@ -18,18 +18,17 @@ object UserInfo {
 
   def apply(user: String, password: Option[String]): UserInfo = {
     if (user == null || user.isEmpty) throw new IllegalArgumentException("`user` cannot be `null` and cannot be empty.")
-    // TODO: I think the following should be enabled. A test would fail: ParsingTest; "Parsing an absolute URI (must have scheme and host) with `default` UriConfig"; "successfully parse with user and empty password only"
-    // if (password.nonEmpty && password.exists(_.isEmpty)) throw new IllegalArgumentException("`password` cannot exist and be empty.")
     new UserInfo(user, password) {}
   }
 
   def apply(user: String, password: String = null): UserInfo = apply(user, Option(password))
 
-  def option(user: String, password: Option[String]): Option[UserInfo] =
+  def option(user: String, password: Option[String]): Option[UserInfo] = {
     if (user == null || user.isEmpty) {
-      if (password.nonEmpty) throw new IllegalArgumentException("Cannot have a `password` without a `user`.")
+      if (password == null || password.nonEmpty) throw new IllegalArgumentException("Cannot have a `password` without a `user`.")
       None
     } else Option(apply(user, password))
+  }
 
   def option(user: String = null, password: String = null): Option[UserInfo] = option(user, Option(password))
 }

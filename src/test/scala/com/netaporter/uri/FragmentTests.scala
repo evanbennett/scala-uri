@@ -33,7 +33,7 @@ class FragmentTests extends TestSpec {
   }
 
   it should "work without a fragment" in {
-    EmptyUri.fragmentToString should equal("")
+    EmptyRelativeReference.fragmentToString should equal("")
   }
 
   "`Uri.fragmentToStringRaw` and therefore `Fragment.toStringRaw`" should "work with a fragment" in {
@@ -42,7 +42,7 @@ class FragmentTests extends TestSpec {
   }
 
   it should "work without a fragment" in {
-    EmptyUri.fragmentToStringRaw should equal("")
+    EmptyRelativeReference.fragmentToStringRaw should equal("")
   }
 
   "`Fragment.copy`" should "succeed" in {

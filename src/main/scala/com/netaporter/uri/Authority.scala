@@ -26,6 +26,7 @@ object Authority {
     if (host == null || host.isEmpty) throw new IllegalArgumentException("`host` cannot be `null`.")
     if (port.nonEmpty && port.exists(port => port < 1 || port > 65535)) throw new IllegalArgumentException("Invalid `port`. [" + port + "]")
     new Authority(userInfo, host, port) {}
+    if (userInfo == null) throw new IllegalArgumentException("`userInfo` cannot be `null`.")
   }
 
   def apply(user: String = null, password: String = null, host: String, port: Int = 0): Authority =
@@ -33,8 +34,9 @@ object Authority {
 
   def option(userInfo: Option[UserInfo], host: String, port: Option[Int]): Option[Authority] = {
     if (host == null || host.isEmpty) {
-      if (userInfo.nonEmpty || port.nonEmpty) throw new IllegalArgumentException("`host` cannot be `null`.")
       None
+      if (userInfo != null && userInfo.nonEmpty) throw new IllegalArgumentException("Cannot have a `userInfo` without a `host`.")
+      if (port != null && port.nonEmpty) throw new IllegalArgumentException("Cannot have a `port` without a `host`.")
     } else Option(apply(userInfo, host, port))
   }
 
