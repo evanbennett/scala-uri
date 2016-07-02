@@ -83,6 +83,18 @@ class SchemeTests extends TestSpec {
     Scheme("https").scheme should equal("https")
   }
 
+  it should "fail when passed an invalid string (trailing ':')" in {
+    intercept[IllegalArgumentException] {
+      Scheme("https:")
+    }
+  }
+  it should "fail when passed an invalid string (illegal characters)" in {
+    intercept[IllegalArgumentException] {
+      Scheme("ht$p")
+    }
+  }
+
+
   it should "fail when passed an empty string" in {
     intercept[IllegalArgumentException] {
       Scheme("")
