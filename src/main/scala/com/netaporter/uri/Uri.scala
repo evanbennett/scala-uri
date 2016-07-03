@@ -20,7 +20,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
 
   def password: Option[String] = authority.flatMap(_.password)
 
-  def host: Option[String] = authority.map(_.host)
+  def host: Option[String] = authority.flatMap(_.hostString)
 
   def hostParts: Seq[String] =
     host.map(h => h.split('.').toVector).getOrElse(Vector.empty)
@@ -165,9 +165,14 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
     }
   }
 
-  def withHost(uri: Uri): Uri = withHost(uri.host.orNull)
+  def withHost(uri: Uri): Uri = withHost(uri.authority.flatMap(_.host))
 
   def withHost(authority: Authority): Uri = withHost(authority.host)
+
+  def withHost(newHost: Option[Host]): Uri =
+    copy(authority = if (authority.isEmpty) Authority.option(None, newHost, None) else authority.map(_.copy(host = newHost)))
+
+  def withHost(newHost: Host): Uri = withHost(Option(newHost))
 
   /**
    * Copies this Uri but with the host set as the given value.
@@ -175,9 +180,8 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
    * @param newHost the new host to set
    * @return a new Uri with the specified host
    */
-  def withHost(newHost: String = null): Uri = {
-    if (newHost == null || newHost.isEmpty) copy(authority = None)
-    else copy(authority = if (authority.isEmpty) Authority.option(host = newHost) else authority.map(_.copy(host = newHost)))
+  def withHost(registeredName: String = null, ipv4Address: String = null, ipLiteralAddress: String = null): Uri = {
+    withHost(Host.option(registeredName, ipv4Address, ipLiteralAddress))
   }
 
   def withPort(uri: Uri): Uri = withPort(uri.port.getOrElse(0))
@@ -673,7 +677,7 @@ object Uri {
             query: Query = null,
             fragment: String = null): Uri =
     apply(Scheme.option(scheme),
-          Authority.option(user, password, host, port),
+          (if (user == null && password == null && host == null && port == 0) None else Authority.option(UserInfo.option(user, password), Host.option(host), if (port == 0) None else Option(port))), // TODO: Previously, EmptyAuthority did not exist, and IP addresses were not explicitly supported.
           AbsolutePath.option(pathParts), // TODO: Previously, all paths were absolute. Moving forward, this does not make sense. See above.
           Option(query),
           Fragment.option(fragment))

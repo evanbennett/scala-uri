@@ -399,7 +399,7 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`Uri.apply` old case class generated" in {
-    Uri(Some("http"), None, None, Some("test.com"), None, Seq.empty, null, Some("fragment")) should equal(Uri(Scheme.option("http"), Authority.option(host = "test.com"), None, None, Fragment.option("fragment")))
+    Uri(Some("http"), None, None, Some("test.com"), None, Seq.empty, null, Some("fragment")) should equal(Uri(Scheme.option("http"), Authority.option(registeredName = "test.com"), None, None, Fragment.option("fragment")))
   }
 
   it should "`Uri.parseQuery`" in {

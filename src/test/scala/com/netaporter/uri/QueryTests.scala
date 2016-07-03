@@ -107,13 +107,13 @@ class QueryTests extends TestSpec {
   }
 
   it should "not change the query when query was empty, and provided empty query" in {
-    val uri = Uri(None, Authority.option(host = "www.example.com"), None, Option(EmptyQuery), None)
+    val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, Option(EmptyQuery), None)
     uri.query.value should equal(EmptyQuery)
     uri.withQuery(EmptyQuery) should equal(uri)
   }
 
   it should "not change the query when query was `None`, and provided nothing" in {
-    val uri = Uri(None, Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.query should equal(None)
     uri.withQuery() should equal(uri)
   }

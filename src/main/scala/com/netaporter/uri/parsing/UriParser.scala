@@ -27,7 +27,16 @@ abstract class UriParser(val input: ParserInput, val c: UriConfig) extends Parse
   val extractUserInfo: (String, Option[String]) => UserInfo = (user: String, password: Option[String]) =>
     UserInfo(c.userInfoDecoder.decode(user, originalInput), password.map(c.userInfoDecoder.decode(_, originalInput)))
 
-  val extractAuthority: (Option[UserInfo], String, Option[Int]) => Authority = (userInfo: Option[UserInfo], host: String, port: Option[Int]) =>
+  val extractRegisteredNameHost: (String) => Host = (registeredName: String) =>
+    Host(c.hostDecoder.decode(registeredName, originalInput))
+
+  val extractIpv4AddressHost: (String) => Host = (ipv4Address: String) =>
+    Host(ipv4Address = ipv4Address)
+
+  val extractIpLiteralHost: (String) => Host = (ipLiteralAddress: String) =>
+    Host(ipLiteralAddress = ipLiteralAddress)
+
+  val extractAuthority: (Option[UserInfo], Option[Host], Option[Int]) => Authority = (userInfo: Option[UserInfo], host: Option[Host], port: Option[Int]) =>
     Authority(userInfo, host, port)
 
   val extractSegment: String => StringSegment = (segment: String) =>

@@ -65,6 +65,19 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
+  it should "successfully parse with empty authority (without user, password, host and port), path and query" in {
+    val uriString = "http:///path?queryKey=queryValue"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AbsoluteUri]
+    uri.scheme.value.scheme should equal("http")
+    uri.authority.value should equal(EmptyAuthority)
+    uri.path.value shouldBe an[AbsolutePath]
+    uri.pathSegments should equal(Seq(StringSegment("path")))
+    uri.queryParameters should equal(Seq(Parameter("queryKey", Some("queryValue"))))
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
   it should "successfully parse with user, password, host, path and query, and without port" in {
     val uriString = "http://evan:password@test.com/path?queryKey=queryValue"
     val uri = Uri.parse(uriString)
@@ -210,6 +223,19 @@ class ParsingTests extends TestSpec {
     uri.password should equal(None)
     uri.host.value should equal("test.com")
     uri.port.value should equal(8080)
+    uri.path.value shouldBe an[AbsolutePath]
+    uri.pathSegments should equal(Seq(StringSegment("path")))
+    uri.queryParameters should equal(Seq(Parameter("queryKey", Some("queryValue"))))
+    uri.fragment.value.fragment should equal("fragment")
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with empty authority (without user, password, host and port), path, query and fragment" in {
+    val uriString = "http:///path?queryKey=queryValue#fragment"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[SchemeWithAuthorityAndFragmentUri]
+    uri.scheme.value.scheme should equal("http")
+    uri.authority.value should equal(EmptyAuthority)
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("path")))
     uri.queryParameters should equal(Seq(Parameter("queryKey", Some("queryValue"))))
@@ -458,7 +484,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing a `SchemeWithFragmentUri` (must have scheme and fragment; must not have authority path and query) with `default` UriConfig" should "successfully parse" in {
+  "Parsing a `SchemeWithFragmentUri` (must have scheme and fragment; must not have authority, path and query) with `default` UriConfig" should "successfully parse" in {
     val uriString = "test:#fragment"
     val uri = Uri.parse(uriString)
     uri shouldBe a[SchemeWithFragmentUri]
@@ -467,6 +493,18 @@ class ParsingTests extends TestSpec {
     uri.path should equal(None)
     uri.query should equal(None)
     uri.fragment.value.fragment should equal("fragment")
+    uri.toString should equal(uriString)
+  }
+
+  "Parsing a `SchemeUri` (must have scheme; must not have authority, path, query and fragment) with `default` UriConfig" should "successfully parse" in {
+    val uriString = "dav:"
+    val uri = Uri.parse(uriString)
+    uri shouldBe a[SchemeUri]
+    uri.scheme.value.scheme should equal("dav")
+    uri.authority should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
     uri.toString should equal(uriString)
   }
 
@@ -524,6 +562,19 @@ class ParsingTests extends TestSpec {
     uri.password should equal(None)
     uri.host.value should equal("test.com")
     uri.port.value should equal(8080)
+    uri.path.value shouldBe an[AbsolutePath]
+    uri.pathSegments should equal(Seq(StringSegment("path")))
+    uri.queryParameters should equal(Seq(Parameter("queryKey", Some("queryValue"))))
+    uri.fragment.value.fragment should equal("fragment")
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with empty authority (without user, password, host and port), path, query and fragment" in {
+    val uriString = "///path?queryKey=queryValue#fragment"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.authority.value should equal(EmptyAuthority)
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("path")))
     uri.queryParameters should equal(Seq(Parameter("queryKey", Some("queryValue"))))
@@ -607,6 +658,244 @@ class ParsingTests extends TestSpec {
     uri.query should equal(None)
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv4 address) only" in {
+    val uriString = "//192.168.205.1"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipv4Address.value should equal("192.168.205.1")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 1 hextet at start) only" in {
+    val uriString = "//[39c2::]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[39c2::]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 1 hextet at end) only" in {
+    val uriString = "//[::abe8]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[::abe8]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 2 hextets at start) only" in {
+    val uriString = "//[4af2:36a2::]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[4af2:36a2::]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 2 hextets at end) only" in {
+    val uriString = "//[::28d4:fffe]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[::28d4:fffe]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 2 hextets) only" in {
+    val uriString = "//[ac3e::27f9]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[ac3e::27f9]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 3 hextets) only" in {
+    val uriString = "//[6248::5e2a:3]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[6248::5e2a:3]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 4 hextets) only" in {
+    val uriString = "//[::3a9c:9a2c:a:0020]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[::3a9c:9a2c:a:0020]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 5 hextets) only" in {
+    val uriString = "//[284:7:3a23:5000::36]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[284:7:3a23:5000::36]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 6 hextets) only" in {
+    val uriString = "//[02:586:39ce:aaa:29f3:d284::]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[02:586:39ce:aaa:29f3:d284::]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 7 hextets) only" in {
+    val uriString = "//[10:cc0c::16d4:0fff:3957:234:12]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[10:cc0c::16d4:0fff:3957:234:12]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 8 hextets) only" in {
+    val uriString = "//[0000:0000:2956:ffff:0000:0000:0000:1234]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[0000:0000:2956:ffff:0000:0000:0000:1234]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - just an IPv4 address) only" in {
+    val uriString = "//[::192.168.13.8]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[::192.168.13.8]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 2 hextets at start with IPv4 address) only" in {
+    val uriString = "//[28f:36a2::10.8.14.57]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[28f:36a2::10.8.14.57]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 2 hextets at end with IPv4 address) only" in {
+    val uriString = "//[::e2:8349:3.248.156.24]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[::e2:8349:3.248.156.24]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IPv6 address - 2 hextets with IPv4 address) only" in {
+    val uriString = "//[c::a3b2:84.16.3.74]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[c::a3b2:84.16.3.74]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal(uriString)
+  }
+
+  it should "successfully parse with host (IP future) only" in {
+    val uriString = "//[v9.somethingAsYetUndefined]"
+    val uri = Uri.parse(uriString)
+    uri shouldBe an[AuthorityRelativeReference]
+    uri.scheme should equal(None)
+    uri.userInfo should equal(None)
+    uri.authority.value.host.value.ipLiteralAddress.value should equal("[v9.somethingAsYetUndefined]")
+    uri.port should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal("//[v9.somethingasyetundefined]")
   }
 
   "Parsing an `AbsolutePathRelativeReference` (must start with an absolute path) with `default` UriConfig" should "successfully parse without query and fragment" in {

@@ -45,7 +45,7 @@ class GithubIssueTests extends TestSpec {
   "Github Issue #12" should "now be fixed. Parsing URIs parse percent escapes" in {
     val source = Uri(
       Scheme.option("http"),
-      Authority.option(host = "xn--ls8h.example.net"),
+      Authority.option(registeredName = "xn--ls8h.example.net"),
       AbsolutePath.option(Seq(Segment(""), Segment("path with spaces"))),
       Query.option(Vector(Parameter("a b", Some("c d")))),
       None

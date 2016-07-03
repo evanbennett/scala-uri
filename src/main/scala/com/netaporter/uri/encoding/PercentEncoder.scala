@@ -31,6 +31,8 @@ object PercentEncoder {
     ' ', '%', '<', '>', '[', ']', '#', '{', '}', '^', '`', '|', '?', '@', ':', '/'
   )
 
+  val HOST_CHARS_TO_ENCODE = Set ('%', '[', ']') // TODO: RFC section 3.2.2 last paragraph.
+
   val PATH_CHARS_TO_ENCODE = Set (
     ' ', '%', '<', '>', '[', ']', '#', '{', '}', '^', '`', '|', '?'
   )

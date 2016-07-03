@@ -6,12 +6,12 @@ import com.netaporter.uri.encoding._
 class EncodingTests extends TestSpec {
 
   "Default `PercentEncoder` in `Uri.toString(...)`" should "encode user" in {
-    val uri = Uri(None, Authority.option("üser", null, "test.com", 0), None, None, None)
+    val uri = Uri(None, Authority.option("üser", registeredName = "test.com"), None, None, None)
     uri.toString should equal("//%C3%BCser@test.com")
   }
 
   it should "encode password" in {
-    val uri = Uri(None, Authority.option("user", "p@ssword", "test.com", 0), None, None, None)
+    val uri = Uri(None, Authority.option("user", "p@ssword", registeredName = "test.com"), None, None, None)
     uri.toString should equal("//user:p%40ssword@test.com")
   }
 
@@ -36,7 +36,7 @@ class EncodingTests extends TestSpec {
   }
 
   it should "NOT encode path pchars" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(null, null, "example.com", 0), AbsolutePath.option(StringSegment("-._~!$&'()*+,;=:@"), StringSegment("test")), None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "example.com"), AbsolutePath.option(StringSegment("-._~!$&'()*+,;=:@"), StringSegment("test")), None, None)
     uri.toString should equal("http://example.com/-._~!$&'()*+,;=:@/test")
   }
 

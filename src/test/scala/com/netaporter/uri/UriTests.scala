@@ -7,7 +7,7 @@ class UriTests extends TestSpec {
   // NOTE: Uri.parse(...) tested in ParsingTests and DecodingTests.
 
   "`Uri.copy`" should "should work" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri shouldBe an[AbsoluteUri]
     uri.scheme should not equal(None)
     uri.authority should not equal(None)
@@ -31,49 +31,49 @@ class UriTests extends TestSpec {
   }
 
   "`Uri.equals`" should "should return `true` for the same Uri" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.equals(uri) should equal(true)
   }
 
   it should "should return `true` for an equivalent Uri" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
-    val uri2 = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
+    val uri2 = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.equals(uri2) should equal(true)
   }
 
   it should "should return `false` for a different Uri" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
-    val uri2 = Uri(Scheme.option("https"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
+    val uri2 = Uri(Scheme.option("https"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.equals(uri2) should equal(false)
   }
 
   it should "should return `false` for `null`" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.equals(null) should equal(false)
   }
 
   it should "should return `false` for a `String`" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.equals("aString") should equal(false)
   }
 
   "`Uri.hashCode`" should "handle simple URI" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
-    uri.hashCode should equal(-714783347)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
+    uri.hashCode should equal(-611751205)
   }
 
   "`Uri.toString`" should "handle simple URI" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.toString() should equal("http://www.example.com")
   }
 
   "`Uri.toStringRaw`" should "handle simple URI" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.toStringRaw should equal("http://www.example.com")
   }
 
   "`Uri.toUri` and `Uri.apply(java.net.URI)`" should "handle simple URI" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), None, None, None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     val javaUri = uri.toURI
     javaUri.getScheme should equal("http")
     javaUri.getUserInfo should equal(null)
@@ -87,7 +87,7 @@ class UriTests extends TestSpec {
   }
 
   it should "handle scheme-less URI" in {
-    val uri = Uri(None, Authority.option(host = "www.example.com"), AbsolutePath.option(StringSegment("test")), None, None)
+    val uri = Uri(None, Authority.option(registeredName = "www.example.com"), AbsolutePath.option(StringSegment("test")), None, None)
     val javaUri = uri.toURI
     javaUri.getScheme should equal(null)
     javaUri.getUserInfo should equal(null)
@@ -101,7 +101,7 @@ class UriTests extends TestSpec {
   }
 
   it should "handle authenticated URI" in {
-    val uri = Uri(Scheme.option("https"), Authority.option(UserInfo.option("user", "password"), "www.example.com", None), AbsolutePath.option(StringSegment("test")), None, None)
+    val uri = Uri(Scheme.option("https"), Authority.option("user", "password", "www.example.com"), AbsolutePath.option(StringSegment("test")), None, None)
     val javaUri = uri.toURI
     javaUri.getScheme should equal("https")
     javaUri.getUserInfo should equal("user:password")
@@ -115,7 +115,7 @@ class UriTests extends TestSpec {
   }
 
   it should "handle exotic/reserved characters in query" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(host = "www.example.com"), AbsolutePath.option(StringSegment("test")), Query.option(Parameter("weird=&key", Some("strange%value")), Parameter("arrow", Some("⇔"))), None)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), AbsolutePath.option(StringSegment("test")), Query.option(Parameter("weird=&key", Some("strange%value")), Parameter("arrow", Some("⇔"))), None)
     val javaUri = uri.toURI
     javaUri.getScheme should equal("http")
     javaUri.getUserInfo should equal(null)
@@ -130,7 +130,7 @@ class UriTests extends TestSpec {
   }
 
   "`AbsoluteUri`" should "`apply` with mandatory arguments" in {
-    AbsoluteUri(Scheme("http"), Authority(host = "test.com"), None, None, None)
+    AbsoluteUri(Scheme("http"), Authority(registeredName = "test.com"), None, None)
   }
 
   it should "`apply` with all arguments" in {
@@ -321,14 +321,15 @@ class UriTests extends TestSpec {
 
   "`Uri.apply` with `Option` arguments" should "fail with an invalid argument set" in {
     intercept[IllegalArgumentException] {
-      Uri(Scheme.option("http"), Authority.option(host = "www.test.com"), RootlessPath.option(StringSegment("path")), None, None)
+      Uri(Scheme.option("http"), Authority.option(registeredName = "www.test.com"), RootlessPath.option(StringSegment("path")), None, None)
     }
   }
 
   "`Uri.apply` with `null` default arguments" should "accept String scheme, String host and path" in {
-    val uri = Uri(scheme = "http", host = "theon.github.com", pathParts = Seq(StringSegment("blah")))
+    val uri = Uri(scheme = "http", host = "theon.github.com", port = 8080, pathParts = Seq(StringSegment("blah")))
     uri shouldBe an[AbsoluteUri]
     uri.scheme.value should equal(Scheme("http"))
+    uri.port.value should equal(8080)
     uri.pathSegments should equal(Seq(StringSegment("blah")))
     uri.query should equal(None)
   }
@@ -351,7 +352,7 @@ class UriTests extends TestSpec {
 
   "`Uri.unapply`" should "work properly" in {
     val scheme = Scheme.option("http")
-    val authority = Authority.option(host = "www.test.com")
+    val authority = Authority.option(registeredName = "www.test.com")
     val path = AbsolutePath.option(StringSegment("path"))
     val query = Query.option(Parameter("queryKey", Some("queryValue")))
     val fragment = Fragment.option("fragment")

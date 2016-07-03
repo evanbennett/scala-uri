@@ -96,7 +96,7 @@ class OldEncodingTests extends FlatSpec with Matchers {
   "Percent encoding with a few extra reserved characters on top of the defaults" should "be easy" in {
     implicit val config = UriConfig(encoder = percentEncode() ++ ('a', 'b'))
     val uri: Uri = "http://theon.github.com/abcde"
-    uri.toString should equal ("http://theon.github.com/%61%62cde")
+    uri.toString should equal ("http://theon.githu%62.com/%61%62cde") // TODO: Changed 'b' in host to "%62" due to functional changes.
   }
 
   "URI path pchars" should "not be encoded by default" in {
