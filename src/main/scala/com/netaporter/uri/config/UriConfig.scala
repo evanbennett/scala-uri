@@ -14,6 +14,7 @@ case class UriConfig(userInfoEncoder: UriEncoder,
                      pathDecoder: UriDecoder,
                      queryDecoder: UriDecoder,
                      fragmentDecoder: UriDecoder,
+                     delimiterParsing: Boolean,
                      matrixParams: Boolean,
                      charset: String) {
 
@@ -27,9 +28,10 @@ object UriConfig {
 
   def apply(encoder: UriEncoder = PercentEncoder.default,
             decoder: UriDecoder = PercentDecoder,
+            delimiterParsing: Boolean = false,
             matrixParams: Boolean = false,
             charset: String = "UTF-8"): UriConfig =
-    apply(encoder, encoder, encoder, encoder, encoder, decoder, decoder, decoder, decoder, decoder, matrixParams, charset)
+    apply(encoder, encoder, encoder, encoder, encoder, decoder, decoder, decoder, decoder, decoder, delimiterParsing, matrixParams, charset)
 
   val default = apply(userInfoEncoder = PercentEncoder(USER_INFO_CHARS_TO_ENCODE),
                       hostEncoder = PercentEncoder(HOST_CHARS_TO_ENCODE),
@@ -41,6 +43,7 @@ object UriConfig {
                       pathDecoder = PercentDecoder,
                       queryDecoder = PercentDecoder,
                       fragmentDecoder = PercentDecoder,
+                      delimiterParsing = false,
                       matrixParams = false,
                       charset = "UTF-8")
 

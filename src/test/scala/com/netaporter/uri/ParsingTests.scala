@@ -1327,6 +1327,24 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
+  it should "fail with a fragment containing '#'" in {
+    intercept[java.net.URISyntaxException] {
+      Uri.parse("#fragmentContaining#")
+    }
+  }
+
+  "Parsing a `FragmentRelativeReference` (must be a fragment) with `default` UriConfig with `delimiterParsing`" should "successfully parse" in {
+    val uriString = "#fragmentContaining#"
+    val uri = Uri.parse(uriString)(UriConfig.default.copy(delimiterParsing = true))
+    uri shouldBe a[FragmentRelativeReference]
+    uri.scheme should equal(None)
+    uri.authority should equal(None)
+    uri.path should equal(None)
+    uri.query should equal(None)
+    uri.fragment.value.fragment should equal("fragmentContaining#")
+    uri.toString should equal("#fragmentContaining%23")
+  }
+
   "Parsing an `EmptyRelativeReference` with `default` UriConfig" should "successfully parse" in {
     Uri.parse("") should equal(EmptyRelativeReference)
     EmptyRelativeReference.toString should equal("")
