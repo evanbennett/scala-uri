@@ -23,13 +23,13 @@ sealed abstract case class Host(registeredName: Option[String], ipv4Address: Opt
 
 object Host {
 
-  val REGISTERED_NAME_REGEX = """(?!\.\.)[^\.\[\]:/?#][^\[\]:/?#]{0,254}""".r // Cannot contain [\[\]:/?#]; For DNS host (but maybe not for everything else) cannot: start with '.'; contain "..";
+  private val REGISTERED_NAME_REGEX = """(?!\.\.)[^\.\[\]:/?#][^\[\]:/?#]{0,254}""".r // Cannot contain [\[\]:/?#]; For DNS host (but maybe not for everything else) cannot: start with '.'; contain "..";
   private val DECIMAL_OCTET = """(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)"""
   private val IPV4_ADDRESS = s"""$DECIMAL_OCTET(\\.$DECIMAL_OCTET){3}"""
-  val IPV4_ADDRESS_REGEX = IPV4_ADDRESS.r
+  private val IPV4_ADDRESS_REGEX = IPV4_ADDRESS.r
   private val HEX_DIGIT = """[a-fA-F0-9]"""
   private val HEXTET = s"""$HEX_DIGIT{1,4}"""
-  val IPV6_ADDRESS_REGEX = (s"""\\[(($HEXTET:){7}$HEXTET|""" +
+  private val IPV6_ADDRESS_REGEX = (s"""\\[(($HEXTET:){7}$HEXTET|""" +
                                 s"""($HEXTET:){6}$IPV4_ADDRESS|""" +
                               s"""::($HEXTET:){6}$HEXTET|""" +
                               s"""::($HEXTET:){5}$IPV4_ADDRESS|""" +
