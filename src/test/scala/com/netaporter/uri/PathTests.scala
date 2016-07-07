@@ -521,6 +521,6 @@ class PathTests extends TestSpec {
   }
 
   "`Segment.toStringRaw`" should "succeed" in {
-    StringSegment("path").toStringRaw(UriConfig.default) should equal("path")
+    StringSegment("path").toStringRaw(UriConfig.DEFAULT) should equal("path")
   }
 }

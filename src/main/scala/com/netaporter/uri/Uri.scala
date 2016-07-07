@@ -180,9 +180,8 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
    * @param newHost the new host to set
    * @return a new Uri with the specified host
    */
-  def withHost(registeredName: String = null, ipv4Address: String = null, ipLiteralAddress: String = null): Uri = {
+  def withHost(registeredName: String = null, ipv4Address: String = null, ipLiteralAddress: String = null): Uri =
     withHost(Host.option(registeredName, ipv4Address, ipLiteralAddress))
-  }
 
   def withPort(uri: Uri): Uri = withPort(uri.port.getOrElse(0))
 
@@ -210,13 +209,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
   /**
    * Append the matrix parameter key and value to any existing segment that matches `existingSegment`.
    */
-  def appendMatrixParameter(existingSegment: String, key: String, value: String): Uri =
-    path.fold(this)(path => withPath(path.appendMatrixParameter(existingSegment, key, value)))
-
-  /**
-   * Append the matrix parameter key and value to any existing segment that matches `existingSegment`.
-   */
-  def appendMatrixParameter(existingSegment: String, key: String, value: Option[String] = None): Uri =
+  def appendMatrixParameter(existingSegment: String, key: String, value: Any = None): Uri =
     path.fold(this)(path => withPath(path.appendMatrixParameter(existingSegment, key, value)))
 
   /**
@@ -231,13 +224,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
   /**
    * If a `path` exists, append the matrix parameter key and value to the last segment.
    */
-  def appendMatrixParameterToLastSegment(key: String, value: String): Uri =
-    path.fold(this)(path => withPath(path.appendMatrixParameterToLastSegment(key, value)))
-
-  /**
-   * If a `path` exists, append the matrix parameter key and value to the last segment.
-   */
-  def appendMatrixParameterToLastSegment(key: String, value: Option[String]): Uri =
+  def appendMatrixParameterToLastSegment(key: String, value: Any = None): Uri =
     path.fold(this)(path => withPath(path.appendMatrixParameterToLastSegment(key, value)))
 
   /**
@@ -270,15 +257,8 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
    * @param value value for the parameter
    * @return A new Uri with the new Query parameter
    */
-  def queryAppend(key: String, value: Any = null): Uri = {
-    val newValue = value match {
-      case null => None
-      case None => None
-      case Some(value) => Option(value.toString)
-      case value => Option(value.toString)
-    }
-    withQuery(query.fold(Query(Parameter(key, newValue)))(query => query.append(key, newValue)))
-  }
+  def queryAppend(key: String, value: Any = None): Uri =
+    withQuery(query.fold(Query(Parameter(key, value)))(query => query.append(key, value)))
 
   @deprecated("Use `queryAppend` instead.", "1.0.0")
   def addParams(kvs: Seq[(String, Any)]): Uri = queryAppend(kvs)
@@ -416,15 +396,8 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
    * @param value value to replace with
    * @return A new Uri with the result of the replace
    */
-  def queryReplaceMatching(existingKey: String, newValue: Any): Uri = {
-    query.fold(this) { query =>
-      val newValueOption = newValue match {
-        case valueOption: Option[Any] => valueOption
-        case _ => Option(newValue)
-      }
-      withQuery(query.replaceMatching(existingKey, newValueOption))
-    }
-  }
+  def queryReplaceMatching(existingKey: String, newValue: Any): Uri =
+    query.fold(this)(query => withQuery(query.replaceMatching(existingKey, newValue)))
 
   @deprecated("Use `withQuery` instead.", "1.0.0")
   def replaceAllParams(params: Param*): Uri = withQuery(params)
@@ -497,16 +470,16 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  def schemeToString(implicit c: UriConfig = UriConfig.default): String =
+  def schemeToString(implicit c: UriConfig = UriConfig.DEFAULT): String =
     scheme.map(_.toString).getOrElse("")
 
-  def schemeToStringRaw(implicit c: UriConfig = UriConfig.default): String =
+  def schemeToStringRaw(implicit c: UriConfig = UriConfig.DEFAULT): String =
     scheme.map(_.toStringRaw).getOrElse("")
 
-  def authorityToString(implicit c: UriConfig = UriConfig.default): String =
+  def authorityToString(implicit c: UriConfig = UriConfig.DEFAULT): String =
     authority.map(_.toString).getOrElse("")
 
-  def authorityToStringRaw(implicit c: UriConfig = UriConfig.default): String =
+  def authorityToStringRaw(implicit c: UriConfig = UriConfig.DEFAULT): String =
     authority.map(_.toStringRaw).getOrElse("")
 
   /**
@@ -514,41 +487,41 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
    *
    * @return String containing the path for this Uri
    */
-  def pathToString(implicit c: UriConfig = UriConfig.default): String =
+  def pathToString(implicit c: UriConfig = UriConfig.DEFAULT): String =
     path.map(_.toString).getOrElse("")
 
   @deprecated("Use `pathToStringRaw` instead.", "1.0.0")
-  def pathRaw(implicit c: UriConfig = UriConfig.default): String = pathToStringRaw
+  def pathRaw(implicit c: UriConfig = UriConfig.DEFAULT): String = pathToStringRaw
 
   /**
    * Returns the path with no encoders taking place (e.g. non ASCII characters will not be percent encoded)
    *
    * @return String containing the raw path for this Uri
    */
-  def pathToStringRaw(implicit c: UriConfig = UriConfig.default): String =
+  def pathToStringRaw(implicit c: UriConfig = UriConfig.DEFAULT): String =
     path.map(_.toStringRaw).getOrElse("")
 
   @deprecated("Use `queryToString` instead.", "1.0.0")
-  def queryString(implicit c: UriConfig = UriConfig.default): String = queryToString
+  def queryString(implicit c: UriConfig = UriConfig.DEFAULT): String = queryToString
 
-  def queryToString(implicit c: UriConfig = UriConfig.default): String =
+  def queryToString(implicit c: UriConfig = UriConfig.DEFAULT): String =
     query.map(_.toString).getOrElse("")
 
   @deprecated("Use `pathToStringRaw` instead.", "1.0.0")
-  def queryStringRaw(implicit c: UriConfig = UriConfig.default): String = queryToStringRaw
+  def queryStringRaw(implicit c: UriConfig = UriConfig.DEFAULT): String = queryToStringRaw
 
-  def queryToStringRaw(implicit c: UriConfig = UriConfig.default): String =
+  def queryToStringRaw(implicit c: UriConfig = UriConfig.DEFAULT): String =
     query.map(_.toStringRaw).getOrElse("")
 
-  def fragmentToString(implicit c: UriConfig = UriConfig.default): String =
+  def fragmentToString(implicit c: UriConfig = UriConfig.DEFAULT): String =
     fragment.map(_.toString).getOrElse("")
 
-  def fragmentToStringRaw(implicit c: UriConfig = UriConfig.default): String =
+  def fragmentToStringRaw(implicit c: UriConfig = UriConfig.DEFAULT): String =
     fragment.map(_.toStringRaw).getOrElse("")
 
-  override def toString: String = toString(UriConfig.default)
+  override def toString: String = toString(UriConfig.DEFAULT)
 
-  def toString(implicit c: UriConfig = UriConfig.default): String =
+  def toString(implicit c: UriConfig = UriConfig.DEFAULT): String =
     schemeToString + authorityToString + pathToString + queryToString + fragmentToString
 
   /**
@@ -557,7 +530,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
    *
    * @return String containing this Uri in it's raw form
    */
-  def toStringRaw(implicit c: UriConfig = UriConfig.default): String =
+  def toStringRaw(implicit c: UriConfig = UriConfig.DEFAULT): String =
     schemeToStringRaw + authorityToStringRaw + pathToStringRaw + queryToStringRaw + fragmentToStringRaw
 
   /**
@@ -567,7 +540,7 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
    *
    * @return a URI matching this Uri
    */
-  def toURI(implicit c: UriConfig = UriConfig.conservative): java.net.URI = new java.net.URI(toString)
+  def toURI(implicit c: UriConfig = UriConfig.CONSERVATIVE): java.net.URI = new java.net.URI(toString)
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -616,7 +589,8 @@ case class AbsolutePathRelativeReference(private val _path: AbsolutePath, overri
   if (_path.segments.length != 1 && _path.segments(0).segment.isEmpty) throw new IllegalArgumentException("First segment cannot be empty otherwise it would be an authority.")
 }
 
-case class RelativePathRelativeReference(private val _path: RootlessPath, override val query: Option[Query], override val fragment: Option[Fragment])
+/** Relative URI */
+case class RootlessPathRelativeReference(private val _path: RootlessPath, override val query: Option[Query], override val fragment: Option[Fragment])
   extends RelativeReference(None, Some(_path), query, fragment) {
   // TODO: This is interesting, as a ':' could have been encoded. The default `pathDecoder` would decode it, but the default `pathEncoder` would not re-encode it as it is not in `PATH_CHARS_TO_ENCODE`.
   //       This could be handled by overriding `pathToString`, `pathToStringRaw`, `toString`, `toString` and `toStringRaw` to include ':' in the `pathEncoder`, but should only be for the first segment.
@@ -652,7 +626,7 @@ object Uri {
       case (None, Some(authority), None, _, _) => AuthorityRelativeReference(authority, None, query, fragment)
       case (None, Some(authority), Some(path: AbsolutePath), _, _) => AuthorityRelativeReference(authority, Some(path), query, fragment)
       case (None, None, Some(path: AbsolutePath), _, _) => AbsolutePathRelativeReference(path, query, fragment)
-      case (None, None, Some(path: RootlessPath), _, _) => RelativePathRelativeReference(path, query, fragment)
+      case (None, None, Some(path: RootlessPath), _, _) => RootlessPathRelativeReference(path, query, fragment)
       case (None, None, None, Some(query), _) => QueryRelativeReference(query, fragment)
       case (None, None, None, None, Some(fragment)) => FragmentRelativeReference(fragment: Fragment)
       case (None, None, None, None, None) => EmptyRelativeReference
@@ -698,15 +672,15 @@ object Uri {
   def unapply(uri: Uri): Option[(Option[Scheme], Option[Authority], Option[Path], Option[Query], Option[Fragment])] =
     if (uri == null) None else Some((uri.scheme, uri.authority, uri.path, uri.query, uri.fragment))
 
-  def parse(s: CharSequence)(implicit c: UriConfig = UriConfig.default): Uri =
-    UriParser.parse(s.toString, c)
+  def parse(charSequence: CharSequence)(implicit c: UriConfig = UriConfig.DEFAULT): Uri =
+    UriParser.parseUri(charSequence.toString, c)
 
   // TODO: Add `parseRaw` method:
-  //def parseRaw(s: CharSequence)(implicit c: UriConfig = UriConfig.default): Uri =
+  //def parseRaw(s: CharSequence)(implicit c: UriConfig = UriConfig.DEFAULT): Uri =
   //  UriParser.parse(s.toString, c.withNoDecoding)
 
   @deprecated("Use `parse` instead, ensuring the starting '?' and noting it returns a `Uri`.", "1.0.0")
-  def parseQuery(s: CharSequence)(implicit c: UriConfig = UriConfig.default): QueryString =
+  def parseQuery(s: CharSequence)(implicit c: UriConfig = UriConfig.DEFAULT): QueryString =
     UriParser.parseQuery(s.toString, c)
 
   @deprecated("Use `EmptyRelativeReference` instead.", "1.0.0")

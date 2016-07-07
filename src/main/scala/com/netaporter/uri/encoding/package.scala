@@ -2,7 +2,7 @@ package com.netaporter.uri
 
 package object encoding {
 
-  @deprecated("Use `PercentEncoder.default` instead.", "1.0.0")
+  @deprecated("Use `PercentEncoder.DEFAULT` instead.", "1.0.0")
   val percentEncode = PercentEncoder()
 
   @deprecated("Use `PercentEncoder.apply` instead.", "1.0.0")

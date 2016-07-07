@@ -5,7 +5,7 @@ import com.netaporter.uri.config.UriConfig
 
 class OldEncodingTests extends FlatSpec with Matchers {
 
-  import dsl._
+  import dsl.{ uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString }
   import encoding._
 
   "URI paths" should "be percent encoded" in {
@@ -100,7 +100,7 @@ class OldEncodingTests extends FlatSpec with Matchers {
   }
 
   "URI path pchars" should "not be encoded by default" in {
-    val uri: Uri = "http://example.com" / "-._~!$&'()*+,;=:@/test"
+    val uri: Uri = "http://example.com" / "-._~!$&'()*+,;=:@" / "test"
     uri.toString should equal("http://example.com/-._~!$&'()*+,;=:@/test")
   }
 

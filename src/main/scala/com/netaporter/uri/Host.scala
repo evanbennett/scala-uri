@@ -91,16 +91,15 @@ object Host {
 
   def option(registeredName: String = null, ipv4Address: String = null, ipLiteralAddress: String = null): Option[Host] = option(Option(registeredName), Option(ipv4Address), Option(ipLiteralAddress))
 
-  // TODO: Do we need a method to pass a `String` that we then determine what type of host it is? I think the DSL may benefit from this?
-//  def parse(host: String): Option[Host] = {
-//    host match {
-//      case null => None
-//      case "" => None
-//      case IPVFUTURE_ADDRESS_REGEX(_*) => Some(new Host(None, None, Some(host)) {})
-//      case IPV6_ADDRESS_REGEX(_*) => Some(new Host(None, None, Some(host)) {})
-//      case IPV4_ADDRESS_REGEX(_*) => Some(new Host(None, Some(host), None) {})
-//      case REGISTERED_NAME_REGEX(_*) => Some(new Host(Some(host), None, None) {})
-//      case _ => throw new IllegalArgumentException("`host` is not valid.")
-//    }
-//  }
+  def parse(host: String): Option[Host] = {
+    host match {
+      case null => None
+      case "" => None
+      case IPVFUTURE_ADDRESS_REGEX(_*) => Some(new Host(None, None, Some(host)) {})
+      case IPV6_ADDRESS_REGEX(_*) => Some(new Host(None, None, Some(host)) {})
+      case IPV4_ADDRESS_REGEX(_*) => Some(new Host(None, Some(host), None) {})
+      case REGISTERED_NAME_REGEX(_*) => Some(new Host(Some(host), None, None) {})
+      case _ => throw new IllegalArgumentException("`host` is not valid.")
+    }
+  }
 }

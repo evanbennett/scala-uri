@@ -2,7 +2,7 @@ package com.netaporter.uri
 
 import org.scalatest.WordSpec
 import org.scalatest.Matchers
-import dsl._
+import dsl.{ uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString }
 import java.net.URI
 import com.netaporter.uri.config.UriConfig
 

@@ -25,10 +25,7 @@ sealed abstract class Path(val hasRootSlash: Boolean) {
 
   def appendSegments(path: Path): Self = copy(segments ++ path.segments)
 
-  def appendMatrixParameter(existingSegment: String, key: String, value: String): Self =
-    appendMatrixParameter(existingSegment, Parameter(key, value))
-
-  def appendMatrixParameter(existingSegment: String, key: String, value: Option[String]): Self =
+  def appendMatrixParameter(existingSegment: String, key: String, value: Any): Self =
     appendMatrixParameter(existingSegment, Parameter(key, value))
 
   def appendMatrixParameter(existingSegment: String, parameter: Parameter): Self = {
@@ -38,10 +35,7 @@ sealed abstract class Path(val hasRootSlash: Boolean) {
     })
   }
 
-  def appendMatrixParameterToLastSegment(key: String, value: String): Self =
-    copy(segments = segments.dropRight(1) :+ segments.last.append(key, value))
-
-  def appendMatrixParameterToLastSegment(key: String, value: Option[String]): Self =
+  def appendMatrixParameterToLastSegment(key: String, value: Any): Self =
     copy(segments = segments.dropRight(1) :+ segments.last.append(key, value))
 
   def appendMatrixParameterToLastSegment(parameter: Parameter): Self =

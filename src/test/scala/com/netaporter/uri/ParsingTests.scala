@@ -4,7 +4,7 @@ import com.netaporter.uri.config.UriConfig
 
 class ParsingTests extends TestSpec {
 
-  "Parsing an `AbsoluteUri` (must have scheme and authority, and cannot have fragment) with `default` UriConfig" should "successfully parse with host, and without user, password, port, path and query" in {
+  "Parsing an `AbsoluteUri` (must have scheme and authority, and cannot have fragment) with the default `UriConfig`" should "successfully parse with host, and without user, password, port, path and query" in {
     val uriString = "http://test.com"
     val uri = Uri.parse(uriString)
     uri shouldBe an[AbsoluteUri]
@@ -183,7 +183,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing an `SchemeWithAuthorityAndFragmentUri` (must have scheme, authority and fragment) with `default` UriConfig" should "successfully parse with user, password, host, port, path, query and fragment" in {
+  "Parsing an `SchemeWithAuthorityAndFragmentUri` (must have scheme, authority and fragment) with the default `UriConfig`" should "successfully parse with user, password, host, port, path, query and fragment" in {
     val uriString = "http://evan:password@test.com:8080/path?queryKey=queryValue#fragment"
     val uri = Uri.parse(uriString)
     uri shouldBe an[SchemeWithAuthorityAndFragmentUri]
@@ -304,7 +304,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing a `SchemeWithAbsolutePathUri` (must have scheme and absolute path; must not have authority) with `default` UriConfig" should "successfully parse without query and fragment" in {
+  "Parsing a `SchemeWithAbsolutePathUri` (must have scheme and absolute path, and must not have authority) with the default `UriConfig`" should "successfully parse without query and fragment" in {
     val uriString = "test:/path"
     val uri = Uri.parse(uriString)
     uri shouldBe a[SchemeWithAbsolutePathUri]
@@ -356,7 +356,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing a `SchemeWithRootlessPathUri` (must have scheme and rootless path; must not have authority) with `default` UriConfig" should "successfully parse without query and fragment" in {
+  "Parsing a `SchemeWithRootlessPathUri` (must have scheme and rootless path, and must not have authority) with the default `UriConfig`" should "successfully parse without query and fragment" in {
     val uriString = "test:path"
     val uri = Uri.parse(uriString)
     uri shouldBe a[SchemeWithRootlessPathUri]
@@ -460,7 +460,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing a `SchemeWithQueryUri` (must have scheme and query; must not have authority and path) with `default` UriConfig" should "successfully parse without fragment" in {
+  "Parsing a `SchemeWithQueryUri` (must have scheme and query, and must not have authority and path) with the default `UriConfig`" should "successfully parse without fragment" in {
     val uriString = "test:?queryKey=queryValue"
     val uri = Uri.parse(uriString)
     uri shouldBe a[SchemeWithQueryUri]
@@ -484,7 +484,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing a `SchemeWithFragmentUri` (must have scheme and fragment; must not have authority, path and query) with `default` UriConfig" should "successfully parse" in {
+  "Parsing a `SchemeWithFragmentUri` (must have scheme and fragment, and must not have authority, path and query) with the default `UriConfig`" should "successfully parse" in {
     val uriString = "test:#fragment"
     val uri = Uri.parse(uriString)
     uri shouldBe a[SchemeWithFragmentUri]
@@ -496,7 +496,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing a `SchemeUri` (must have scheme; must not have authority, path, query and fragment) with `default` UriConfig" should "successfully parse" in {
+  "Parsing a `SchemeUri` (must have scheme, and must not have authority, path, query and fragment) with the default `UriConfig`" should "successfully parse" in {
     val uriString = "dav:"
     val uri = Uri.parse(uriString)
     uri shouldBe a[SchemeUri]
@@ -508,7 +508,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal(uriString)
   }
 
-  "Parsing an `AuthorityRelativeReference` (must start with an authority) with `default` UriConfig" should "successfully parse with host (registered name), and without user, password, port, path, query and fragment" in {
+  "Parsing an `AuthorityRelativeReference` (must start with an authority) with the default `UriConfig`" should "successfully parse with host (registered name), and without user, password, port, path, query and fragment" in {
     val uriString = "//test.com"
     val uri = Uri.parse(uriString)
     uri shouldBe an[AuthorityRelativeReference]
@@ -898,7 +898,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal("//[v9.somethingasyetundefined]")
   }
 
-  "Parsing an `AbsolutePathRelativeReference` (must start with an absolute path) with `default` UriConfig" should "successfully parse without query and fragment" in {
+  "Parsing an `AbsolutePathRelativeReference` (must start with an absolute path) with the default `UriConfig`" should "successfully parse without query and fragment" in {
     val uriString = "/path"
     val uri = Uri.parse(uriString)
     uri shouldBe an[AbsolutePathRelativeReference]
@@ -1012,13 +1012,13 @@ class ParsingTests extends TestSpec {
   }
 
   it should "successfully parse with path containing matrix parameters, and without query and fragment" in {
-    val uriString = "/path1;matrixKeyOne=matrixValueOne;matrixKeyTwo=matrixValueTwo/path2;matrixKey=matrixValue"
+    val uriString = "/path1;matrixKey1=matrixValue1;matrixKey2=matrixValue2/path2;matrixKey=matrixValue"
     val uri = Uri.parse(uriString)
     uri shouldBe an[AbsolutePathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[AbsolutePath]
-    uri.pathSegments should equal(Seq(StringSegment("path1;matrixKeyOne=matrixValueOne;matrixKeyTwo=matrixValueTwo"), StringSegment("path2;matrixKey=matrixValue")))
+    uri.pathSegments should equal(Seq(StringSegment("path1;matrixKey1=matrixValue1;matrixKey2=matrixValue2"), StringSegment("path2;matrixKey=matrixValue")))
     uri.query should equal(None)
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
@@ -1026,13 +1026,13 @@ class ParsingTests extends TestSpec {
 
   "Parsing an absolute path reference URI (must start with an absolute path) with `UriConfig(matrixParams = true)`" should "successfully parse with path containing matrix parameters, and without query and fragment" in {
     implicit val c = UriConfig(matrixParams = true)
-    val uriString = "/path1;matrixKeyOne=matrixValueOne;matrixKeyTwo=matrixValueTwo/path2;matrixKey=matrixValue"
+    val uriString = "/path1;matrixKey1=matrixValue1;matrixKey2=matrixValue2/path2;matrixKey=matrixValue"
     val uri = Uri.parse(uriString)
     uri shouldBe an[AbsolutePathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[AbsolutePath]
-    uri.pathSegments should equal(Seq(MatrixParametersSegment("path1", Seq(Parameter("matrixKeyOne", Some("matrixValueOne")), Parameter("matrixKeyTwo", Some("matrixValueTwo")))), MatrixParametersSegment("path2", Seq(Parameter("matrixKey", Some("matrixValue"))))))
+    uri.pathSegments should equal(Seq(MatrixParametersSegment("path1", Seq(Parameter("matrixKey1", Some("matrixValue1")), Parameter("matrixKey2", Some("matrixValue2")))), MatrixParametersSegment("path2", Seq(Parameter("matrixKey", Some("matrixValue"))))))
     uri.query should equal(None)
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
@@ -1040,13 +1040,13 @@ class ParsingTests extends TestSpec {
 
   it should "successfully parse with path containing matrix parameters (with no value, empty value and a value), and without query and fragment" in {
     implicit val c = UriConfig(matrixParams = true)
-    val uriString = "/path;matrixKeyOne;matrixKeyTwo=;matrixKeyThree=matrixValueThree"
+    val uriString = "/path;matrixKey1;matrixKey2=;matrixKey3=matrixValue3"
     val uri = Uri.parse(uriString)
     uri shouldBe an[AbsolutePathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[AbsolutePath]
-    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKeyOne", None), Parameter("matrixKeyTwo", Some("")), Parameter("matrixKeyThree", Some("matrixValueThree"))))))
+    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKey1", None), Parameter("matrixKey2", Some("")), Parameter("matrixKey3", Some("matrixValue3"))))))
     uri.query should equal(None)
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
@@ -1054,21 +1054,34 @@ class ParsingTests extends TestSpec {
 
   it should "successfully parse with path containing some empty matrix parameters, and without query and fragment" in {
     implicit val c = UriConfig(matrixParams = true)
-    val uri = Uri.parse("/path;;matrixKeyTwo=matrixValueTwo;;matrixKeyFour=matrixValueFour;")
+    val uri = Uri.parse("/path;;matrixKey2=matrixValue2;;matrixKey4=matrixValue4;")
     uri shouldBe an[AbsolutePathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[AbsolutePath]
-    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKeyTwo", Some("matrixValueTwo")), Parameter("matrixKeyFour", Some("matrixValueFour"))))))
+    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKey2", Some("matrixValue2")), Parameter("matrixKey4", Some("matrixValue4"))))))
     uri.query should equal(None)
     uri.fragment should equal(None)
-    uri.toString should equal("/path;matrixKeyTwo=matrixValueTwo;matrixKeyFour=matrixValueFour")
+    uri.toString should equal("/path;matrixKey2=matrixValue2;matrixKey4=matrixValue4")
   }
 
-  "Parsing a `RelativePathRelativeReference` (must start with a relative path) with `default` UriConfig" should "successfully parse without query and fragment" in {
+  "Parsing an absolute path reference URI (must start with an absolute path) with `UriConfig(delimiterParsing = true, matrixParams = true)`" should "successfully parse with path containing matrix parameters, and without query and fragment" in {
+    implicit val c = UriConfig(delimiterParsing = true, matrixParams = true)
+    val uri = Uri.parse("/path1;matrixKey1=matrixValue1;matrixKey2=matrix value2/path2;matrixKey=matrixValue")
+    uri shouldBe an[AbsolutePathRelativeReference]
+    uri.scheme should equal(None)
+    uri.authority should equal(None)
+    uri.path.value shouldBe an[AbsolutePath]
+    uri.pathSegments should equal(Seq(MatrixParametersSegment("path1", Seq(Parameter("matrixKey1", Some("matrixValue1")), Parameter("matrixKey2", Some("matrix value2")))), MatrixParametersSegment("path2", Seq(Parameter("matrixKey", Some("matrixValue"))))))
+    uri.query should equal(None)
+    uri.fragment should equal(None)
+    uri.toString should equal("/path1;matrixKey1=matrixValue1;matrixKey2=matrix%20value2/path2;matrixKey=matrixValue")
+  }
+
+  "Parsing a `RootlessPathRelativeReference` (must start with a relative path) with the default `UriConfig`" should "successfully parse without query and fragment" in {
     val uriString = "path"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe a[RootlessPath]
@@ -1081,7 +1094,7 @@ class ParsingTests extends TestSpec {
   it should "successfully parse with query and fragment" in {
     val uriString = "path?queryKey=queryValue#fragment"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe a[RootlessPath]
@@ -1094,7 +1107,7 @@ class ParsingTests extends TestSpec {
   it should "successfully parse with fragment, and without query" in {
     val uriString = "path#fragment"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe a[RootlessPath]
@@ -1107,7 +1120,7 @@ class ParsingTests extends TestSpec {
   it should "successfully parse with query, and without fragment" in {
     val uriString = "path?queryKey=queryValue"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe a[RootlessPath]
@@ -1120,7 +1133,7 @@ class ParsingTests extends TestSpec {
   it should "successfully parse with path containing empty segments, and without query and fragment" in {
     val uriString = "path1//path3/"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[RootlessPath]
@@ -1131,13 +1144,13 @@ class ParsingTests extends TestSpec {
   }
 
   it should "successfully parse with path containing matrix parameters, and without query and fragment" in {
-    val uriString = "path1;matrixKeyOne=matrixValueOne;matrixKeyTwo=matrixValueTwo/path2;matrixKey=matrixValue"
+    val uriString = "path1;matrixKey1=matrixValue1;matrixKey2=matrixValue2/path2;matrixKey=matrixValue"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[RootlessPath]
-    uri.pathSegments should equal(Seq(StringSegment("path1;matrixKeyOne=matrixValueOne;matrixKeyTwo=matrixValueTwo"), StringSegment("path2;matrixKey=matrixValue")))
+    uri.pathSegments should equal(Seq(StringSegment("path1;matrixKey1=matrixValue1;matrixKey2=matrixValue2"), StringSegment("path2;matrixKey=matrixValue")))
     uri.query should equal(None)
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
@@ -1145,13 +1158,13 @@ class ParsingTests extends TestSpec {
 
   "Parsing a relative path reference URI (must start with a relative path) with `UriConfig(matrixParams = true)`" should "successfully parse with path containing matrix parameters, and without query and fragment" in {
     implicit val c = UriConfig(matrixParams = true)
-    val uriString = "path1;matrixKeyOne=matrixValueOne;matrixKeyTwo=matrixValueTwo/path2;matrixKey=matrixValue"
+    val uriString = "path1;matrixKey1=matrixValue1;matrixKey2=matrixValue2/path2;matrixKey=matrixValue"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[RootlessPath]
-    uri.pathSegments should equal(Seq(MatrixParametersSegment("path1", Seq(Parameter("matrixKeyOne", Some("matrixValueOne")), Parameter("matrixKeyTwo", Some("matrixValueTwo")))), MatrixParametersSegment("path2", Seq(Parameter("matrixKey", Some("matrixValue"))))))
+    uri.pathSegments should equal(Seq(MatrixParametersSegment("path1", Seq(Parameter("matrixKey1", Some("matrixValue1")), Parameter("matrixKey2", Some("matrixValue2")))), MatrixParametersSegment("path2", Seq(Parameter("matrixKey", Some("matrixValue"))))))
     uri.query should equal(None)
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
@@ -1159,13 +1172,13 @@ class ParsingTests extends TestSpec {
 
   it should "successfully parse with path containing matrix parameters (with no value, empty value and a value), and without query and fragment" in {
     implicit val c = UriConfig(matrixParams = true)
-    val uriString = "path;matrixKeyOne;matrixKeyTwo=;matrixKeyThree=matrixValueThree"
+    val uriString = "path;matrixKey1;matrixKey2=;matrixKey3=matrixValue3"
     val uri = Uri.parse(uriString)
-    uri shouldBe a[RelativePathRelativeReference]
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[RootlessPath]
-    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKeyOne", None), Parameter("matrixKeyTwo", Some("")), Parameter("matrixKeyThree", Some("matrixValueThree"))))))
+    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKey1", None), Parameter("matrixKey2", Some("")), Parameter("matrixKey3", Some("matrixValue3"))))))
     uri.query should equal(None)
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
@@ -1173,18 +1186,18 @@ class ParsingTests extends TestSpec {
 
   it should "successfully parse with path containing some empty matrix parameters, and without query and fragment" in {
     implicit val c = UriConfig(matrixParams = true)
-    val uri = Uri.parse("path;;matrixKeyTwo=matrixValueTwo;;matrixKeyFour=matrixValueFour;")
-    uri shouldBe a[RelativePathRelativeReference]
+    val uri = Uri.parse("path;;matrixKey2=matrixValue2;;matrixKey4=matrixValue4;")
+    uri shouldBe a[RootlessPathRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path.value shouldBe an[RootlessPath]
-    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKeyTwo", Some("matrixValueTwo")), Parameter("matrixKeyFour", Some("matrixValueFour"))))))
+    uri.pathSegments should equal(Seq(MatrixParametersSegment("path", Seq(Parameter("matrixKey2", Some("matrixValue2")), Parameter("matrixKey4", Some("matrixValue4"))))))
     uri.query should equal(None)
     uri.fragment should equal(None)
-    uri.toString should equal("path;matrixKeyTwo=matrixValueTwo;matrixKeyFour=matrixValueFour")
+    uri.toString should equal("path;matrixKey2=matrixValue2;matrixKey4=matrixValue4")
   }
 
-  "Parsing a `QueryRelativeReference` (must start with a query) with `default` UriConfig" should "successfully parse without fragment" in {
+  "Parsing a `QueryRelativeReference` (must start with a query) with the default `UriConfig`" should "successfully parse without fragment" in {
     val uriString = "?queryKey=queryValue"
     val uri = Uri.parse(uriString)
     uri shouldBe a[QueryRelativeReference]
@@ -1209,13 +1222,13 @@ class ParsingTests extends TestSpec {
   }
 
   it should "successfully parse with empty query parameter values, and without fragment" in {
-    val uriString = "?queryKeyOne=&queryKeyTwo=&queryKeyThree="
+    val uriString = "?queryKey1=&queryKey2=&queryKey3="
     val uri = Uri.parse(uriString)
     uri shouldBe a[QueryRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path should equal(None)
-    uri.queryParameters should equal(Seq(Parameter("queryKeyOne", Some("")), Parameter("queryKeyTwo", Some("")), Parameter("queryKeyThree", Some(""))))
+    uri.queryParameters should equal(Seq(Parameter("queryKey1", Some("")), Parameter("queryKey2", Some("")), Parameter("queryKey3", Some(""))))
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
   }
@@ -1233,13 +1246,13 @@ class ParsingTests extends TestSpec {
   }
 
   it should "successfully parse with no query parameter values, and without fragment" in {
-    val uriString = "?queryKeyOne&queryKeyTwo&queryKeyThree"
+    val uriString = "?queryKey1&queryKey2&queryKey3"
     val uri = Uri.parse(uriString)
     uri shouldBe a[QueryRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
     uri.path should equal(None)
-    uri.queryParameters should equal(Seq(Parameter("queryKeyOne", None), Parameter("queryKeyTwo", None), Parameter("queryKeyThree", None)))
+    uri.queryParameters should equal(Seq(Parameter("queryKey1", None), Parameter("queryKey2", None), Parameter("queryKey3", None)))
     uri.fragment should equal(None)
     uri.toString should equal(uriString)
   }
@@ -1303,7 +1316,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal("?query_param_one=hello%3Dworld&query_param_two=false")
   }
 
-  "Parsing a `FragmentRelativeReference` (must be a fragment) with `default` UriConfig" should "successfully parse" in {
+  "Parsing a `FragmentRelativeReference` (must be a fragment) with the default `UriConfig`" should "successfully parse" in {
     val uriString = "#fragment"
     val uri = Uri.parse(uriString)
     uri shouldBe a[FragmentRelativeReference]
@@ -1333,9 +1346,9 @@ class ParsingTests extends TestSpec {
     }
   }
 
-  "Parsing a `FragmentRelativeReference` (must be a fragment) with `default` UriConfig with `delimiterParsing`" should "successfully parse" in {
+  "Parsing a `FragmentRelativeReference` (must be a fragment) with the default `UriConfig` with `delimiterParsing`" should "successfully parse" in {
     val uriString = "#fragmentContaining#"
-    val uri = Uri.parse(uriString)(UriConfig.default.copy(delimiterParsing = true))
+    val uri = Uri.parse(uriString)(UriConfig.DEFAULT.copy(delimiterParsing = true))
     uri shouldBe a[FragmentRelativeReference]
     uri.scheme should equal(None)
     uri.authority should equal(None)
@@ -1345,7 +1358,7 @@ class ParsingTests extends TestSpec {
     uri.toString should equal("#fragmentContaining%23")
   }
 
-  "Parsing an `EmptyRelativeReference` with `default` UriConfig" should "successfully parse" in {
+  "Parsing an `EmptyRelativeReference` with the default `UriConfig`" should "successfully parse" in {
     Uri.parse("") should equal(EmptyRelativeReference)
     EmptyRelativeReference.toString should equal("")
   }

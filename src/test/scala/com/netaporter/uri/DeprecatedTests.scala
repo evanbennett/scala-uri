@@ -2,7 +2,7 @@ package com.netaporter.uri
 
 import com.netaporter.uri.config.UriConfig
 import com.netaporter.uri.decoding._
-import com.netaporter.uri.dsl._
+import com.netaporter.uri.dsl.{ encoderToChainedEncoder, uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString }
 import com.netaporter.uri.encoding._
 import com.netaporter.uri.parsing._
 import Parameters._
@@ -10,7 +10,13 @@ import Parameters._
 class DeprecatedTests extends TestSpec {
 
   "`@deprecated` code" should "`dsl.encoderToChainedEncoder`" in {
-    val chainedUriEncoder: ChainedUriEncoder = PercentEncoder.default
+    val chainedUriEncoder: ChainedUriEncoder = PercentEncoder.DEFAULT
+  }
+
+  it should "`dsl.uriToString`" in {
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
+    val uriString: String = uri
+    uriString should equal(uri.toString)
   }
 
   it should "`UriDecoder.decodeTuple`" in {
@@ -18,7 +24,7 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`encoding.percentEncode`" in {
-    percentEncode should equal(PercentEncoder.default)
+    percentEncode should equal(PercentEncoder.DEFAULT)
   }
 
   it should "`encoding.percentEncode(...)`" in {
@@ -34,19 +40,24 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`PercentEncoder.ascii`" in {
-    PercentEncoder.default.ascii('c') should equal(true)
+    PercentEncoder.DEFAULT.ascii('c') should equal(true)
+  }
+
+  it should "`UriParser.parse`" in {
+    val uriString = "http://www.example.com/"
+    UriParser.parse(uriString, UriConfig.DEFAULT) should equal(UriParser.parseUri(uriString, UriConfig.DEFAULT))
   }
 
 // TODO: I could not get this to fail:
 //  it should "`UriParser.parseQuery` ParseError" in {
 //    intercept[java.net.URISyntaxException] {
-//      println("WOW:" + UriParser.parseQuery("queryParam#Key=queryParamValue", UriConfig.default) + ":")
+//      println("WOW:" + UriParser.parseQuery("queryParam#Key=queryParamValue", UriConfig.DEFAULT) + ":")
 //    }
 //  }
 
   it should "`UriParser.parseQuery` exception" in {
     intercept[java.net.URISyntaxException] {
-      UriParser.parseQuery("?queryParamKey=queryParam%Value", UriConfig.default)
+      UriParser.parseQuery("?queryParamKey=queryParam%Value", UriConfig.DEFAULT)
     }
   }
 
@@ -164,16 +175,16 @@ class DeprecatedTests extends TestSpec {
 
   it should "`Parameters.paramsToString`" in {
     val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    "?" + query.paramsToString(UriConfig.default.queryEncoder, UriConfig.default.charset) should equal(query.toString(UriConfig.default))
+    "?" + query.paramsToString(UriConfig.DEFAULT.queryEncoder, UriConfig.DEFAULT.charset) should equal(query.toString(UriConfig.DEFAULT))
   }
 
   it should "`Query.queryToString`" in {
     val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.queryToString(UriConfig.default) should equal(query.toString(UriConfig.default))
+    query.queryToString(UriConfig.DEFAULT) should equal(query.toString(UriConfig.DEFAULT))
   }
 
   it should "`EmptyQuery.queryToString`" in {
-    ("?" + EmptyQuery.queryToString(UriConfig.default)) should equal(EmptyQuery.toString(UriConfig.default))
+    ("?" + EmptyQuery.queryToString(UriConfig.DEFAULT)) should equal(EmptyQuery.toString(UriConfig.DEFAULT))
   }
 
   it should "`QueryString.apply`" in {
@@ -212,7 +223,7 @@ class DeprecatedTests extends TestSpec {
 
   it should "`Segment.partToString`" in {
     val segment = StringSegment("segment")
-    segment.partToString(UriConfig.default) should equal(segment.toString(UriConfig.default))
+    segment.partToString(UriConfig.DEFAULT) should equal(segment.toString(UriConfig.DEFAULT))
   }
 
   it should "`StringSegment.params`" in {

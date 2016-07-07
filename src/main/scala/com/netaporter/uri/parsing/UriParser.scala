@@ -83,8 +83,8 @@ class UriParser(val input: ParserInput, val c: UriConfig) extends Parser {
   protected val extractAbsolutePathRelativeReference = (path: AbsolutePath, query: Option[Query], fragment: Option[Fragment]) =>
     AbsolutePathRelativeReference(path, query, fragment)
 
-  protected val extractRelativePathRelativeReference = (path: RootlessPath, query: Option[Query], fragment: Option[Fragment]) =>
-    RelativePathRelativeReference(path, query, fragment)
+  protected val extractRootlessPathRelativeReference = (path: RootlessPath, query: Option[Query], fragment: Option[Fragment]) =>
+    RootlessPathRelativeReference(path, query, fragment)
 
   protected val extractQueryRelativeReference = (query: Query, fragment: Option[Fragment]) =>
     QueryRelativeReference(query, fragment)
@@ -245,8 +245,8 @@ class UriParser(val input: ParserInput, val c: UriConfig) extends Parser {
     _pathAbsolute ~ optional(_query) ~ optional(_fragment) ~> extractAbsolutePathRelativeReference
   }
 
-  protected def _relativePathRelativeReference: Rule1[Uri] = rule {
-    _pathNoScheme ~ optional(_query) ~ optional(_fragment) ~> extractRelativePathRelativeReference
+  protected def _rootlessPathRelativeReference: Rule1[Uri] = rule {
+    _pathNoScheme ~ optional(_query) ~ optional(_fragment) ~> extractRootlessPathRelativeReference
   }
 
   protected def _queryRelativeReference: Rule1[Uri] = rule {
@@ -263,7 +263,7 @@ class UriParser(val input: ParserInput, val c: UriConfig) extends Parser {
 
   def uri: Rule1[Uri] = rule {
     (_schemeWithAuthorityAndFragmentUri | _absoluteUri | _schemeWithAbsolutePathUri | _schemeWithRootlessPathUri | _schemeWithQueryUri | _schemeWithFragmentUri | _schemeUri |
-      _authorityRelativeReference | _absolutePathRelativeReference | _relativePathRelativeReference | _queryRelativeReference | _fragmentRelativeReference | _emptyRelativeReference) ~ EOI
+      _authorityRelativeReference | _absolutePathRelativeReference | _rootlessPathRelativeReference | _queryRelativeReference | _fragmentRelativeReference | _emptyRelativeReference) ~ EOI
   }
 }
 
@@ -287,39 +287,46 @@ object UriParser {
   val QUERY_PARAMETER_VALUE = QUERY -- "&"
   val FRAGMENT = PCHAR ++ "/?"
 
-  // TODO: Default parsing is now RFC3986 compliant. Delimiter parsing can be enabled through `c`.
-  def parse(s: String, c: UriConfig) = {
-    val parser = {
+  private def parser(string: String, c: UriConfig) = {
       c.delimiterParsing match {
         case false =>
           c.matrixParams match {
-            case false => new UriParser(s, c)
-            case true =>  new UriParser(s, c) with MatrixParamSupport
+            case false => new UriParser(string, c)
+            case true =>  new UriParser(string, c) with MatrixParamSupport
           }
         case true =>
           c.matrixParams match {
-            case false => new UriParser(s, c) with DelimiterParsing
-            case true =>  new UriParser(s, c) with MatrixParamSupportWithDelimiterParsing
+            case false => new UriParser(string, c) with DelimiterParsing
+            case true =>  new UriParser(string, c) with MatrixParamSupportWithDelimiterParsing
           }
       }
-    }
-    parser.uri.run() match {
+  }
+
+  private def getValueOrThrowException[T](parserTry: scala.util.Try[T], string: String) = {
+    parserTry match {
       case Success(uri) =>
         uri
       case Failure(pe@ParseError(position, _, formatTraces)) =>
-        throw new java.net.URISyntaxException(s, "Invalid URI could not be parsed. " + formatTraces, position.index)
+        throw new java.net.URISyntaxException(string, "Invalid URI could not be parsed. " + formatTraces, position.index)
       case Failure(e) =>
         throw e
     }
   }
 
+  @deprecated("Use `parseUri` instead.", "1.0.0")
+  def parse(s: String, c: UriConfig) = parseUri(s, c)
+
+  // TODO: Default parsing is now RFC3986 compliant. Delimiter parsing can be enabled through `c`.
+  def parseUri(string: String, c: UriConfig): Uri =
+    getValueOrThrowException(parser(string, c).uri.run(), string)
+
   /**
    * NOTE: This was not working properly:
    *   It does not provide `MatrixParamSupport`.
    *   For some reason it does not require the starting '?'.
-   *   It does not end with `EOI` and so parses until of the string that matches and then skips the rest.
+   *   It does not end with `EOI`, so it parses until the string does not match and then skips the rest.
    */
-  @deprecated("Use `parse` instead, ensuring the starting '?'.", "1.0.0")
+  @deprecated("Use `uri` instead, ensuring the starting '?' and noting the `Uri` return type.", "1.0.0")
   def parseQuery(s: String, c: UriConfig) = {
     val withQuestionMark = if (s.head == '?') s else "?" + s
     val parser = new UriParser(withQuestionMark, c)

@@ -2,36 +2,35 @@ package com.netaporter.uri
 
 import com.netaporter.uri.config.UriConfig
 import com.netaporter.uri.decoding.PermissivePercentDecoder
-import com.netaporter.uri.dsl._
+import com.netaporter.uri.dsl.{ uriToUriDsl => _, stringToUri => _, stringToUriDsl => _, queryParamToUriDsl => _, uriToString => _, _ }
 
 /**
  * Test Suite to ensure that bugs raised by awesome GitHub peeps NEVER come back.
  */
 class GithubIssueTests extends TestSpec {
 
-  "Github Issue #2" should "now be fixed. Pluses in querystrings should be encoded when using the conservative encoder" in {
-    val uri = "http://theon.github.com/" ? ("+" -> "+")
-    uri.toString(UriConfig.conservative) should equal("http://theon.github.com/?%2B=%2B")
+  "Github Issue #2" should "now be fixed. Pluses in querystrings should be encoded when using ``UriConfig.CONSERVATIVE`" in {
+    val uri: Uri = "http".`://` ("theon.github.com") /? ("+" `=` "+") // TODO: Updated to new DSL.
+    uri.toString(UriConfig.CONSERVATIVE) should equal("http://theon.github.com/?%2B=%2B")
   }
 
   "Github Issue #4" should "now be fixed. Port numbers should be rendered by toString" in {
-    val uri = "http://theon.github.com:8080/test" ? ("p" -> "1")
+    val uri: Uri = "http".`://` ("theon.github.com" `:` 8080) / "test" ? ("p" `=` "1") // TODO: Updated to new DSL.
     uri.toString should equal("http://theon.github.com:8080/test?p=1")
   }
 
   "Github Issue #5" should "now be fixed. The characters {} should now be percent encoded" in {
-    val uri = ("http://theon.github.com" / "{}") ? ("{}" -> "{}")
+    val uri: Uri = "http".`://` ("theon.github.com") / "{}" ? ("{}" `=` "{}") // TODO: Updated to new DSL.
     uri.toString should equal("http://theon.github.com/%7B%7D?%7B%7D=%7B%7D")
   }
 
   "Github Issue #6" should "now be fixed. No implicit Encoder val required for implicit Uri -> String conversion " in {
-    val uri = "/blah" ? ("blah" -> "blah")
-    val uriString: String = uri
-    uriString should equal("/blah?blah=blah")
+    val uri: Uri = / ("blah") ? ("blah" `=` "blah") // TODO: Updated to new DSL.
+    uri.toString should equal("/blah?blah=blah")
   }
 
   "Github Issue #7" should "now be fixed. Calling uri.toString() (with parentheses) should now behave the same as uri.toString " in {
-    val uri = "/blah" ? ("blah" -> "blah")
+    val uri: Uri = / ("blah") ? ("blah" `=` "blah") // TODO: Updated to new DSL.
     uri.toString() should equal("/blah?blah=blah")
   }
 
@@ -68,7 +67,7 @@ class GithubIssueTests extends TestSpec {
   }
 
   "Github Issue #19" should "now be fixed" in {
-    val uri: Uri = "/coldplay.com?singer=chris%26will"
+    val uri: Uri = / ("coldplay.com") ? ("singer" `=` "chris&will") // TODO: Updated to new DSL.
     uri.toString should equal("/coldplay.com?singer=chris%26will")
   }
 
@@ -82,7 +81,7 @@ class GithubIssueTests extends TestSpec {
   }
 
   "Github Issue #37" should "now be fixed" in {
-    val uri = "http://test.com:8080" / "something"
+    val uri: Uri = "http".`://` ("test.com" `:` 8080) / "something" // TODO: Updated to new DSL.
     uri.toString should equal("http://test.com:8080/something")
   }
 
@@ -93,7 +92,7 @@ class GithubIssueTests extends TestSpec {
   }
 
   "Github Issue #55" should "now be fixed" in {
-    val uri: Uri = "http://localhost:9002/iefjiefjief-efefeffe-fefefee/toto?access_token=ijifjijef-fekieifj-fefoejfoef&gquery=filter(time_before_closing%3C=45)"
+    val uri = Uri.parse("http://localhost:9002/iefjiefjief-efefeffe-fefefee/toto?access_token=ijifjijef-fekieifj-fefoejfoef&gquery=filter(time_before_closing%3C=45)") // TODO: Converted to direct parsing.
     uri.query.value.parameters should equal(Seq(
       Parameter("access_token", Some("ijifjijef-fekieifj-fefoejfoef")),
       Parameter("gquery", Some("filter(time_before_closing<=45)"))
@@ -112,7 +111,7 @@ class GithubIssueTests extends TestSpec {
   }
 
   "Github Issue #65 example 2" should "now be fixed" in {
-    val uri = Uri.parse("http://localhost:9000/mlb/2014/06/15/david-wrights-slump-continues-why-new-york-mets-franchise-third-baseman-must-be-gone-before-seasons-end/?utm_source=RantSports&utm_medium=HUBRecirculation&utm_term=MLBNew York MetsGrid")(UriConfig.default.copy(delimiterParsing = true))
+    val uri = Uri.parse("http://localhost:9000/mlb/2014/06/15/david-wrights-slump-continues-why-new-york-mets-franchise-third-baseman-must-be-gone-before-seasons-end/?utm_source=RantSports&utm_medium=HUBRecirculation&utm_term=MLBNew York MetsGrid")(UriConfig.DEFAULT.copy(delimiterParsing = true))
     uri.toString should equal("http://localhost:9000/mlb/2014/06/15/david-wrights-slump-continues-why-new-york-mets-franchise-third-baseman-must-be-gone-before-seasons-end/?utm_source=RantSports&utm_medium=HUBRecirculation&utm_term=MLBNew%20York%20MetsGrid")
   }
 
@@ -138,7 +137,7 @@ class GithubIssueTests extends TestSpec {
   }
 
   "Github Issue #68" should "now be fixed" in {
-    val uri = ("http://example.com/path" ? ("param" -> "something==")).toString
+    val uri: Uri = "http".`://` ("example.com") / "path" ? ("param" `=` "something==") // TODO: Updated to new DSL.
     uri.toString should equal("http://example.com/path?param=something%3D%3D")
   }
 
@@ -149,7 +148,7 @@ class GithubIssueTests extends TestSpec {
   }
 
   "Github Issue #73" should "now be fixed" in {
-    val uri = "http://somewhere.something".withUser("user:1@domain").withPassword("abc xyz")
+    val uri = Uri.parse("http://somewhere.something").withUser("user:1@domain").withPassword("abc xyz") // TODO: Converted to direct parsing.
     uri.toString should equal("http://user%3A1%40domain:abc%20xyz@somewhere.something")
   }
 
@@ -175,10 +174,10 @@ class GithubIssueTests extends TestSpec {
   }
 
   "Github Issue #106" should "now be fixed" in {
-    val p = "http://localhost:1234"
-    val withPath = p / "some/path/segments"
+    val p = "http".`://` ("localhost" `:` 1234) // TODO: Updated to new DSL.
+    val withPath: Uri = p / "some" / "path" / "segments" // TODO: Converted to individual segments due to functional changes (the '/'s within a segment get encoded).
     withPath.toString should equal("http://localhost:1234/some/path/segments")
-    val withPathAndQuery = p / "some/path/segments" ? ("returnUrl" -> "http://localhost:1234/some/path/segments")
+    val withPathAndQuery: Uri = p / "some" / "path" / "segments" ? ("returnUrl" `=` "http://localhost:1234/some/path/segments") // TODO: Updated to new DSL.
     withPathAndQuery.toString should equal("http://localhost:1234/some/path/segments?returnUrl=http://localhost:1234/some/path/segments")
   }
 }

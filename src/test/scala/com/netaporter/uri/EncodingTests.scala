@@ -62,12 +62,12 @@ class EncodingTests extends TestSpec {
 
   "`Uri.toString(...)` with custom `PercentEncoder`" should "encode path with extra encoded characters easily" in {
     val uri = Uri(None, None, AbsolutePath.option(StringSegment("abcde")), None, None)
-    uri.toString(UriConfig(encoder = PercentEncoder.default ++('a', 'b'))) should equal("/%61%62cde")
+    uri.toString(UriConfig(encoder = PercentEncoder.DEFAULT ++('a', 'b'))) should equal("/%61%62cde")
   }
 
   it should "encode query with less encoded characters easily" in {
     val uri = Uri(None, None, None, Query.option(Parameter("reserved", Some(":/?#[]@!$&'()*+,;={}\\\n\r"))), None)
-    uri.toString(UriConfig(encoder = PercentEncoder.default -- '+')) should equal("?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A+%2C%3B%3D%7B%7D%5C%0A%0D")
+    uri.toString(UriConfig(encoder = PercentEncoder.DEFAULT -- '+')) should equal("?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A+%2C%3B%3D%7B%7D%5C%0A%0D")
   }
 
   it should "encode query with custom encoded characters easily" in {
@@ -75,14 +75,14 @@ class EncodingTests extends TestSpec {
     uri.toString(UriConfig(encoder = PercentEncoder('#'))) should equal("?reserved=:/?%23[]@!$&'()*+,;={}\\")
   }
 
-  "`UriConfig.conservative` in `Uri.toString(...)`" should "encode query with reserved characters" in {
+  "`UriConfig.CONSERVATIVE` in `Uri.toString(...)`" should "encode query with reserved characters" in {
     val uri = Uri(None, None, None, Query.option(Parameter("reserved", Some(":/?#[]@!$&'()*+,;={}\\\n\r"))), None)
-    uri.toString(UriConfig.conservative) should equal("?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
+    uri.toString(UriConfig.CONSERVATIVE) should equal("?reserved=%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%7B%7D%5C%0A%0D")
   }
 
   it should "encode absolute path with '\"'" in {
     val uri = Uri(None, None, AbsolutePath.option(StringSegment(""""that"""")), None, None)
-    uri.toString(UriConfig.conservative) should equal("/%22that%22")
+    uri.toString(UriConfig.CONSERVATIVE) should equal("/%22that%22")
   }
 
   "`NoopEncoder` in `Uri.toString(...)`" should "process query with reserved characters wihtout encoding" in {

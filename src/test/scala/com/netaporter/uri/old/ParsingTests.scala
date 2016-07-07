@@ -147,7 +147,6 @@ class OldParsingTests extends FlatSpec with Matchers {
     uri2.queryValue.params("q") should equal(Vector(Some("foo")))
     uri2.toString should equal("//cythrawll.github.com/scala-uri.html?q=foo&ham")
 
-
     val uri3 = parse("//cythrawll.github.com/scala-uri.html?ham&q=foo")
     uri3.host should equal(Some("cythrawll.github.com"))
     uri3.queryValue.params("ham") should equal(Vector(None))
@@ -163,7 +162,6 @@ class OldParsingTests extends FlatSpec with Matchers {
     uri4.queryValue.params("q")   should equal(Vector(Some("foo")))
     uri4.toString should equal("//cythrawll.github.com/scala-uri.html?ham&jam=&q=foo")
   }
-
 
   "Path with matrix params" should "be parsed when configured" in {
     implicit val config = UriConfig(matrixParams = true)
@@ -199,14 +197,14 @@ class OldParsingTests extends FlatSpec with Matchers {
 
   "exotic/reserved characters in query string" should "be decoded" in {
     val q = "?weird%3D%26key=strange%25value&arrow=%E2%87%94"
-    val parsedQueryString = new DefaultUriParser(q, config.UriConfig.default)._query.run().get
+    val parsedQueryString = new UriParser(q, config.UriConfig.default)._query.run().get
     parsedQueryString.params("weird=&key") should equal(Seq(Some("strange%value")))
     parsedQueryString.params("arrow") should equal(Seq(Some("⇔")))
   }
 
   "exotic/reserved characters in user info" should "be decoded" in {
     val userInfo = "user%3A:p%40ssword%E2%87%94@"
-    val parsedUserInfo = new DefaultUriParser(userInfo, config.UriConfig.default)._userInfo.run().get
+    val parsedUserInfo = new UriParser(userInfo, config.UriConfig.default)._userInfo.run().get
     parsedUserInfo.user should equal("user:")
     parsedUserInfo.password should equal(Some("p@ssword⇔"))
   }

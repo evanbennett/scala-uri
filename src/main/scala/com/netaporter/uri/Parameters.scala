@@ -70,7 +70,7 @@ trait Parameters {
    *
    * @return A new instance with the new parameter added
    */
-  def append(key: String, value: String): Self = append(Parameter(key, value))
+  def append(key: String, value: Any = null): Self = append(Parameter(key, value))
 
   /**
    * Adds a new parameter key-value pair. If the value for the parameter is None, then this
@@ -80,14 +80,6 @@ trait Parameters {
    */
   @deprecated("Use `append` instead.", "1.0.0")
   def addParam(k: String, v: Option[String]): Self = append(k, v)
-
-  /**
-   * Append a new parameter with key and value. If the value for the parameter is None, then this
-   * parameter will be rendered without an = sign (use Some("") if this is not what you want).
-   *
-   * @return A new instance with the new parameter added
-   */
-  def append(key: String, value: Option[String] = None): Self = append(Parameter(key, value))
 
   def append(parameter: Parameter): Self = withParameters(parameters :+ parameter)
 
@@ -233,10 +225,10 @@ trait Parameters {
    * @param newValue value to replace with
    * @return A new Query with the result of the replace
    */
-  def replaceMatching(existingKey: String, newValue: Option[Any]): Self = {
+  def replaceMatching(existingKey: String, newValue: Any): Self = {
     val filteredParameters = parameters.filterNot(_.key == existingKey)
     if (parameters.length == filteredParameters.length) withParameters(parameters) // TODO: `withParameters(parameters)` should be `this`, but I could not get it to work.
-    else withParameters(filteredParameters :+ Parameter(existingKey, newValue.map(_.toString)))
+    else withParameters(filteredParameters :+ Parameter(existingKey, newValue))
   }
 
   /**

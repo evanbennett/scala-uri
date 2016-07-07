@@ -34,7 +34,7 @@ object PercentEncoder {
   val HOST_CHARS_TO_ENCODE = Set ('%', '[', ']') // TODO: RFC section 3.2.2 last paragraph.
 
   val PATH_CHARS_TO_ENCODE = Set (
-    ' ', '%', '<', '>', '[', ']', '#', '{', '}', '^', '`', '|', '?'
+    ' ', '%', '<', '>', '[', ']', '#', '{', '}', '^', '`', '|', '?', '/' // TODO: This needs to encode '/' otherwise converting a `Uri` to string and re-parsing will change the `Uri`.
   )
 
   val QUERY_CHARS_TO_ENCODE = Set (
@@ -55,8 +55,8 @@ object PercentEncoder {
    */
   val DEFAULT_CHARS_TO_ENCODE = RESERVED ++ PATH_CHARS_TO_ENCODE ++ QUERY_CHARS_TO_ENCODE ++ EXCLUDED
 
+  val DEFAULT = apply()
+
   // NOTE: Must have at least one Char so that the default value `DEFAULT_CHARS_TO_ENCODE` can be used when none are provided.
   def apply(firstChar: Char, chars: Char*): PercentEncoder = apply(chars.toSet + firstChar)
-
-  val default = apply()
 }

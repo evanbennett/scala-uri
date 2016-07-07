@@ -4,7 +4,7 @@ import org.scalatest.{Matchers, FlatSpec}
 
 class OldProtocolTests extends FlatSpec with Matchers {
 
-  import dsl._
+  import dsl.{ uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString }
 
   "A domain with no scheme" should "be rendered as a scheme relative url" in {
     val uri = Uri(host = "theon.github.com") / "uris-in-scala.html"

@@ -655,6 +655,12 @@ class AuthorityTests extends TestSpec {
     }
   }
 
+  "`UserInfo.apply`" should "fail when passed a `null` passwoird" in {
+    intercept[IllegalArgumentException] {
+      UserInfo("user", null: Option[String])
+    }
+  }
+
   "`UserInfo.copy`" should "succeed with user and password" in {
     val userInfo = UserInfo("user").copy("user2", Some("password2"))
     userInfo.user should equal("user2")
@@ -686,18 +692,8 @@ class AuthorityTests extends TestSpec {
   }
 
   "`UserInfo.toStringRaw`" should "succeed" in {
-    UserInfo("user", Some("password")).toStringRaw(UriConfig.default) should equal("user:password@")
+    UserInfo("user", Some("password")).toStringRaw(UriConfig.DEFAULT) should equal("user:password@")
   }
-
-
-
-
-
-
-
-
-
-
 
   "`Host.host`" should "succeed when it is a `registeredName`" in {
     Host("www.test.com").host should equal("www.test.com")
@@ -718,27 +714,27 @@ class AuthorityTests extends TestSpec {
   }
 
   "`Host.toString`" should "succeed when it is a `registeredName`" in {
-    Host("www.Test.com").toString(UriConfig.default) should equal("www.test.com")
+    Host("www.Test.com").toString(UriConfig.DEFAULT) should equal("www.test.com")
   }
 
   it should "succeed when it is an `ipv4Address`" in {
-    Host(ipv4Address = "192.168.203.46").toString(UriConfig.default) should equal("192.168.203.46")
+    Host(ipv4Address = "192.168.203.46").toString(UriConfig.DEFAULT) should equal("192.168.203.46")
   }
 
   it should "succeed when it is an `ipLiteralAddress`" in {
-    Host(ipLiteralAddress = "[54D8::2586]").toString(UriConfig.default) should equal("[54d8::2586]")
+    Host(ipLiteralAddress = "[54D8::2586]").toString(UriConfig.DEFAULT) should equal("[54d8::2586]")
   }
 
   "`Host.toStringRaw`" should "succeed when it is a `registeredName`" in {
-    Host("www.Test.com").toStringRaw(UriConfig.default) should equal("www.Test.com")
+    Host("www.Test.com").toStringRaw(UriConfig.DEFAULT) should equal("www.Test.com")
   }
 
   it should "succeed when it is an `ipv4Address`" in {
-    Host(ipv4Address = "192.168.203.46").toStringRaw(UriConfig.default) should equal("192.168.203.46")
+    Host(ipv4Address = "192.168.203.46").toStringRaw(UriConfig.DEFAULT) should equal("192.168.203.46")
   }
 
   it should "succeed when it is an `ipLiteralAddress`" in {
-    Host(ipLiteralAddress = "[54D8::2586]").toStringRaw(UriConfig.default) should equal("[54D8::2586]")
+    Host(ipLiteralAddress = "[54D8::2586]").toStringRaw(UriConfig.DEFAULT) should equal("[54D8::2586]")
   }
 
   "`Host.apply` with `Option` arguments" should "fail when all arguments are `None`" in {

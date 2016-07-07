@@ -15,9 +15,7 @@ sealed abstract case class Parameter(key: String, value: Option[String]) {
 
   def copy(key: String = key, value: Option[String] = value): Parameter = Parameter(key, value)
 
-  def withValue(newValue: String): Parameter = Parameter(key, newValue)
-
-  def withValue(newValue: Option[String]): Parameter = Parameter(key, newValue)
+  def withValue(newValue: Any): Parameter = Parameter(key, newValue)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -33,5 +31,13 @@ object Parameter {
     new Parameter(key, value) {}
   }
 
-  def apply(key: String, value: String): Parameter = apply(key, Option(value))
+  def apply(key: String, value: Any): Parameter = {
+    val newValue = value match {
+      case null => None
+      case None => None
+      case Some(value) => Option(value.toString)
+      case value => Option(value.toString)
+    }
+    apply(key, newValue)
+  }
 }

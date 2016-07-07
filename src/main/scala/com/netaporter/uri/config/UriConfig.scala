@@ -26,14 +26,7 @@ case class UriConfig(userInfoEncoder: UriEncoder,
 
 object UriConfig {
 
-  def apply(encoder: UriEncoder = PercentEncoder.default,
-            decoder: UriDecoder = PercentDecoder,
-            delimiterParsing: Boolean = false,
-            matrixParams: Boolean = false,
-            charset: String = "UTF-8"): UriConfig =
-    apply(encoder, encoder, encoder, encoder, encoder, decoder, decoder, decoder, decoder, decoder, delimiterParsing, matrixParams, charset)
-
-  val default = apply(userInfoEncoder = PercentEncoder(USER_INFO_CHARS_TO_ENCODE),
+  val DEFAULT = apply(userInfoEncoder = PercentEncoder(USER_INFO_CHARS_TO_ENCODE),
                       hostEncoder = PercentEncoder(HOST_CHARS_TO_ENCODE),
                       pathEncoder = PercentEncoder(PATH_CHARS_TO_ENCODE),
                       queryEncoder = PercentEncoder(QUERY_CHARS_TO_ENCODE),
@@ -51,5 +44,22 @@ object UriConfig {
    * Probably more than you need to percent encode. Wherever possible try to use a tighter Set of characters
    * to encode depending on your use case
    */
-  val conservative = apply(PercentEncoder.default, PercentDecoder)
+  val CONSERVATIVE = apply(PercentEncoder.DEFAULT, PercentDecoder)
+
+  def apply(encoder: UriEncoder = PercentEncoder.DEFAULT,
+            decoder: UriDecoder = PercentDecoder,
+            delimiterParsing: Boolean = false,
+            matrixParams: Boolean = false,
+            charset: String = "UTF-8"): UriConfig =
+    apply(encoder, encoder, encoder, encoder, encoder, decoder, decoder, decoder, decoder, decoder, delimiterParsing, matrixParams, charset)
+
+  @deprecated("Use `DEFAULT` instead.", "1.0.0")
+  val default = DEFAULT
+
+  /**
+   * Probably more than you need to percent encode. Wherever possible try to use a tighter Set of characters
+   * to encode depending on your use case
+   */
+  @deprecated("Use `CONSERVATIVE` instead.", "1.0.0")
+  val conservative = CONSERVATIVE
 }

@@ -38,12 +38,7 @@ sealed abstract class Segment {
   /**
    * Adds a matrix parameter to the end of this segment
    */
-  def append(key: String, value: String): MatrixParametersSegment
-
-  /**
-   * Adds a matrix parameter to the end of this segment
-   */
-  def append(key: String, value: Option[String]): MatrixParametersSegment
+  def append(key: String, value: Any): MatrixParametersSegment
 
   /**
    * Adds a matrix parameter to the end of this segment
@@ -73,9 +68,7 @@ sealed abstract case class StringSegment(segment: String) extends Segment {
 
   def mapSegments(f: String => String) = StringSegment(f(segment))
 
-  def append(key: String, value: String) = append(Parameter(key, value))
-
-  def append(key: String, value: Option[String]) = append(Parameter(key, value))
+  def append(key: String, value: Any) = append(Parameter(key, value))
 
   def append(parameter: Parameter) = MatrixParametersSegment(segment, Vector(parameter))
 

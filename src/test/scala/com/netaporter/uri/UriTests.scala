@@ -271,24 +271,24 @@ class UriTests extends TestSpec {
     }
   }
 
-  "`RelativePathRelativeReference`" should "`apply` with mandatory arguments" in {
-    RelativePathRelativeReference(RootlessPath(StringSegment("path")), None, None)
+  "`RootlessPathRelativeReference`" should "`apply` with mandatory arguments" in {
+    RootlessPathRelativeReference(RootlessPath(StringSegment("path")), None, None)
   }
 
   it should "`apply` with all arguments" in {
-    RelativePathRelativeReference(RootlessPath(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
+    RootlessPathRelativeReference(RootlessPath(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
   }
 
   it should "be creatable from `Uri.apply` with `Option` arguments" in {
     val path = RootlessPath.option(StringSegment("path"))
     val query = Query.option(Parameter("queryKey", Some("queryValue")))
     val fragment = Fragment.option("fragment")
-    RelativePathRelativeReference(path.get, query, fragment) should equal(Uri(None, None, path, query, fragment))
+    RootlessPathRelativeReference(path.get, query, fragment) should equal(Uri(None, None, path, query, fragment))
   }
 
   it should "fail `apply` with invalid arguments" in {
     intercept[IllegalArgumentException] {
-      RelativePathRelativeReference(RootlessPath(StringSegment("pathWith:isNotAllowed")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
+      RootlessPathRelativeReference(RootlessPath(StringSegment("pathWith:isNotAllowed")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
     }
   }
 

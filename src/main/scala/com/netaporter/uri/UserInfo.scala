@@ -16,19 +16,20 @@ sealed abstract case class UserInfo(user: String, password: Option[String]) {
 
 object UserInfo {
 
-  def apply(user: String, password: Option[String]): UserInfo = {
+  def apply(user: String, password: Option[String] = None): UserInfo = {
     if (user == null || user.isEmpty) throw new IllegalArgumentException("`user` cannot be `null` and cannot be empty.")
+    if (password == null) throw new IllegalArgumentException("`password` cannot be `null`.")
     new UserInfo(user, password) {}
   }
 
-  def apply(user: String, password: String = null): UserInfo = apply(user, Option(password))
+  def apply(user: String, password: String): UserInfo = apply(user, Option(password))
 
-  def option(user: String, password: Option[String]): Option[UserInfo] = {
+  def option(user: String, password: Option[String] = None): Option[UserInfo] = {
     if (user == null || user.isEmpty) {
       if (password == null || password.nonEmpty) throw new IllegalArgumentException("Cannot have a `password` without a `user`.")
       None
     } else Option(apply(user, password))
   }
 
-  def option(user: String = null, password: String = null): Option[UserInfo] = option(user, Option(password))
+  def option(user: String, password: String): Option[UserInfo] = option(user, Option(password))
 }

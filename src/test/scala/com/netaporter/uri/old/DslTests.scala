@@ -4,7 +4,8 @@ import org.scalatest.{Matchers, FlatSpec}
 
 class OldDslTests extends FlatSpec with Matchers {
 
-  import dsl._
+  import dsl.{ uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString }
+
 
   "A simple absolute URI" should "render correctly" in {
     val uri: Uri = "http://theon.github.com/uris-in-scala.html"

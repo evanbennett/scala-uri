@@ -28,6 +28,8 @@ There is also a [demo project](https://github.com/NET-A-PORTER/scala-uri-demo) t
 
 ## Building URIs with the DSL
 
+TODO: This section needs to be updated.
+
 ### Query Strings
 
 ```scala
@@ -74,6 +76,8 @@ uri.toString //This is: http://theon.github.com/scala-uri#fragments
 ```
 
 ## Parsing URIs
+
+TODO: This section needs to be updated.
 
 Provided you have the import `com.netaporter.uri.dsl._`, Strings will be implicitly parsed into `Uri` instances:
 
@@ -145,7 +149,9 @@ uri.filterQueryValues(_.length == 1) //Results in /scala-uri?p2=2
 
 ## URL Percent Encoding
 
-By Default, `scala-uri` will URL percent encode user info, paths, query strings and fragments. To prevent this, you can call the `uri.toStringRaw` method:
+TODO: This section needs to be updated.
+
+By Default, `scala-uri` will URL percent encode user info, registered names, paths, query strings and fragments. To prevent this, you can call the `uri.toStringRaw` method:
 
 ```scala
 import com.netaporter.uri.dsl._
@@ -206,6 +212,8 @@ uri.toString //This is http://theon.github.com/uri_with_space
 ```
 
 ## URL Percent Decoding
+
+TODO: This section needs to be updated.
 
 By Default, `scala-uri` will URL percent decode paths and query string parameters during parsing:
 
@@ -272,6 +280,8 @@ uri.query.paramMap //This is: Map("a" -> Seq("b", "c"), "d" -> Seq("e"))
 
 ## User Information
 
+TODO: This section needs to be updated.
+
 `scala-uri` supports user information (username and password) encoded in URLs.
 
 Parsing URLs with user information:
@@ -300,6 +310,8 @@ uri.withPassword("secret") //URL is now http://user:secret@host.com
 
 ## Protocol Relative URLs
 
+TODO: This section needs to be updated. They are just `AuthorityRelativeReference`s from the RFC, I am not sure why they need special attention.
+
 [Protocol Relative URLs](http://paulirish.com/2010/the-protocol-relative-url/) are supported in `scala-uri`. A `Uri` object with a protocol of `None`, but a host of `Some(x)` will be considered a protocol relative URL.
 
 ```scala
@@ -313,8 +325,7 @@ uri.host //This is: Some("example.com")
 
 TODO: This section needs to be updated.
 
-[Matrix Parameters](http://www.w3.org/DesignIssues/MatrixURIs.html) are supported in `scala-uri`. Support is enabled
-using a`UriConfig` with `matrixParams = true` like so:
+[Matrix Parameters](http://www.w3.org/DesignIssues/MatrixURIs.html) are supported in `scala-uri`. Support is enabled using a`UriConfig` with `matrixParams = true` like so:
 
 ```scala
 import com.netaporter.uri.dsl._
@@ -338,6 +349,8 @@ val uri3 = uri.addMatrixParam("pathTwo", "paramFour", "value4")
 
 ## Character Sets
 
+TODO: This section needs to be updated.
+
 By default `scala-uri` uses `UTF-8` charset encoding:
 
 ```scala
@@ -355,8 +368,9 @@ uri.toString //This is http://theon.github.com/uris-in-scala.html?chinese=%CD%F8
 
 ## Public Suffixes
 
-`scala-uri` uses the list of public suffixes from [publicsuffix.org](https://publicsuffix.org) to allow you to identify
-the TLD of your absolute URIs.
+TODO: This section needs to be updated.
+
+`scala-uri` uses the list of public suffixes from [publicsuffix.org](https://publicsuffix.org) to allow you to identify the TLD of your absolute URIs.
 
 The `publicSuffix` method returns the longest public suffix from your URI
 
@@ -374,7 +388,9 @@ uri.publicSuffixes == Seq("co.uk", "uk")
 
 These methods return `None` and `Seq.empty`, respectively for relative URIs
 
-## Including scala-uri your project
+## Including scala-uri in your project
+
+TODO: I think this should be simplified and provide a link to the Maven repository. From there users can see the released versions (including latest) and get dependency information.
 
 `scala-uri` `1.0.x` is currently built with support for scala `2.10.x` and `2.11.x`
 
@@ -426,17 +442,17 @@ The unit tests can be run from the sbt console by running the `test` command! Ch
 
 TODO: `scct:test` does not work for me.
 
-Generate code coverage reports from the sbt console by running the `scct:test` command. The HTML reports should be generated at `target/scala-2.10/coverage-report/index.html`. Ideally pull requests shouldn't significantly decrease code coverage, but it's not the end of the world if they do. Contributions with no tests are better than no contributions :)
+Generate code coverage reports from the sbt console by running the `scct:test` command. The HTML reports should be generated at `target/scala-2.10/coverage-report/index.html`. Ideally pull requests shouldn't significantly decrease code coverage, but it's not the end of the world if they do. Contributions with no tests are better than no contributions. :)
 
 ## Performance Tests
 
-For the `scala-uri` performance tests head to the [scala-uri-benchmarks](https://github.com/net-a-porter/scala-uri-benchmarks) github project
+For the `scala-uri` performance tests head to the [scala-uri-benchmarks](https://github.com/net-a-porter/scala-uri-benchmarks) github project.
 
 # Migration guide
 
 ## From 1.0.x to 1.1.x
 
- * Remove all deprecation warnings.
+ * Remove all deprecation warnings before migrating.
 
 ## From 0.4.x to 1.0.x
 
@@ -448,6 +464,7 @@ For the `scala-uri` performance tests head to the [scala-uri-benchmarks](https:/
   * `copy` use `copyOld` instead
   * `path` use `pathToString` instead
   * `unapply` returns the new arguments
+ * DSL incompatibilities may produce errors.
  * Lots of deprecation warnings.
 
 ## From 0.3.x to 0.4.x
