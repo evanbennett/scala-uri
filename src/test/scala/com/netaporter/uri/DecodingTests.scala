@@ -50,7 +50,7 @@ class DecodingTests extends TestSpec {
     uri.pathSegments should equal(Seq.empty)
     uri.query should equal(None)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal(":/?#[]@!$&'()*+,;={}\\\n\r")
+    uri.fragmentString.value should equal(":/?#[]@!$&'()*+,;={}\\\n\r")
   }
 
   it should "decode 2-byte groups" in {
@@ -171,7 +171,7 @@ class DecodingTests extends TestSpec {
     uri.authority should equal(None)
     uri.path should equal(None)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("frag%ment")
+    uri.fragmentString.value should equal("frag%ment")
   }
 
   it should "successfully parse with user, password, host, port, path, query and fragment" in {
@@ -184,7 +184,7 @@ class DecodingTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("path%3A")))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", Some("queryValue"))))
-    uri.fragment.value.fragment should equal("fragment%3A")
+    uri.fragmentString.value should equal("fragment%3A")
   }
 
   "`PermissiveDecoder` in `Uri(...)`" should "parse with a non-percent encoded user containing '%' and encoded password" in {

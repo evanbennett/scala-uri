@@ -147,7 +147,7 @@ class ResolutionTests extends TestSpec {
     targetUri.path.value shouldBe an[AbsolutePath]
     targetUri.pathSegments should equal(Seq(StringSegment("b"), StringSegment("c"), StringSegment("d;p")))
     targetUri.queryParameters.value should equal(Seq(Parameter("q", None)))
-    targetUri.fragment.value.fragment should equal("s")
+    targetUri.fragmentString.value should equal("s")
     targetUri.toString should equal("http://a/b/c/d;p?q#s")
   }
 
@@ -162,7 +162,7 @@ class ResolutionTests extends TestSpec {
     targetUri.path.value shouldBe an[AbsolutePath]
     targetUri.pathSegments should equal(Seq(StringSegment("b"), StringSegment("c"), StringSegment("g")))
     targetUri.query should equal(None)
-    targetUri.fragment.value.fragment should equal("s")
+    targetUri.fragmentString.value should equal("s")
     targetUri.toString should equal("http://a/b/c/g#s")
   }
 
@@ -177,7 +177,7 @@ class ResolutionTests extends TestSpec {
     targetUri.path.value shouldBe an[AbsolutePath]
     targetUri.pathSegments should equal(Seq(StringSegment("b"), StringSegment("c"), StringSegment("g")))
     targetUri.queryParameters.value should equal(Seq(Parameter("y", None)))
-    targetUri.fragment.value.fragment should equal("s")
+    targetUri.fragmentString.value should equal("s")
     targetUri.toString should equal("http://a/b/c/g?y#s")
   }
 
@@ -222,7 +222,7 @@ class ResolutionTests extends TestSpec {
     targetUri.path.value shouldBe an[AbsolutePath]
     targetUri.pathSegments should equal(Seq(StringSegment("b"), StringSegment("c"), StringSegment("g;x")))
     targetUri.queryParameters.value should equal(Seq(Parameter("y", None)))
-    targetUri.fragment.value.fragment should equal("s")
+    targetUri.fragmentString.value should equal("s")
     targetUri.toString should equal("http://a/b/c/g;x?y#s")
   }
 
@@ -614,7 +614,7 @@ class ResolutionTests extends TestSpec {
     targetUri.path.value shouldBe an[AbsolutePath]
     targetUri.pathSegments should equal(Seq(StringSegment("b"), StringSegment("c"), StringSegment("g")))
     targetUri.query should equal(None)
-    targetUri.fragment.value.fragment should equal("s/./x")
+    targetUri.fragmentString.value should equal("s/./x")
     targetUri.toString should equal("http://a/b/c/g#s/./x")
   }
 
@@ -629,7 +629,7 @@ class ResolutionTests extends TestSpec {
     targetUri.path.value shouldBe an[AbsolutePath]
     targetUri.pathSegments should equal(Seq(StringSegment("b"), StringSegment("c"), StringSegment("g")))
     targetUri.query should equal(None)
-    targetUri.fragment.value.fragment should equal("s/../x")
+    targetUri.fragmentString.value should equal("s/../x")
     targetUri.toString should equal("http://a/b/c/g#s/../x")
   }
 
@@ -669,7 +669,7 @@ class ResolutionTests extends TestSpec {
     targetUri.authority should equal(None)
     targetUri.path should equal(None)
     targetUri.query should equal(None)
-    targetUri.fragment.value.fragment should equal("fragment")
+    targetUri.fragmentString.value should equal("fragment")
     targetUri.toString should equal("scheme:#fragment")
   }
 
@@ -714,7 +714,7 @@ class ResolutionTests extends TestSpec {
     targetUri.path.value shouldBe a[RootlessPath]
     targetUri.pathSegments should equal(Seq(StringSegment("path")))
     targetUri.query should equal(None)
-    targetUri.fragment.value.fragment should equal("fragment")
+    targetUri.fragmentString.value should equal("fragment")
     targetUri.toString should equal("scheme:path#fragment")
   }
 }

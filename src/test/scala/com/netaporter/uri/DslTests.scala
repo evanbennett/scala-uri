@@ -68,7 +68,7 @@ class DslTests extends TestSpec {
     uri.port.value should equal(8080)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment1"), MatrixParametersSegment("pathSegment2", Seq(Parameter("matrixKey1", Some("matrixValue1")), Parameter("matrixKey2", Some("matrixValue2"))))))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey1", Some("queryValue1")), Parameter("queryKey2", Some("queryValue2"))))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, registeredName, multiple segements, no query and fragment" in {
@@ -80,7 +80,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment1"), MatrixParametersSegment("pathSegment2", Seq(Parameter("matrixKey1", Some("matrixValue1")), Parameter("matrixKey2", Some("matrixValue2"))))))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, registeredName, a single string segement, a query parameter and fragment" in {
@@ -92,7 +92,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", "queryValue")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, registeredName and empty path" in {
@@ -130,7 +130,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.path should equal(None)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -232,7 +232,7 @@ class DslTests extends TestSpec {
     uri.authority.value should equal(EmptyAuthority)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", "queryValue")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, empty authority, single path segment and fragment" in {
@@ -242,7 +242,7 @@ class DslTests extends TestSpec {
     uri.authority.value should equal(EmptyAuthority)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, empty authority, empty path and empty query" in {
@@ -294,7 +294,7 @@ class DslTests extends TestSpec {
     uri.authority.value should equal(EmptyAuthority)
     uri.path.value should equal(EmptyAbsolutePath)
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, empty authority, empty path and empty fragment" in {
@@ -315,7 +315,7 @@ class DslTests extends TestSpec {
     uri.authority.value should equal(EmptyAuthority)
     uri.path.value should equal(EmptyAbsolutePath)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, empty authority and empty query" in {
@@ -367,7 +367,7 @@ class DslTests extends TestSpec {
     uri.authority.value should equal(EmptyAuthority)
     uri.path should equal(None)
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, empty authority and empty fragment" in {
@@ -388,7 +388,7 @@ class DslTests extends TestSpec {
     uri.authority.value should equal(EmptyAuthority)
     uri.path should equal(None)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme and empty path" in {
@@ -429,7 +429,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", "queryValue")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, single path segment and fragment" in {
@@ -439,7 +439,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, empty path and empty query" in {
@@ -491,7 +491,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path.value should equal(EmptyAbsolutePath)
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, empty path and empty fragment" in {
@@ -512,7 +512,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path.value should equal(EmptyAbsolutePath)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme and rootless single path segment" in {
@@ -552,7 +552,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", "queryValue")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme, rootless single path segment and fragment" in {
@@ -562,7 +562,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme and empty query" in {
@@ -614,7 +614,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path should equal(None)
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with scheme and empty fragment" in {
@@ -635,7 +635,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path should equal(None)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -745,7 +745,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", "queryValue")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with registeredName, single path segment and fragment" in {
@@ -757,7 +757,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.pathSegments should equal(Seq(StringSegment("pathSegment")))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with registeredName, empty path and empty query" in {
@@ -819,7 +819,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.path.value should equal(EmptyAbsolutePath)
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with registeredName, empty path and empty fragment" in {
@@ -844,7 +844,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.path.value should equal(EmptyAbsolutePath)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with registeredName and empty query" in {
@@ -906,7 +906,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.path should equal(None)
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with registeredName and empty fragment" in {
@@ -931,7 +931,7 @@ class DslTests extends TestSpec {
     uri.port should equal(None)
     uri.path should equal(None)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1068,7 +1068,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(MatrixParametersSegment("pathSegment1", Seq(Parameter("matrixKey1", "matrixValue1"), Parameter("matrixKey2", "matrixValue2"))), MatrixParametersSegment("pathSegment2", Seq(Parameter("matrixKey1", "matrixValue1"), Parameter("matrixKey2")))))
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with multiple matrix parameter segments with key only parameter first followed by query and empty fragment" in {
@@ -1091,7 +1091,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(MatrixParametersSegment("pathSegment1", Seq(Parameter("matrixKey1", "matrixValue1"), Parameter("matrixKey2", "matrixValue2"))), MatrixParametersSegment("pathSegment2", Seq(Parameter("matrixKey1", "matrixValue1"), Parameter("matrixKey2")))))
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", "queryValue")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with multiple matrix parameter segments with key only parameter first followed by empty fragment" in {
@@ -1114,7 +1114,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(MatrixParametersSegment("pathSegment1", Seq(Parameter("matrixKey1", "matrixValue1"), Parameter("matrixKey2", "matrixValue2"))), MatrixParametersSegment("pathSegment2", Seq(Parameter("matrixKey1", "matrixValue1"), Parameter("matrixKey2")))))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with a string segment ending with '/', and empty query" in {
@@ -1171,7 +1171,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("pathSegment"), EmptySegment))
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with a string segment ending with '/', and empty fragment" in {
@@ -1194,7 +1194,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("pathSegment"), EmptySegment))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with multiple string segments and query with key only with parentheses surrounding the path" in {
@@ -1216,7 +1216,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("pathSegment1"), StringSegment("pathSegment2"), StringSegment("pathSegment3")))
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with multiple string segments, empty query and fragment with parentheses surrounding the path" in {
@@ -1227,7 +1227,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("pathSegment1"), StringSegment("pathSegment2"), StringSegment("pathSegment3")))
     uri.query.value should equal(EmptyQuery)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with multiple string segments and fragment" in {
@@ -1238,7 +1238,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("pathSegment1"), StringSegment("pathSegment2"), StringSegment("pathSegment3")))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with absolute path with multiple string segments and fragment with parentheses surrounding the path" in {
@@ -1249,7 +1249,7 @@ class DslTests extends TestSpec {
     uri.path.value shouldBe an[AbsolutePath]
     uri.pathSegments should equal(Seq(StringSegment("pathSegment1"), StringSegment("pathSegment2"), StringSegment("pathSegment3")))
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1282,7 +1282,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path should equal(None)
     uri.queryParameters.value should equal(Seq(Parameter("queryKey", "queryValue")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with multiple query parameters" in {
@@ -1322,7 +1322,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path should equal(None)
     uri.queryParameters.value should equal(Seq(Parameter("queryKey1", Some("queryValue1")), Parameter("queryKey2", Some("queryValue2")), Parameter("queryKey3", Some("queryValue3"))))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   it should "create a `Uri` with multiple query parameters and empty fragment" in {
@@ -1343,7 +1343,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path should equal(None)
     uri.queryParameters.value should equal(Seq(Parameter("queryKey1", Some("queryValue1")), Parameter("queryKey2", Some("queryValue2")), Parameter("queryKey3")))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1366,7 +1366,7 @@ class DslTests extends TestSpec {
     uri.authority should equal(None)
     uri.path should equal(None)
     uri.query should equal(None)
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
   }
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -114,7 +114,6 @@ sealed abstract class Uri(val scheme: Option[Scheme], val authority: Option[Auth
     case _ => Map.empty[String, Seq[String]]
   }
 
-  @deprecated("Use `fragment: Option[Fragment]` instead.", "1.0.0")
   def fragmentString: Option[String] = fragment.map(_.fragment)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

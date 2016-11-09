@@ -182,7 +182,7 @@ class GithubIssueTests extends TestSpec {
 
   "Github Issue #114" should "now be fixed" in {
     val uri = Uri("https://krownlab.com/products/hardware-systems/baldur/#baldur-top-mount#1") // THEON: Updated to new `Uri` parsing method.
-    uri.fragment.value.fragment should equal("baldur-top-mount#1")
+    uri.fragmentString.value should equal("baldur-top-mount#1")
     uri.toString should equal("https://krownlab.com/products/hardware-systems/baldur/#baldur-top-mount#1")
   }
 }

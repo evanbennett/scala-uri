@@ -420,11 +420,6 @@ class DeprecatedTests extends TestSpec {
     uri.queryValue should equal(uri.query.getOrElse(EmptyQuery))
   }
 
-  it should "`Uri.fragmentString`" in {
-    val uri = Uri(None, None, AbsolutePath.option(StringSegment("path")), None, Fragment.option("fragment"))
-    uri.fragmentString.value should equal(uri.fragment.value.fragment)
-  }
-
   it should "`Uri.addMatrixParam(String, String, String)`" in {
     val uri = Uri(None, None, AbsolutePath.option(StringSegment("path")), None, None)
     uri.addMatrixParam("path", "key", "value") should equal(uri.appendMatrixParameter("path", "key", "value"))

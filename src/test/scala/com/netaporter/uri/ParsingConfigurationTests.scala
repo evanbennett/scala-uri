@@ -25,7 +25,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -35,7 +35,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -54,7 +54,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -68,7 +68,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -78,7 +78,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -97,7 +97,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -111,7 +111,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -121,7 +121,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -137,7 +137,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -147,7 +147,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -161,7 +161,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -171,7 +171,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -187,7 +187,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -197,7 +197,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -211,7 +211,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -221,7 +221,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -240,7 +240,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -254,7 +254,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -264,7 +264,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -283,7 +283,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -297,7 +297,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -307,7 +307,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -323,7 +323,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -333,7 +333,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -347,7 +347,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -357,7 +357,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -373,7 +373,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -383,7 +383,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -397,7 +397,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -417,7 +417,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -431,7 +431,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -451,7 +451,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -465,7 +465,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -482,7 +482,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -492,7 +492,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -506,7 +506,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -523,7 +523,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -533,7 +533,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -547,7 +547,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -567,7 +567,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -581,7 +581,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -601,7 +601,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -615,7 +615,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -632,7 +632,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -642,7 +642,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -656,7 +656,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -673,7 +673,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -683,7 +683,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -697,7 +697,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -707,7 +707,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -727,7 +727,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -741,7 +741,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -751,7 +751,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -771,7 +771,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -785,7 +785,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -795,7 +795,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -811,7 +811,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -822,7 +822,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -836,7 +836,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -846,7 +846,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -862,7 +862,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -873,7 +873,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -887,7 +887,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -897,7 +897,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -917,7 +917,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -931,7 +931,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -941,7 +941,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -961,7 +961,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -975,7 +975,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -985,7 +985,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1001,7 +1001,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1012,7 +1012,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -1026,7 +1026,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1036,7 +1036,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1052,7 +1052,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1063,7 +1063,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -1077,7 +1077,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1098,7 +1098,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -1112,7 +1112,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1133,7 +1133,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -1147,7 +1147,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1164,7 +1164,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1175,7 +1175,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -1189,7 +1189,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1206,7 +1206,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1217,7 +1217,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -1231,7 +1231,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1252,7 +1252,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -1266,7 +1266,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1287,7 +1287,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -1301,7 +1301,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1318,7 +1318,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1329,7 +1329,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = false, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -1343,7 +1343,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1360,7 +1360,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1371,7 +1371,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -1385,7 +1385,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1395,7 +1395,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1411,7 +1411,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1421,7 +1421,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -1435,7 +1435,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1445,7 +1445,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1461,7 +1461,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1471,7 +1471,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -1485,7 +1485,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1495,7 +1495,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1511,7 +1511,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1521,7 +1521,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -1535,7 +1535,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1545,7 +1545,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1561,7 +1561,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1571,7 +1571,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -1585,7 +1585,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1595,7 +1595,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1611,7 +1611,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1621,7 +1621,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -1635,7 +1635,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1645,7 +1645,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1661,7 +1661,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1671,7 +1671,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -1685,7 +1685,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1695,7 +1695,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1711,7 +1711,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1721,7 +1721,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -1735,7 +1735,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -1745,7 +1745,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -1761,7 +1761,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1771,7 +1771,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -1785,7 +1785,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1802,7 +1802,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1812,7 +1812,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -1826,7 +1826,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1843,7 +1843,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1853,7 +1853,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -1867,7 +1867,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1884,7 +1884,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1894,7 +1894,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -1908,7 +1908,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1925,7 +1925,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1935,7 +1935,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -1949,7 +1949,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -1966,7 +1966,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -1976,7 +1976,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -1990,7 +1990,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2007,7 +2007,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2017,7 +2017,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -2031,7 +2031,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2048,7 +2048,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2058,7 +2058,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = false, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -2072,7 +2072,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2089,7 +2089,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2099,7 +2099,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -2113,7 +2113,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2123,7 +2123,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2139,7 +2139,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2150,7 +2150,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -2164,7 +2164,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2174,7 +2174,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2190,7 +2190,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2201,7 +2201,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -2215,7 +2215,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2225,7 +2225,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2241,7 +2241,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2252,7 +2252,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -2266,7 +2266,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2276,7 +2276,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2292,7 +2292,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2303,7 +2303,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -2317,7 +2317,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2327,7 +2327,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2343,7 +2343,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2354,7 +2354,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -2368,7 +2368,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2378,7 +2378,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2394,7 +2394,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2405,7 +2405,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -2419,7 +2419,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2429,7 +2429,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryString.value should equal("queryKey")
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2445,7 +2445,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2456,7 +2456,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = false, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -2470,7 +2470,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     val uriNotDns = Uri.option(uriStringNotDns).value
     uriNotDns shouldBe a[NetworkPathReference]
     uriNotDns.scheme should equal(None)
@@ -2480,7 +2480,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriNotDns.path.value shouldBe an[AbsolutePath]
     uriNotDns.pathSegments should equal(Seq(EmptySegment))
     uriNotDns.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriNotDns.fragment.value.fragment should equal("fragment")
+    uriNotDns.fragmentString.value should equal("fragment")
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
     uriEmptyQuery.scheme should equal(None)
@@ -2496,7 +2496,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2507,7 +2507,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -2521,7 +2521,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2538,7 +2538,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2549,7 +2549,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -2563,7 +2563,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2580,7 +2580,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2591,7 +2591,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -2605,7 +2605,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2622,7 +2622,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2633,7 +2633,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = false, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -2647,7 +2647,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2664,7 +2664,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2675,7 +2675,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(stringSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = false)`" in {
@@ -2689,7 +2689,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2706,7 +2706,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2717,7 +2717,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = false)`" in {
@@ -2731,7 +2731,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2748,7 +2748,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2759,7 +2759,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = false, fragmentAllowHashParsing = true)`" in {
@@ -2773,7 +2773,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryString.value should equal("queryKey")
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2790,7 +2790,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryString.value should equal("queryKey")
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2801,7 +2801,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryString.value should equal("queryKey1&queryKey2=queryValue2&queryKey3=")
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 
   it should "perform as expected with `UriConfig(delimiterParsing = true, userPasswordParsing = true, registeredNameMustBeDomainName = true, matrixParameterParsing = true, queryParameterParsing = true, fragmentAllowHashParsing = true)`" in {
@@ -2815,7 +2815,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriSimple.path.value shouldBe an[AbsolutePath]
     uriSimple.pathSegments should equal(Seq(StringSegment("path")))
     uriSimple.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriSimple.fragment.value.fragment should equal("fragment")
+    uriSimple.fragmentString.value should equal("fragment")
     Uri.option(uriStringNotDns) should equal(None)
     val uriEmptyQuery = Uri.option(uriStringEmptyQuery).value
     uriEmptyQuery shouldBe a[AbsolutePathReference]
@@ -2832,7 +2832,7 @@ class ParsingConfigurationTests extends TestSpec {
     uriFragmentWithHash.path.value shouldBe an[RootlessPath]
     uriFragmentWithHash.pathSegments should equal(Seq(StringSegment("path")))
     uriFragmentWithHash.queryParameters.value should equal(Seq(Parameter("queryKey")))
-    uriFragmentWithHash.fragment.value.fragment should equal("fragment#")
+    uriFragmentWithHash.fragmentString.value should equal("fragment#")
     val uriComplex = Uri.option(uriStringComplex).value
     uriComplex shouldBe a[SchemeWithAuthorityUri]
     uriComplex.scheme.value.scheme should equal("scheme")
@@ -2843,6 +2843,6 @@ class ParsingConfigurationTests extends TestSpec {
     uriComplex.path.value shouldBe an[AbsolutePath]
     uriComplex.pathSegments should equal(matrixParameterSegments)
     uriComplex.queryParameters.value should equal(queryParameters)
-    uriComplex.fragment.value.fragment should equal("fragment")
+    uriComplex.fragmentString.value should equal("fragment")
   }
 }

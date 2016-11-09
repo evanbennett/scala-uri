@@ -4,26 +4,26 @@ class FragmentTests extends TestSpec {
 
   "`Uri.withFragment`" should "change the fragment when provided a `Uri`" in {
     val uri = Uri(None, None, None, None, Fragment.option("fragment"))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
     val uri2 = Uri(None, None, None, None, Fragment.option("fragment2"))
-    uri.withFragment(uri2).fragment.value.fragment should equal("fragment2")
+    uri.withFragment(uri2).fragmentString.value should equal("fragment2")
   }
 
   it should "change the fragment when provided a `Fragment`" in {
     val uri = Uri(None, None, None, None, Fragment.option("fragment"))
-    uri.fragment.value.fragment should equal("fragment")
-    uri.withFragment(Fragment("fragment2")).fragment.value.fragment should equal("fragment2")
+    uri.fragmentString.value should equal("fragment")
+    uri.withFragment(Fragment("fragment2")).fragmentString.value should equal("fragment2")
   }
 
   it should "change the fragment when provided a `String`" in {
     val uri = Uri(None, None, None, None, Fragment.option("fragment"))
-    uri.fragment.value.fragment should equal("fragment")
-    uri.withFragment("fragment2").fragment.value.fragment should equal("fragment2")
+    uri.fragmentString.value should equal("fragment")
+    uri.withFragment("fragment2").fragmentString.value should equal("fragment2")
   }
 
   it should "remove the fragment when provided nothing" in {
     val uri = Uri(None, None, None, None, Fragment.option("fragment"))
-    uri.fragment.value.fragment should equal("fragment")
+    uri.fragmentString.value should equal("fragment")
     uri.withFragment().fragment should equal(None)
   }
 
