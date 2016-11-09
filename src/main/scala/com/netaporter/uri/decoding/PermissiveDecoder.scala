@@ -1,8 +1,11 @@
 package com.netaporter.uri.decoding
 
+/**
+ * Attempts to decode, but when an error occurs, the original input is returned rather than failing.
+ */
 class PermissiveDecoder(child: UriDecoder) extends UriDecoder {
 
-  def decode(s: String, originalInput: String): String = {
+  protected def _decode(s: String, originalInput: String)(implicit config: com.netaporter.uri.UriConfig): String = {
     try {
       child.decode(s, originalInput)
     } catch {

@@ -2,7 +2,6 @@ package com.netaporter.uri
 
 import org.scalatest.{Matchers, FlatSpec}
 import com.netaporter.uri.decoding.{UriDecodeException, NoopDecoder}
-import com.netaporter.uri.config.UriConfig
 
 class OldDecodingTests extends FlatSpec with Matchers {
 

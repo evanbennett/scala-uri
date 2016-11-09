@@ -1,58 +1,41 @@
-import scoverage.ScoverageSbtPlugin.ScoverageKeys._
-
 name := "scala-uri"
+organization := "com.netaporter"
+version := "1.0.0-SNAPSHOT"
 
-organization  := "com.netaporter"
-
-version       := "1.0.0-SNAPSHOT"
-
-scalaVersion  := "2.11.7"
-
-crossScalaVersions := Seq("2.10.5", "2.11.7")
-
-def coverageEnabled(scalaVersion: String) = scalaVersion match {
-  case v if v startsWith "2.10" => false
-  case _ => true
-}
-
-lazy val updatePublicSuffixes = taskKey[Unit]("Updates the public suffix Trie at com.netaporter.uri.internet.PublicSuffixes")
-
-updatePublicSuffixes := UpdatePublicSuffixTrie.generate()
-
-coverageOutputXML := coverageEnabled(scalaVersion.value)
-
-coverageOutputCobertua := coverageEnabled(scalaVersion.value)
-
-coverageHighlighting := coverageEnabled(scalaVersion.value)
-
-publishMavenStyle := true
-
-publishArtifact in Test := false
-
-pomIncludeRepository := { _ => false }
-
+scalaVersion := "2.11.8"
+crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.0")
+scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8", "-feature")
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
-
 resolvers += "Sonatype OSS Releases" at "https://oss.sonatype.org/content/repositories/releases"
 
-scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8", "-feature")
+lazy val updatePublicSuffixes = taskKey[Unit]("Updates the public suffix Trie at com.netaporter.uri.internet.PublicSuffixes")
+updatePublicSuffixes := UpdatePublicSuffixTrie.generate()
 
-libraryDependencies += "org.parboiled" %% "parboiled" % "2.1.0"
+def coverageAllowed(scalaVersion: String) = !scalaVersion.startsWith("2.10")
+coverageOutputXML := coverageAllowed(scalaVersion.value)
+coverageOutputCobertura := coverageAllowed(scalaVersion.value)
+coverageHighlighting := coverageAllowed(scalaVersion.value)
 
-libraryDependencies += "io.spray" %%  "spray-json" % "1.3.2"
+libraryDependencies ++= Seq(
+  "com.lihaoyi" %% "fastparse" % "0.4.2",
+  "io.spray" %%  "spray-json" % "1.3.2",
+  "org.parboiled" %% "parboiled" % "2.1.3",
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+)
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.1.4" % "test"
+logBuffered in Test := false
+//parallelExecution in Test := false
 
-parallelExecution in Test := false
-
-publishTo <<= version { (v: String) =>
+publishMavenStyle := true
+publishArtifact in Test := false
+pomIncludeRepository := { _ => false }
+publishTo := {
   val nexus = "https://oss.sonatype.org/"
-  if (v.trim.endsWith("SNAPSHOT"))
+  if (version.value.trim.endsWith("SNAPSHOT"))
     Some("snapshots" at nexus + "content/repositories/snapshots")
   else
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
-
 pomExtra := (
   <url>https://github.com/net-a-porter/scala-uri</url>
   <licenses>
@@ -72,4 +55,9 @@ pomExtra := (
       <name>Ian Forsey</name>
       <url>http://theon.github.io</url>
     </developer>
-  </developers>)
+  </developers>
+)
+
+// TODO: REMOVE:
+scalacOptions -= "-deprecation"
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oC")

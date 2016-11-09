@@ -1,14 +1,30 @@
 package com.netaporter.uri
 
-import com.netaporter.uri.config.UriConfig
-
+/**
+ * URI Authority, based on RFC 3986 section 3.2.
+ *
+ * @param userInfo the optional user info, which cannot exist without a host
+ * @param host the optional host
+ * @param port the optional port, which cannot exist without a host, and where `-1` represents an empty port
+ */
 sealed abstract case class Authority(userInfo: Option[UserInfo], host: Option[Host], port: Option[Int]) {
 
-  def user: Option[String] = userInfo.map(_.user)
+  def userInfoString: Option[String] = userInfo match {
+    case Some(userInfo: StringUserInfo) => Option(userInfo.userInfoString)
+    case _ => None
+  }
 
-  def password: Option[String] = userInfo.flatMap(_.password)
+  def user: Option[String] = userInfo match {
+    case Some(userInfo: UserPasswordUserInfo) => Option(userInfo.user)
+    case _ => None
+  }
 
-  def hostString: Option[String] = host.map(_.host)
+  def password: Option[String] = userInfo match {
+    case Some(userInfo: UserPasswordUserInfo) => userInfo.password
+    case _ => None
+  }
+
+  def hostString: Option[String] = host.map(_.hostString)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -16,10 +32,8 @@ sealed abstract case class Authority(userInfo: Option[UserInfo], host: Option[Ho
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  def toString(implicit c: UriConfig): String =
-    "//" + userInfo.map(_.toString).getOrElse("") + host.map(_.toString).getOrElse("") + port.map(":" + _).getOrElse("")
-
-  def toStringRaw(implicit c: UriConfig): String = toString(c.withNoEncoding)
+  def toString(implicit config: UriConfig): String =
+    "//" + userInfo.map(_.toString).getOrElse("") + host.map(_.toString).getOrElse("") + port.map(port => if (port == -1 && config.emptyComponentNormalization) "" else if (port == -1) ":" else ":" + port).getOrElse("")
 }
 
 object Authority {
@@ -33,24 +47,20 @@ object Authority {
       if (port.nonEmpty) throw new IllegalArgumentException("Cannot have a `port` without a `host`.")
       EmptyAuthority
     } else {
-      if (port.nonEmpty && port.exists(port => port < 1 || port > 65535)) throw new IllegalArgumentException("Invalid `port`. [" + port + "]")
+      if (port.nonEmpty && port.exists(port => port < -1 || port == 0 || port > 65535)) throw new IllegalArgumentException("Invalid `port`. [" + port + "]")
       new Authority(userInfo, host, port) {}
     }
   }
 
-  def apply(user: String = null, password: String = null, registeredName: String = null, ipv4Address: String = null, ipLiteralAddress: String = null, port: Int = 0): Authority =
-    apply(UserInfo.option(user, password), Host.option(registeredName, ipv4Address, ipLiteralAddress), if (port == 0) None else Option(port))
+  /** NOTE: Does not support `StringUserInfo`. */
+  def apply(user: String = null, password: String = null, registeredName: String = null, ipv4Address: String = null, ipLiteral: String = null, port: Int = 0)(implicit config: UriConfig): Authority =
+    apply(UserInfo.option(user, password), Host.option(registeredName, ipv4Address, ipLiteral), if (port == 0) None else Option(port))
 
-  def option(userInfo: Option[UserInfo], host: Option[Host], port: Option[Int]): Option[Authority] = {
-    if (host == null || host.isEmpty) {
-      if (userInfo != null && userInfo.nonEmpty) throw new IllegalArgumentException("Cannot have a `userInfo` without a `host`.")
-      if (port != null && port.nonEmpty) throw new IllegalArgumentException("Cannot have a `port` without a `host`.")
-      Some(EmptyAuthority)
-    } else Option(apply(userInfo, host, port))
-  }
+  def option(userInfo: Option[UserInfo], host: Option[Host], port: Option[Int]): Option[Authority] = Option(apply(userInfo, host, port))
 
-  def option(user: String = null, password: String = null, registeredName: String = null, ipv4Address: String = null, ipLiteralAddress: String = null, port: Int = 0): Option[Authority] =
-    option(UserInfo.option(user, password), Host.option(registeredName, ipv4Address, ipLiteralAddress), if (port == 0) None else Option(port))
+  /** NOTE: Does not support `StringUserInfo`. */
+  def option(user: String = null, password: String = null, registeredName: String = null, ipv4Address: String = null, ipLiteral: String = null, port: Int = 0)(implicit config: UriConfig): Option[Authority] =
+    Option(apply(user, password, registeredName, ipv4Address, ipLiteral, port))
 }
 
 object EmptyAuthority extends Authority(None, None, None)

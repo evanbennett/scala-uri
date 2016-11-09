@@ -2,17 +2,30 @@ package com.netaporter.uri
 
 class QueryTests extends TestSpec {
 
+  "`Uri.queryString`" should "return the query string" in {
+    val uri = Uri(None, None, None, Query.option("queryParamKey1=queryParamValue1&queryParamKey2="), None)
+    uri.queryString.value should equal("queryParamKey1=queryParamValue1&queryParamKey2=")
+  }
+
+  it should "return `None` the query has parameters" in {
+    Uri(None, None, None, Query.option(Parameter("queryParamKey1", Some("queryParamValue1")), Parameter("queryParamKey2", Some("")), Parameter("queryParamKey3", None), Parameter("queryParamKey4", Some("queryParamValue4"))), None).queryString should equal(None)
+  }
+
+  it should "return `None` when the query is `EmptyReference`" in {
+    EmptyReference.queryString should equal(None)
+  }
+
   "`Uri.queryParameters`" should "return all the query parameters" in {
     val uri = Uri(None, None, None, Query.option(Parameter("queryParamKey1", Some("queryParamValue1")), Parameter("queryParamKey2", Some("")), Parameter("queryParamKey3", None), Parameter("queryParamKey4", Some("queryParamValue4"))), None)
-    uri.queryParameters should equal(Seq(Parameter("queryParamKey1", Some("queryParamValue1")), Parameter("queryParamKey2", Some("")), Parameter("queryParamKey3", None), Parameter("queryParamKey4", Some("queryParamValue4"))))
+    uri.queryParameters.value should equal(Seq(Parameter("queryParamKey1", Some("queryParamValue1")), Parameter("queryParamKey2", Some("")), Parameter("queryParamKey3", None), Parameter("queryParamKey4", Some("queryParamValue4"))))
   }
 
-  it should "return empty when the query is empty" in {
-    Uri(None, None, None, Option(EmptyQuery), None).queryParameters should equal(Seq.empty)
+  it should "return `None` when the query is empty" in {
+    Uri(None, None, None, Option(EmptyQuery), None).queryParameters should equal(None)
   }
 
-  it should "return empty when the query is `None`" in {
-    EmptyRelativeReference.queryParameters should equal(Seq.empty)
+  it should "return `None` when the query is `EmptyReference`" in {
+    EmptyReference.queryParameters should equal(None)
   }
 
   "`Uri.queryValues(String)`" should "return the matching query parameters" in {
@@ -25,7 +38,7 @@ class QueryTests extends TestSpec {
   }
 
   it should "return empty when the query is `None`" in {
-    EmptyRelativeReference.queryValues("queryParamKey") should equal(Seq.empty)
+    EmptyReference.queryValues("queryParamKey") should equal(Seq.empty)
   }
 
   "`Uri.queryValueFirst(String)`" should "return the first matching query parameter" in {
@@ -38,7 +51,7 @@ class QueryTests extends TestSpec {
   }
 
   it should "return `None` when the query is `None`" in {
-    EmptyRelativeReference.queryValueFirst("queryParamKey1") should equal(None)
+    EmptyReference.queryValueFirst("queryParamKey1") should equal(None)
   }
 
   "`Uri.queryMap`" should "return all the query parameters" in {
@@ -55,12 +68,12 @@ class QueryTests extends TestSpec {
   }
 
   it should "return empty when the query is `None`" in {
-    EmptyRelativeReference.queryMap should equal(Map.empty)
+    EmptyReference.queryMap should equal(Map.empty)
   }
 
   "`Uri.withQuery`" should "change the query when provided a `Uri`" in {
     val query = Query.option(Parameter("queryParamKey", Some("queryParamValue")))
-    EmptyRelativeReference.withQuery(Uri(None, None, None, query, None)).query should equal(query)
+    EmptyReference.withQuery(Uri(None, None, None, query, None)).query should equal(query)
   }
 
   it should "change the query when provided a `Query`" in {
@@ -160,7 +173,7 @@ class QueryTests extends TestSpec {
 
   it should "append a parameter key and value without an existing query" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
-    EmptyRelativeReference.queryAppend("queryParamKey1", Some("queryParamValue1")).query.value should equal(Query(parameter1))
+    EmptyReference.queryAppend("queryParamKey1", Some("queryParamValue1")).query.value should equal(Query(parameter1))
   }
 
   it should "append a parameter sequence to an existing query" in {
@@ -174,7 +187,7 @@ class QueryTests extends TestSpec {
   it should "append a parameter sequence without an existing query" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter3 = Parameter("queryParamKey3", None)
-    EmptyRelativeReference.queryAppend(Seq(("queryParamKey1", "queryParamValue1"), ("queryParamKey3", None))).query.value should equal(Query(parameter1, parameter3))
+    EmptyReference.queryAppend(Seq(("queryParamKey1", "queryParamValue1"), ("queryParamKey3", None))).query.value should equal(Query(parameter1, parameter3))
   }
 
   it should "append parameters to an existing query" in {
@@ -197,7 +210,7 @@ class QueryTests extends TestSpec {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some(""))
     val parameter3 = Parameter("queryParamKey3", None)
-    EmptyRelativeReference.queryAppend(parameter1, parameter2, parameter3).query.value should equal(Query(parameter1, parameter2, parameter3))
+    EmptyReference.queryAppend(parameter1, parameter2, parameter3).query.value should equal(Query(parameter1, parameter2, parameter3))
   }
 
   it should "append query parameters" in {
@@ -205,44 +218,36 @@ class QueryTests extends TestSpec {
     val parameter2 = Parameter("queryParamKey2", Some(""))
     val parameter3 = Parameter("queryParamKey3", None)
     val uri = Uri(None, None, None, Query.option(parameter1, parameter2), None)
-    uri.queryAppend(Query(parameter2, parameter3)).query.value.parameters should equal(Seq(parameter1, parameter2, parameter2, parameter3))
-  }
-
-  it should "not change when passed an EmptyQuery" in {
-    val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
-    val parameter2 = Parameter("queryParamKey2", Some(""))
-    val query = Query.option(parameter1, parameter2)
-    val uri = Uri(None, None, None, query, None)
-    uri.queryAppend(EmptyQuery).query should equal(query)
+    uri.queryAppend(ParameterQuery(parameter2, parameter3)).queryParameters.value should equal(Seq(parameter1, parameter2, parameter2, parameter3))
   }
 
   it should "use the other query when called with an EmptyQuery" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some(""))
-    val query = Query(parameter1, parameter2)
+    val query = ParameterQuery(parameter1, parameter2)
     Uri(query = EmptyQuery).queryAppend(query).query.value should equal(query)
   }
 
-  it should "use the other query when called on EmptyRelativeReference" in {
+  it should "use the other query when called on EmptyReference" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some(""))
-    val query = Query(parameter1, parameter2)
-    EmptyRelativeReference.queryAppend(query).query.value should equal(query)
+    val query = ParameterQuery(parameter1, parameter2)
+    EmptyReference.queryAppend(query).query.value should equal(query)
   }
 
   "`Uri.queryMapParameters`" should "transform all parameters" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some(""))
     val parameter3 = Parameter("queryParamKey3", None)
-    val uri = Uri(None, None, None, Query.option(parameter1, parameter2, parameter3), None)
+    val uri = Uri(None, None, None, ParameterQuery.option(parameter1, parameter2, parameter3), None)
     uri.queryMapParameters(parameter => parameter.withValue(parameter.value.map(_ + "Extension"))).query.value should equal(Query(Parameter("queryParamKey1", Some("queryParamValue1Extension")), Parameter("queryParamKey2", Some("Extension")), Parameter("queryParamKey3", None)))
   }
 
-  "`Uri.queryMapParameters`" should "transform all parameters using `withValue(String)`" in {
+  it should "transform all parameters using `withValue(String)`" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some(""))
     val parameter3 = Parameter("queryParamKey3", None)
-    val uri = Uri(None, None, None, Query.option(parameter1, parameter2, parameter3), None)
+    val uri = Uri(None, None, None, ParameterQuery.option(parameter1, parameter2, parameter3), None)
     uri.queryMapParameters(parameter => parameter.withValue(parameter.value.getOrElse("") + "Extension")).query.value should equal(Query(Parameter("queryParamKey1", Some("queryParamValue1Extension")), Parameter("queryParamKey2", Some("Extension")), Parameter("queryParamKey3", Some("Extension"))))
   }
 
@@ -250,7 +255,7 @@ class QueryTests extends TestSpec {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
     val parameter2 = Parameter("queryParamKey2", Some("queryParamValue2"))
     val parameter3 = Parameter("queryParamKey3", None)
-    val uri = Uri(None, None, None, Query.option(parameter1, parameter2, parameter3), None)
+    val uri = Uri(None, None, None, ParameterQuery.option(parameter1, parameter2, parameter3), None)
     uri.queryMapParameters {
       case Parameter(key, Some(value)) => Parameter(value, Some(key))
       case parameter => parameter
@@ -307,8 +312,8 @@ class QueryTests extends TestSpec {
     val parameter3 = Parameter("queryParamKey3", None)
     val uri = Uri(None, None, None, Query.option(parameter1, parameter2, parameter3), None)
     uri.queryFilterParameters {
-      case Parameter(key, Some(value)) => (key + value).length < 16
       case Parameter(key, None) => key.length < 16
+      case Parameter(key, Some(value)) => (key + value).length < 16
     }.query.value should equal(Query(parameter2, parameter3))
   }
 
@@ -428,7 +433,7 @@ class QueryTests extends TestSpec {
     val parameter2 = Parameter("queryParamKey2", Some(""))
     val parameter3 = Parameter("queryParamKey3", None)
     val uri = Uri(None, None, None, Query.option(parameter1, parameter2, parameter3), None)
-    uri.queryReplaceMatching("queryParamKey4", "") should equal(uri)
+    uri.queryReplaceMatching("queryParamKey4", "").query.value should equal(Query(parameter1, parameter2, parameter3, Parameter("queryParamKey4", "")))
   }
 
   it should "change nothing when query was `None`" in {
@@ -504,70 +509,180 @@ class QueryTests extends TestSpec {
   }
 
   it should "work without a query" in {
-    EmptyRelativeReference.queryToString should equal("")
+    EmptyReference.queryToString should equal("")
   }
 
-  "`Uri.queryToStringRaw` and therefore `Query.toStringRaw`" should "work with a single query parameter with key and value" in {
-    val uri = Uri(None, None, None, Query.option(Parameter("queryParamKey", Some("queryParamValue"))), None)
-    uri.queryToStringRaw should equal("?queryParamKey=queryParamValue")
+  "`Query.withQueryString`" should "succeed with passed a string" in {
+    val query = Query("queryParamKey=queryParamValue").withQueryString("newQuery")
+    query shouldBe a[StringQuery]
+    query.asInstanceOf[StringQuery].queryString should equal("newQuery")
   }
 
-  it should "work with a single query parameter with key and empty value" in {
-    val uri = Uri(None, None, None, Query.option(Parameter("queryParamKey", Some(""))), None)
-    uri.queryToStringRaw should equal("?queryParamKey=")
+  it should "succeed with passed an empty string" in {
+    Query("queryParamKey=queryParamValue").withQueryString("") should equal(EmptyQuery)
   }
 
-  it should "work with a single query parameter with key and no value" in {
-    val uri = Uri(None, None, None, Query.option(Parameter("queryParamKey", None)), None)
-    uri.queryToStringRaw should equal("?queryParamKey")
+  it should "succeed with passed nothing" in {
+    Query("queryParamKey=queryParamValue").withQueryString() should equal(EmptyQuery)
   }
 
-  it should "work with multiple query parameters" in {
-    val uri = Uri(None, None, None, Query.option(Parameter("queryParamKey", Some("queryParamValue")), Parameter("queryParamKey", Some("")), Parameter("queryParamKey", None)), None)
-    uri.queryToStringRaw should equal("?queryParamKey=queryParamValue&queryParamKey=&queryParamKey")
+  "`Query.apply`" should "succeed when passed a string" in {
+    val query = Query("queryParamKey=queryParamValue")
+    query shouldBe a[StringQuery]
+    query.asInstanceOf[StringQuery].queryString should equal("queryParamKey=queryParamValue")
   }
 
-  it should "work without a query" in {
-    EmptyRelativeReference.queryToStringRaw should equal("")
+  it should "succeed when passed an empty string" in {
+    Query("") should equal(EmptyQuery)
   }
 
-  "`Query.copy` and therfore `Query.apply`" should "succeed" in {
+  it should "succeed when passed a `Parameter`" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
-    val parameter2 = Parameter("queryParamKey2", Some(""))
-    val parameter3 = Parameter("queryParamKey3", None)
-    Query(parameter1).copy(Seq(parameter2, parameter3)).parameters should equal(Seq(parameter2, parameter3))
+    val query = Query(parameter1)
+    query shouldBe a[ParameterQuery]
+    query.asInstanceOf[ParameterQuery].parameters should equal(Seq(parameter1))
+  }
+
+  it should "succeed when passed `Parameter`s" in {
+    val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
+    val query = Query(parameter1, Parameter("queryParamKey2"))
+    query shouldBe a[ParameterQuery]
+    query.asInstanceOf[ParameterQuery].parameters should equal(Seq(parameter1, Parameter("queryParamKey2")))
   }
 
   it should "succeed when passed an empty sequence" in {
-    Query(Parameter("queryParamKey", Some("queryParamValue"))).copy(Seq.empty) should equal(EmptyQuery)
+    Query(Seq.empty) should equal(EmptyQuery)
   }
 
-  it should "fail when passed `null`" in {
-    intercept[IllegalArgumentException] {
-      Query(Parameter("queryParamKey", Some("queryParamValue"))).copy(null)
+  it should "fail when passed `null: String`" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Query(null: String)
     }
   }
 
-  "`Query.option`" should "return Some" in {
+  it should "fail when passed `null: Seq[Parameter]`" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Query(null: Seq[Parameter])
+    }
+  }
+
+  "`Query.option`" should "return Some when passed a string" in {
+    val query = Query.option("queryParamKey=queryParamValue").value
+    query shouldBe a[StringQuery]
+    query.asInstanceOf[StringQuery].queryString should equal("queryParamKey=queryParamValue")
+  }
+
+  it should "return None when passed an empty string" in {
+    Query.option("").value should equal(EmptyQuery)
+  }
+
+  it should "return None when passed `null: String`" in {
+    Query.option(null: String) should equal(None)
+  }
+
+  it should "return Some when passed a `Parameter`" in {
     val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
-    Query.option(parameter1).value.parameters should equal(Seq(parameter1))
+    val query = Query.option(parameter1).value
+    query shouldBe a[ParameterQuery]
+    query.asInstanceOf[ParameterQuery].parameters should equal(Seq(parameter1))
+  }
+
+  it should "return Some when passed `Parameter`s" in {
+    val parameter1 = Parameter("queryParamKey1", Some("queryParamValue1"))
+    val query = Query.option(parameter1).value
+    query shouldBe a[ParameterQuery]
+    query.asInstanceOf[ParameterQuery].parameters should equal(Seq(parameter1))
   }
 
   it should "return Some(EmptyQuery) when passed an empty sequence" in {
     Query.option(Seq.empty).value should equal(EmptyQuery)
   }
 
-  it should "return None when passed `null`" in {
+  it should "return None when passed `null: Seq[Parameter]`" in {
     Query.option(null: Seq[Parameter]) should equal(None)
   }
 
-  "`Parameter.copy`" should "succeed" in {
+  "`Query.unapply`" should "succeed with `StringQuery`" in {
+    val query = Query("queryParamKey=queryParamValue")
+    Query.unapply(query).value should equal((Some("queryParamKey=queryParamValue"), None))
+  }
+
+  it should "succeed with `ParameterQuery`" in {
+    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
+    Query.unapply(query).value should equal((None, Some(Seq(Parameter("queryParamKey", Some("queryParamValue"))))))
+  }
+
+  it should "succeed with `EmptyQuery`" in {
+    Query.unapply(EmptyQuery).value should equal((None, None))
+  }
+
+  it should "succeed with `null`" in {
+    Query.unapply(null) should equal(None)
+  }
+
+  "`StringQuery.append`" should "succeed with a `Parameter`" in {
+    val query = Query("queryParamKey=queryParamValue")
+    val parameter = Parameter("queryParamKey", Some("queryParamValue"))
+    val newQuery = query.append(parameter)
+    newQuery shouldBe a[ParameterQuery]
+    newQuery.asInstanceOf[ParameterQuery].parameters should equal(Seq(Parameter("queryParamKey=queryParamValue", None), parameter))
+  }
+
+  it should "succeed with a `Seq[Parameter]`" in {
+    val query = Query("queryParamKey")
+    val parameters = Seq(Parameter("queryParamKey1", Some("queryParamValue1")), Parameter("queryParamKey2", Some("")), Parameter("queryParamKey3", None))
+    val newQuery = query.append(parameters)
+    newQuery shouldBe a[ParameterQuery]
+    newQuery.asInstanceOf[ParameterQuery].parameters should equal(Parameter("queryParamKey") +: parameters)
+  }
+
+  it should "succeed with a `Parameters`" in {
+    val query = Query("query")
+    val otherQuery = ParameterQuery(Parameter("queryParamKey", Some("queryParamValue")))
+    val newQuery = query.append(otherQuery)
+    newQuery shouldBe a[ParameterQuery]
+    newQuery.asInstanceOf[ParameterQuery].parameters should equal(Parameter("query") +: otherQuery.parameters)
+  }
+
+  "`StringQuery.unapply`" should "succeed with `StringQuery`" in {
+    val query = StringQuery("queryParamKey=queryParamValue")
+    StringQuery.unapply(query).value should equal("queryParamKey=queryParamValue")
+  }
+
+  it should "succeed with `null`" in {
+    StringQuery.unapply(null) should equal(None)
+  }
+
+  "`ParameterQuery.unapply`" should "succeed with `ParameterQuery`" in {
+    val query = ParameterQuery(Parameter("queryParamKey", Some("queryParamValue")))
+    ParameterQuery.unapply(query).value should equal(Seq(Parameter("queryParamKey", Some("queryParamValue"))))
+  }
+
+  it should "succeed with `null`" in {
+    ParameterQuery.unapply(null) should equal(None)
+  }
+
+  "`Parameter.copy`" should "succeed with key and value" in {
     Parameter("key", Some("value")).copy("newKey", Option("newValue")) should equal(Parameter("newKey", "newValue"))
   }
 
-  "``Parameter.apply`" should "succeed with key and value" in {
+  it should "succeed with key only" in {
+    Parameter("key", Some("value")).copy("newKey") should equal(Parameter("newKey", "value"))
+  }
+
+  it should "succeed with value only" in {
+    Parameter("key", Some("value")).copy(value = Option("newValue")) should equal(Parameter("key", "newValue"))
+  }
+
+  "`Parameter.apply`" should "succeed with key and value" in {
     val parameter = Parameter("key", Some("value"))
     parameter.key should equal("key")
+    parameter.value.value should equal("value")
+  }
+
+  it should "succeed with an empty key and a value" in {
+    val parameter = Parameter("", Some("value"))
+    parameter.key should equal("")
     parameter.value.value should equal("value")
   }
 
@@ -577,27 +692,27 @@ class QueryTests extends TestSpec {
     parameter.value should equal(None)
   }
 
+  it should "succeed with an empty key only" in {
+    val parameter = Parameter("")
+    parameter.key should equal("")
+    parameter.value should equal(None)
+  }
+
   it should "succeed with `null` value (String)" in {
-    val parameter = Parameter("key", null:String)
+    val parameter = Parameter("key", null: String)
     parameter.key should equal("key")
     parameter.value should equal(None)
   }
 
   it should "fail when passed `null` key" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Parameter(null)
     }
   }
 
-  it should "fail when passed empty key" in {
-    intercept[IllegalArgumentException] {
-      Parameter("")
-    }
-  }
-
   it should "fail when passed `null` value (Option[String])" in {
-    intercept[IllegalArgumentException] {
-      Parameter("key", null:Option[String])
+    an [IllegalArgumentException] should be thrownBy {
+      Parameter("key", null: Option[String])
     }
   }
 }

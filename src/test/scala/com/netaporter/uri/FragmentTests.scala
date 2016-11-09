@@ -33,16 +33,7 @@ class FragmentTests extends TestSpec {
   }
 
   it should "work without a fragment" in {
-    EmptyRelativeReference.fragmentToString should equal("")
-  }
-
-  "`Uri.fragmentToStringRaw` and therefore `Fragment.toStringRaw`" should "work with a fragment" in {
-    val uri = Uri(None, None, None, None, Fragment.option("fragment"))
-    uri.fragmentToStringRaw should equal("#fragment")
-  }
-
-  it should "work without a fragment" in {
-    EmptyRelativeReference.fragmentToStringRaw should equal("")
+    EmptyReference.fragmentToString should equal("")
   }
 
   "`Fragment.copy`" should "succeed" in {
@@ -54,7 +45,7 @@ class FragmentTests extends TestSpec {
   }
 
   it should "fail when passed `null`" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Fragment("http").copy(null)
     }
   }
@@ -68,7 +59,7 @@ class FragmentTests extends TestSpec {
   }
 
   it should "fail when passed `null`" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Fragment(null)
     }
   }

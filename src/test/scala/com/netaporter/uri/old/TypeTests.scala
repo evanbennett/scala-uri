@@ -28,6 +28,6 @@ class OldTypeTests extends FlatSpec with Matchers {
 
   "Options" should "render correctly" in {
     val uri = "/uris-in-scala.html" ? ("param" -> Some("some")) & ("param2" -> None)
-    uri.toString should equal ("/uris-in-scala.html?param=some&param2") // TODO: Appended "&param2" due to functional changes.
+    uri.toString should equal ("/uris-in-scala.html?param=some&param2") // THEON: Appended "&param2" due to functional changes.
   }
 }

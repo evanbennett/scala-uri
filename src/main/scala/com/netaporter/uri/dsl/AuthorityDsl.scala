@@ -18,7 +18,7 @@ sealed case class AuthorityDsl(scheme: Option[Scheme], authority: Authority) {
 
   def /?(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, Option(authority), Some(EmptyAbsolutePath), Query(firstQueryParameter))
 
-  def /?(firstQueryKey: String): QueryDsl = QueryDsl(scheme, Option(authority), Some(EmptyAbsolutePath), EmptyQuery.append(firstQueryKey))
+  def /?(queryString: String): QueryDsl = QueryDsl(scheme, Option(authority), Some(EmptyAbsolutePath), Query(queryString))
 
   def /?# : FragmentDsl = FragmentDsl(scheme, Option(authority), Some(EmptyAbsolutePath), Some(EmptyQuery), Some(EmptyFragment))
 
@@ -32,7 +32,7 @@ sealed case class AuthorityDsl(scheme: Option[Scheme], authority: Authority) {
 
   def ?(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, Option(authority), None, Query(firstQueryParameter))
 
-  def ?(firstQueryKey: String): QueryDsl = QueryDsl(scheme, Option(authority), None, EmptyQuery.append(firstQueryKey))
+  def ?(queryString: String): QueryDsl = QueryDsl(scheme, Option(authority), None, Query(queryString))
 
   def ?# : FragmentDsl = FragmentDsl(scheme, Option(authority), None, Some(EmptyQuery), Some(EmptyFragment))
 
@@ -42,5 +42,7 @@ sealed case class AuthorityDsl(scheme: Option[Scheme], authority: Authority) {
 
   def `#`(fragment: String): FragmentDsl = FragmentDsl(scheme, Option(authority), None, None, Fragment.option(fragment))
 
-  def toUri: Uri = Uri(scheme, Some(authority), None, None, None)
+  def toUri(implicit config: UriConfig): Uri = Uri(scheme, Some(authority), None, None, None)
+
+  def toString(implicit config: UriConfig): String = toUri.toString
 }

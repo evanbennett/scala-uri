@@ -4,7 +4,6 @@ import org.scalatest.WordSpec
 import org.scalatest.Matchers
 import dsl.{ uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString }
 import java.net.URI
-import com.netaporter.uri.config.UriConfig
 
 class OldToUriTests extends WordSpec with Matchers {
   "toUri" should {
@@ -59,7 +58,7 @@ class OldToUriTests extends WordSpec with Matchers {
 
     "handle exotic/reserved characters in query string" in {
       val javaUri: URI = new URI("http://user:password@www.example.com/test?weird%3D%26key=strange%25value&arrow=%E2%87%94")
-      val uri: Uri = Uri(javaUri)
+      val uri: Uri = Uri(javaUri)(UriConfig.default)
       uri.protocol should equal(Some("http"))
       uri.host should equal(Some("www.example.com"))
       uri.user should equal(Some("user"))

@@ -59,7 +59,7 @@ class OldDslTests extends FlatSpec with Matchers {
   "Remove param method" should "remove multiple parameters" in {
     val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testOne" -> "2")
     val newUri = uri.removeParams("testOne")
-    newUri.toString should equal ("/uris-in-scala.html?") // TODO: Appended '?' due to functional changes.
+    newUri.toString should equal ("/uris-in-scala.html?") // THEON: Appended '?' due to functional changes.
   }
 
   "Replace all params method" should "replace all query params" in {
@@ -71,7 +71,7 @@ class OldDslTests extends FlatSpec with Matchers {
   "Remove param method" should "remove single parameters" in {
     val uri = "/uris-in-scala.html" ? ("testOne" -> "1")
     val newUri = uri.removeParams("testOne")
-    newUri.toString should equal ("/uris-in-scala.html?") // TODO: Appended '?' due to functional changes.
+    newUri.toString should equal ("/uris-in-scala.html?") // THEON: Appended '?' due to functional changes.
   }
 
   "Remove param method" should "not remove other parameters" in {
@@ -83,7 +83,7 @@ class OldDslTests extends FlatSpec with Matchers {
   "Remove param method" should "remove parameters contained in SeqLike" in {
     val uri = "/uris-in-scala.html" ? ("testOne" -> "1") & ("testTwo" -> "2")
     val newUri = uri.removeParams(List("testOne", "testTwo"))
-    newUri.toString should equal ("/uris-in-scala.html?") // TODO: Appended '?' due to functional changes.
+    newUri.toString should equal ("/uris-in-scala.html?") // THEON: Appended '?' due to functional changes.
   }
 
   "Remove param method" should "not remove parameters uncontained in List" in {

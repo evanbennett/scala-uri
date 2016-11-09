@@ -5,7 +5,6 @@ import Uri._
 import scala._
 import scala.Some
 import com.netaporter.uri.parsing._
-import com.netaporter.uri.config.UriConfig
 
 class OldParsingTests extends FlatSpec with Matchers {
 
@@ -197,16 +196,16 @@ class OldParsingTests extends FlatSpec with Matchers {
 
   "exotic/reserved characters in query string" should "be decoded" in {
     val q = "?weird%3D%26key=strange%25value&arrow=%E2%87%94"
-    val parsedQueryString = new UriParser(q, config.UriConfig.default)._query.run().get
+    val parsedQueryString = new DefaultUriParser(q, UriConfig.default)._queryString.run().get
     parsedQueryString.params("weird=&key") should equal(Seq(Some("strange%value")))
     parsedQueryString.params("arrow") should equal(Seq(Some("⇔")))
   }
 
   "exotic/reserved characters in user info" should "be decoded" in {
     val userInfo = "user%3A:p%40ssword%E2%87%94@"
-    val parsedUserInfo = new UriParser(userInfo, config.UriConfig.default)._userInfo.run().get
+    val parsedUserInfo = new DefaultUriParser(userInfo, UriConfig.default)._userInfo.run().get
     parsedUserInfo.user should equal("user:")
-    parsedUserInfo.password should equal(Some("p@ssword⇔"))
+    parsedUserInfo.pass should equal(Some("p@ssword⇔"))
   }
 
   "Uri.parse" should "provide paramMap as a Map of String to Seq of String" in {

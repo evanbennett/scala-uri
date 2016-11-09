@@ -2,5 +2,5 @@ package com.netaporter.uri.decoding
 
 object NoopDecoder extends UriDecoder {
 
-  def decode(s: String, originalInput: String): String = s
+  protected def _decode(s: String, originalInput: String)(implicit config: com.netaporter.uri.UriConfig): String = s
 }

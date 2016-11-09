@@ -1,37 +1,25 @@
 package com.netaporter.uri.parsing
 
 import com.netaporter.uri._
-import org.parboiled2._
+import fastparse.all._
 
-trait DelimiterParsing {
-  self: UriParser =>
+trait DelimiterParsing extends BaseParser {
 
-  @deprecated("Being made `protected`.", "1.0.0")
-  override def _userInfo: Rule1[UserInfo] = rule { // TODO: I had to add '[' or this tries to parse an `ipLiteralAddress` host:
-    capture(oneOrMore(noneOf("[:@/?#"))) ~ optional(":" ~ capture(zeroOrMore(noneOf("@/?#")))) ~ "@" ~> extractUserInfo
-  }
+  protected override val USER_INFO = DelimiterParsing.USER_INFO
+  protected override val REGISTERED_NAME = DelimiterParsing.REGISTERED_NAME
+  protected override val SEGMENT = DelimiterParsing.SEGMENT
+  protected override val SEGMENT_NO_COLONS = DelimiterParsing.SEGMENT_NO_COLONS
+  protected override val QUERY = DelimiterParsing.QUERY
+  protected override val FRAGMENT = DelimiterParsing.FRAGMENT
+}
 
-  protected override def _registeredName: Rule0 = rule {
-    noneOf(".[:/?#") ~ optional((1 to 254).times(noneOf(":/?#"))) // TODO: I do not know how to implement this here: Cannot contain ".."
-  }
+object DelimiterParsing {
 
-  protected override def _segment: Rule1[Segment] = rule {
-    capture(zeroOrMore(noneOf("/?#"))) ~> extractSegment
-  }
-
-  protected override def _segmentNz: Rule1[Segment] = rule {
-    capture(oneOrMore(noneOf("/?#"))) ~> extractSegment
-  }
-
-  protected override def _segmentNzNc: Rule1[Segment] = rule {
-    capture(oneOrMore(noneOf(":/?#"))) ~> extractSegment
-  }
-
-  protected override def _queryParam: Rule1[Parameter] = rule {
-    capture(oneOrMore(noneOf("=&#"))) ~ optional("=" ~ capture(zeroOrMore(noneOf("&#")))) ~> extractParam
-  }
-
-  protected override def _fragment: Rule1[Fragment] = rule {
-    "#" ~ capture(zeroOrMore(ANY)) ~> extractFragment
-  }
+  // TODO: For some reason, I cannot get `!"???" ~ AnyChar` to work, so I have used `CharsWhile(!"`...:
+  private val USER_INFO = CharsWhile(!"[@/?#".contains(_: Char)) // !"[@/?#" ~ AnyChar // THEON: I had to add '[' or this tries to parse an `ipLiteral` host:
+  private val REGISTERED_NAME = CharsWhile(!":/?#".contains(_: Char)) // !":/?#" ~ AnyChar
+  private val SEGMENT = CharsWhile(!"/?#".contains(_: Char)) // !"/?#" ~ AnyChar
+  private val SEGMENT_NO_COLONS = CharsWhile(!":/?#".contains(_: Char)) //  !":/?#" ~ AnyChar
+  private val QUERY = CharsWhile(!"#".contains(_: Char)) // !"#" ~ AnyChar
+  private val FRAGMENT = AnyChar
 }

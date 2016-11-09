@@ -1,7 +1,5 @@
 package com.netaporter.uri
 
-import com.netaporter.uri.config.UriConfig
-
 class AuthorityTests extends TestSpec {
 
   "`Uri.userInfo`" should "return the user info" in {
@@ -10,7 +8,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyRelativeReference.userInfo should equal(None)
+    EmptyReference.userInfo should equal(None)
   }
 
   "`Uri.user` and therefore `Authority.user`" should "return the user" in {
@@ -19,7 +17,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyRelativeReference.user should equal(None)
+    EmptyReference.user should equal(None)
   }
 
   "`Uri.password` and therefore `Authority.password`" should "return the password" in {
@@ -28,58 +26,58 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyRelativeReference.password should equal(None)
+    EmptyReference.password should equal(None)
   }
 
   "`Uri.host`" should "return the host" in {
     val uri = Uri(None, Authority.option("user", "password", "www.example.com", port = 8080), None, None, None)
-    uri.host.value should equal("www.example.com")
+    uri.hostString.value should equal("www.example.com")
   }
 
   it should "return `None`" in {
-    EmptyRelativeReference.host should equal(None)
+    EmptyReference.hostString should equal(None)
   }
 
-  "`Uri.hostParts`" should "return the dot separated host" in {
+  "`Uri.registeredNameParts`" should "return the dot separated host" in {
     val uri = Uri(None, Authority.option(registeredName = "theon.github.com"), None, None, None)
-    uri.hostParts should equal(Seq("theon", "github", "com"))
+    uri.registeredNameParts should equal(Seq("theon", "github", "com"))
   }
 
   it should "return `Seq.empty` when the host is empty" in {
-    EmptyRelativeReference.hostParts should equal(Seq.empty)
+    EmptyReference.registeredNameParts should equal(Seq.empty)
   }
 
-  "`Uri.subdomain`" should "return the first dot separated part of the host" in {
+  "`Uri.registeredNameSubdomain`" should "return the first dot separated part of the host" in {
     val uri = Uri(None, Authority.option(registeredName = "theon.github.com"), None, None, None)
-    uri.subdomain.value should equal("theon")
+    uri.registeredNameSubdomain.value should equal("theon")
   }
 
   it should "return None when the host is empty" in {
-    EmptyRelativeReference.subdomain should equal(None)
+    EmptyReference.registeredNameSubdomain should equal(None)
   }
 
-  "`Uri.publicSuffix`" should "match the longest public suffix" in {
+  "`Uri.registeredNamePublicSuffix`" should "match the longest public suffix" in {
     val uri = Uri(None, Authority.option(registeredName = "www.google.co.uk"), None, None, None)
-    uri.publicSuffix.value should equal("co.uk")
+    uri.registeredNamePublicSuffix.value should equal("co.uk")
   }
 
   it should "return None when the host is empty" in {
-    EmptyRelativeReference.publicSuffix should equal(None)
+    EmptyReference.registeredNamePublicSuffix should equal(None)
   }
 
   it should "only return public suffixes that match full dot separated host parts" in {
     val uri = Uri(None, Authority.option(registeredName = "www.bar.com"), None, None, None)
     // Github issue #110: Should not match ar.com
-    uri.publicSuffix.value should equal("com")
+    uri.registeredNamePublicSuffix.value should equal("com")
   }
 
-  "`Uri.publicSuffixes`" should "match all public suffixes" in {
+  "`Uri.registeredNamePublicSuffixes`" should "match all public suffixes" in {
     val uri = Uri(None, Authority.option(registeredName = "www.google.co.uk"), None, None, None)
-    uri.publicSuffixes should equal(Seq("co.uk", "uk"))
+    uri.registeredNamePublicSuffixes should equal(Seq("co.uk", "uk"))
   }
 
   it should "return `Seq.empty` when the host is empty" in {
-    EmptyRelativeReference.publicSuffixes should equal(Seq.empty)
+    EmptyReference.registeredNamePublicSuffixes should equal(Seq.empty)
   }
 
   "`Uri.port`" should "return the port" in {
@@ -88,13 +86,13 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "return `None`" in {
-    EmptyRelativeReference.port should equal(None)
+    EmptyReference.port should equal(None)
   }
 
   "`Uri.withAuthority`" should "change the authority when provided a `Uri`" in {
     val authority = Authority.option(registeredName = "www.example.com")
     val uri = Uri(None, authority, None, None, None)
-    EmptyRelativeReference.withAuthority(uri).authority should equal(authority)
+    EmptyReference.withAuthority(uri).authority should equal(authority)
   }
 
   it should "change the authority when provided an `Authority`" in {
@@ -115,16 +113,14 @@ class AuthorityTests extends TestSpec {
   "`Uri.withUserInfo`" should "change the userInfo when provided a `Uri`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.userInfo should equal(None)
-    val userInfo = UserInfo.option("user")
     val uri2 = Uri(None, Authority.option("user", registeredName = "www.example.com"), None, None, None)
-    uri.withUserInfo(uri2).userInfo should equal(userInfo)
+    uri.withUserInfo(uri2).userInfo should equal(UserPasswordUserInfo.option("user"))
   }
 
   it should "change the userInfo when provided an `Authority`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.userInfo should equal(None)
-    val userInfo = UserInfo.option("user")
-    uri.withUserInfo(Authority("user", registeredName = "www.example.com")).userInfo should equal(userInfo)
+    uri.withUserInfo(Authority("user", registeredName = "www.example.com")).userInfo should equal(UserPasswordUserInfo.option("user"))
   }
 
   it should "change the userInfo when provided an `UserInfo`" in {
@@ -134,20 +130,25 @@ class AuthorityTests extends TestSpec {
     uri.withUserInfo(userInfo).userInfo.value should equal(userInfo)
   }
 
-  it should "remove the userInfo when provided nothing" in {
-    val userInfo = UserInfo.option("user")
+  it should "change the userInfo when provided a `String`" in {
     val uri = Uri(None, Authority.option("user", registeredName = "www.example.com"), None, None, None)
-    uri.userInfo should equal(userInfo)
+    uri.userInfo.value should equal(UserPasswordUserInfo("user"))
+    uri.withUserInfo("userInfo").userInfo.value should equal(StringUserInfo("userInfo"))
+  }
+
+  it should "remove the userInfo when provided nothing" in {
+    val uri = Uri(None, Authority.option("user", registeredName = "www.example.com"), None, None, None)
+    uri.userInfo.value should equal(UserPasswordUserInfo("user"))
     uri.withUserInfo().userInfo should equal(None)
   }
 
   it should "not change the userInfo when userInfo was empty, and provided empty userInfo" in {
-    EmptyRelativeReference.withUser() should equal(EmptyRelativeReference)
+    EmptyReference.withUser() should equal(EmptyReference)
   }
 
   it should "fail when the host was empty, and userInfo is not empty" in {
-    intercept[IllegalArgumentException] {
-      EmptyRelativeReference.withUserInfo(UserInfo("user"))
+    an [IllegalArgumentException] should be thrownBy {
+      EmptyReference.withUserInfo(UserInfo("user"))
     }
   }
 
@@ -167,7 +168,7 @@ class AuthorityTests extends TestSpec {
   it should "change the user when provided an `UserInfo`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.user should equal(None)
-    uri.withUser(UserInfo("user")).user.value should equal("user")
+    uri.withUser(UserPasswordUserInfo("user")).user.value should equal("user")
   }
 
   it should "change the user when provided a `String`" in {
@@ -189,12 +190,12 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "not change the user when user was empty, and provided empty user" in {
-    EmptyRelativeReference.withUser() should equal(EmptyRelativeReference)
+    EmptyReference.withUser() should equal(EmptyReference)
   }
 
   it should "fail when the host was empty, and user is not empty" in {
-    intercept[IllegalArgumentException] {
-      EmptyRelativeReference.withUser("user")
+    an [IllegalArgumentException] should be thrownBy {
+      EmptyReference.withUser("user")
     }
   }
 
@@ -204,7 +205,7 @@ class AuthorityTests extends TestSpec {
     val uri2 = uri.withPassword(Uri(None, Authority.option("user2", "password", "www.example2.com"), None, None, None))
     uri2.user.value should equal("user")
     uri2.password.value should equal("password")
-    uri2.host.value should equal("www.example.com")
+    uri2.hostString.value should equal("www.example.com")
   }
 
   it should "change the password when provided an `Authority`" in {
@@ -213,16 +214,16 @@ class AuthorityTests extends TestSpec {
     val uri2 = uri.withPassword(Authority(user = "user2", password = "password2", registeredName = "www.example2.com"))
     uri2.user.value should equal("user")
     uri2.password.value should equal("password2")
-    uri2.host.value should equal("www.example.com")
+    uri2.hostString.value should equal("www.example.com")
   }
 
   it should "change the password when provided an `UserInfo`" in {
     val uri = Uri(None, Authority.option(user = "user", registeredName = "www.example.com"), None, None, None)
     uri.password should equal(None)
-    val uri2 = uri.withPassword(UserInfo("user2", "password2"))
+    val uri2 = uri.withPassword(UserPasswordUserInfo("user2", "password2"))
     uri2.user.value should equal("user")
     uri2.password.value should equal("password2")
-    uri2.host.value should equal("www.example.com")
+    uri2.hostString.value should equal("www.example.com")
   }
 
   it should "change the password when provided a `String`" in {
@@ -237,13 +238,21 @@ class AuthorityTests extends TestSpec {
     uri.withPassword().password should equal(None)
   }
 
+  it should "add an empty user and set the password when the authority was not empty, the userInfo was empty, and password is not empty" in {
+    val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
+    uri.userInfo should equal(None)
+    val uri2 = uri.withPassword("password")
+    uri2.user.value should equal("")
+    uri2.password.value should equal("password")
+  }
+
   it should "not change the password when authority was empty, and provided empty password" in {
-    EmptyRelativeReference.withPassword() should equal(EmptyRelativeReference)
+    EmptyReference.withPassword() should equal(EmptyReference)
   }
 
   it should "fail when the authority was empty, and password is not empty" in {
-    intercept[IllegalArgumentException] {
-      EmptyRelativeReference.withPassword("password")
+    an [IllegalArgumentException] should be thrownBy {
+      EmptyReference.withPassword("password")
     }
   }
 
@@ -252,69 +261,63 @@ class AuthorityTests extends TestSpec {
     uri.withPassword() should equal(uri)
   }
 
-  it should "fail when the authority was not empty, the userInfo was empty, and password is not empty" in {
-    intercept[IllegalArgumentException] {
-      Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None).withPassword("password")
-    }
-  }
-
   "`Uri.withHost`" should "change the host when provided a `Uri`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
+    uri.hostString.value should equal("www.example.com")
     val uri2 = Uri(None, Authority.option(registeredName = "www.example2.com"), None, None, None)
-    uri.withHost(uri2).host.value should equal("www.example2.com")
+    uri.withHost(uri2).hostString.value should equal("www.example2.com")
   }
 
   it should "change the host when provided an `Authority`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
-    uri.withHost(Authority(registeredName = "www.example2.com")).host.value should equal("www.example2.com")
+    uri.hostString.value should equal("www.example.com")
+    uri.withHost(Authority(registeredName = "www.example2.com")).hostString.value should equal("www.example2.com")
   }
 
   it should "change the host when provided an `Option[Host]`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
-    uri.withHost(Host.option("www.example2.com")).host.value should equal("www.example2.com")
+    uri.hostString.value should equal("www.example.com")
+    uri.withHost(Host.option("www.example2.com")).hostString.value should equal("www.example2.com")
   }
 
   it should "change the host when provided an `Host`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
-    uri.withHost(Host("www.example2.com")).host.value should equal("www.example2.com")
+    uri.hostString.value should equal("www.example.com")
+    uri.withHost(Host("www.example2.com")).hostString.value should equal("www.example2.com")
   }
 
   it should "change the host when provided a `String`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
+    uri.hostString.value should equal("www.example.com")
     uri.withHost("www.example2.com").authority.value.host.value.registeredName.value should equal("www.example2.com")
   }
 
   it should "change the host when provided a `String` as `ipv4Address`" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
+    uri.hostString.value should equal("www.example.com")
     uri.withHost(ipv4Address = "10.0.0.5").authority.value.host.value.ipv4Address.value should equal("10.0.0.5")
   }
 
-  it should "change the host when provided a `String` as `ipLiteralAddress` (IPv6)" in {
+  it should "change the host when provided a `String` as `ipLiteral` (IPv6 address)" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
-    uri.withHost(ipLiteralAddress = "[d45::2351]").authority.value.host.value.ipLiteralAddress.value should equal("[d45::2351]")
+    uri.hostString.value should equal("www.example.com")
+    uri.withHost(ipLiteral = "[d45::2351]").authority.value.host.value.ipLiteral.value should equal("[d45::2351]")
   }
 
-  it should "change the host when provided a `String` as `ipLiteralAddress` (IPvFuture)" in {
+  it should "change the host when provided a `String` as `ipLiteral` (IPvFuture)" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
-    uri.withHost(ipLiteralAddress = "[vff.whoknows]").authority.value.host.value.ipLiteralAddress.value should equal("[vff.whoknows]")
+    uri.hostString.value should equal("www.example.com")
+    uri.withHost(ipLiteral = "[vff.whoknows]").authority.value.host.value.ipLiteral.value should equal("[vff.whoknows]")
   }
 
   it should "remove the host when provided nothing" in {
     val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.host.value should equal("www.example.com")
-    uri.withHost().host should equal(None)
+    uri.hostString.value should equal("www.example.com")
+    uri.withHost().hostString should equal(None)
   }
 
   it should "change the host when authority was empty" in {
-    EmptyRelativeReference.withHost("www.example.com").host.value should equal("www.example.com")
+    EmptyReference.withHost("www.example.com").hostString.value should equal("www.example.com")
   }
 
   "`Uri.withPort`" should "change the port when provided a `Uri`" in {
@@ -343,12 +346,12 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "not change the port when port was empty, and provided 0" in {
-    EmptyRelativeReference.withPort(0) should equal(EmptyRelativeReference)
+    EmptyReference.withPort(0) should equal(EmptyReference)
   }
 
   it should "fail when the host was empty, and port is not 0" in {
-    intercept[IllegalArgumentException] {
-      EmptyRelativeReference.withPort(8080)
+    an [IllegalArgumentException] should be thrownBy {
+      EmptyReference.withPort(8080)
     }
   }
 
@@ -383,41 +386,7 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "work without an authority" in {
-    EmptyRelativeReference.authorityToString should equal("")
-  }
-
-  "`Uri.authorityToStringRaw` and therefore `Authority.toStringRaw`" should "work with host" in {
-    val uri = Uri(None, Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.authorityToStringRaw should equal("//www.example.com")
-  }
-
-  it should "work with user and host" in {
-    val uri = Uri(None, Authority.option("user", registeredName = "www.example.com"), None, None, None)
-    uri.authorityToStringRaw should equal("//user@www.example.com")
-  }
-
-  it should "work with user, password, and host" in {
-    val uri = Uri(None, Authority.option("user", "password", "www.example.com"), None, None, None)
-    uri.authorityToStringRaw should equal("//user:password@www.example.com")
-  }
-
-  it should "work with host and port" in {
-    val uri = Uri(None, Authority.option(registeredName = "www.example.com", port = 8080), None, None, None)
-    uri.authorityToStringRaw should equal("//www.example.com:8080")
-  }
-
-  it should "work with user, host and port" in {
-    val uri = Uri(None, Authority.option("user", registeredName = "www.example.com", port = 8080), None, None, None)
-    uri.authorityToStringRaw should equal("//user@www.example.com:8080")
-  }
-
-  it should "work with user, password, host and port" in {
-    val uri = Uri(None, Authority.option("user", "password", "www.example.com", port = 8080), None, None, None)
-    uri.authorityToStringRaw should equal("//user:password@www.example.com:8080")
-  }
-
-  it should "work without an authority" in {
-    EmptyRelativeReference.authorityToStringRaw should equal("")
+    EmptyReference.authorityToString should equal("")
   }
 
   "`Authority.copy`" should "succeed with userInfo, host and port" in {
@@ -470,19 +439,19 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "fail when passed a negative port" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Authority("user", "password", "www.example.com", port = 8080).copy(port = Some(-23))
     }
   }
 
   it should "fail when passed a zero port" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Authority("user", "password", "www.example.com", port = 8080).copy(port = Some(0))
     }
   }
 
   it should "fail when passed a too large port" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Authority("user", "password", "www.example.com", port = 8080).copy(port = Some(65536))
     }
   }
@@ -497,6 +466,7 @@ class AuthorityTests extends TestSpec {
   it should "succeed with host and port, and without userInfo" in {
     val authority = Authority(None, Host.option("www.example.com"), Some(8080))
     authority.userInfo should equal(None)
+    authority.userInfoString should equal(None)
     authority.hostString.value should equal("www.example.com")
     authority.port.value should equal(8080)
   }
@@ -520,19 +490,19 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "fail when passed a negative port" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Authority(None, Host.option("www.example.com"), Some(-23))
     }
   }
 
   it should "fail when passed a zero port" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Authority(None, Host.option("www.example.com"), Some(0))
     }
   }
 
   it should "fail when passed a too large port" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Authority(None, Host.option("www.example.com"), Some(65536))
     }
   }
@@ -544,39 +514,40 @@ class AuthorityTests extends TestSpec {
     authority.port.value should equal(8080)
   }
 
-  it should "fail when passed password without user" in {
-    intercept[IllegalArgumentException] {
-     Authority(password = "password", registeredName = "www.example.com")
-    }
+  it should "succeed with password and host, without user and port" in {
+    val authority = Authority(password = "password", registeredName = "www.example.com")
+    authority.userInfo.value should equal(UserInfo("", Some("password")))
+    authority.hostString.value should equal("www.example.com")
+    authority.port should equal(None)
   }
 
   it should "fail when passed something other than host without host" in {
-    intercept[IllegalArgumentException] {
-     Authority(user = "user")
+    an [IllegalArgumentException] should be thrownBy {
+      Authority(user = "user")
     }
   }
 
   it should "fail when passed port without host" in {
-    intercept[IllegalArgumentException] {
-     Authority(port = 8080)
+    an [IllegalArgumentException] should be thrownBy {
+      Authority(port = 8080)
     }
   }
 
   it should "fail when passed userInfo (`Option[UserInfo]`) as `null`" in {
-    intercept[IllegalArgumentException] {
-     Authority(null: Option[UserInfo], None, None)
+    an [IllegalArgumentException] should be thrownBy {
+      Authority(null: Option[UserInfo], None, None)
     }
   }
 
   it should "fail when passed host (`Option[Host]`) as `null`" in {
-    intercept[IllegalArgumentException] {
-     Authority(None, null: Option[Host], None)
+    an [IllegalArgumentException] should be thrownBy {
+      Authority(None, null: Option[Host], None)
     }
   }
 
   it should "fail when passed port (`Option[Int]`) as `null`" in {
-    intercept[IllegalArgumentException] {
-     Authority(None, None, null: Option[Int])
+    an [IllegalArgumentException] should be thrownBy {
+      Authority(None, None, null: Option[Int])
     }
   }
 
@@ -613,20 +584,20 @@ class AuthorityTests extends TestSpec {
   }
 
   it should "fail when passed a negative port" in {
-    intercept[IllegalArgumentException] {
-     Authority.option(None, Host.option("www.example.com"), Some(-23))
+    an [IllegalArgumentException] should be thrownBy {
+      Authority.option(None, Host.option("www.example.com"), Some(-23))
     }
   }
 
   it should "fail when passed a zero port" in {
-    intercept[IllegalArgumentException] {
-     Authority.option(None, Host.option("www.example.com"), Some(0))
+    an [IllegalArgumentException] should be thrownBy {
+      Authority.option(None, Host.option("www.example.com"), Some(0))
     }
   }
 
   it should "fail when passed a too large port" in {
-    intercept[IllegalArgumentException] {
-     Authority.option(None, Host.option("www.example.com"), Some(65536))
+    an [IllegalArgumentException] should be thrownBy {
+      Authority.option(None, Host.option("www.example.com"), Some(65536))
     }
   }
 
@@ -637,151 +608,259 @@ class AuthorityTests extends TestSpec {
     authority.value.port.value should equal(8080)
   }
 
-  it should "fail when passed password without user" in {
-    intercept[IllegalArgumentException] {
-     Authority.option(password = "password", registeredName = "www.example.com")
-    }
-  }
-
   it should "fail when passed something other than host without host" in {
-    intercept[IllegalArgumentException] {
-     Authority.option(user = "user")
+    an [IllegalArgumentException] should be thrownBy {
+      Authority.option(user = "user")
     }
   }
 
   it should "fail when passed port without host" in {
-    intercept[IllegalArgumentException] {
-     Authority.option(port = 8080)
+    an [IllegalArgumentException] should be thrownBy {
+      Authority.option(port = 8080)
     }
   }
 
-  "`UserInfo.apply`" should "fail when passed a `null` passwoird" in {
-    intercept[IllegalArgumentException] {
+  "`UserInfo.apply(String)`" should "succeed when passed a string" in {
+    val userInfo = UserInfo("userInfo")
+    userInfo shouldBe a[StringUserInfo]
+    userInfo.asInstanceOf[StringUserInfo].userInfoString should equal("userInfo")
+  }
+
+  it should "succeed when passed an empty string" in {
+    UserInfo("") should equal(EmptyUserInfo)
+  }
+
+  "`UserInfo.apply(String, Option[String])`" should "succeed when passed an empty user and `None` password" in {
+    UserInfo("", None) should equal(EmptyUserInfo)
+  }
+
+  it should "fail when passed a `null` password" in {
+    an [IllegalArgumentException] should be thrownBy {
       UserInfo("user", null: Option[String])
     }
   }
 
-  "`UserInfo.copy`" should "succeed with user and password" in {
-    val userInfo = UserInfo("user").copy("user2", Some("password2"))
+  "`UserInfo.apply(String, String)`" should "succeed when passed a `null` user and a password" in {
+    val userInfo = UserInfo(null, "password")
+    userInfo shouldBe a[UserPasswordUserInfo]
+    userInfo.asInstanceOf[UserPasswordUserInfo].user should equal("")
+    userInfo.asInstanceOf[UserPasswordUserInfo].password.value should equal("password")
+  }
+
+  it should "fail when passed a `null` password" in {
+    val userInfo = UserInfo("user", null: String)
+    userInfo shouldBe a[UserPasswordUserInfo]
+    userInfo.asInstanceOf[UserPasswordUserInfo].user should equal("user")
+    userInfo.asInstanceOf[UserPasswordUserInfo].password should equal(None)
+  }
+
+  "`UserInfo.option(String)`" should "succeed when passed a string" in {
+    val userInfo = UserInfo.option("userInfo").value
+    userInfo shouldBe a[StringUserInfo]
+    userInfo.asInstanceOf[StringUserInfo].userInfoString should equal("userInfo")
+  }
+
+  it should "succeed when passed an empty string" in {
+    UserInfo.option("").value should equal(EmptyUserInfo)
+  }
+
+  "`UserInfo.option(String, String)`" should "succeed when passed a `null` user and a password" in {
+    val userInfo = UserInfo.option(null, "password").value
+    userInfo shouldBe a[UserPasswordUserInfo]
+    userInfo.asInstanceOf[UserPasswordUserInfo].user should equal("")
+    userInfo.asInstanceOf[UserPasswordUserInfo].password.value should equal("password")
+  }
+
+  it should "fail when passed an empty user and `null` password" in {
+    UserInfo.option("", null: String).value should equal(EmptyUserInfo)
+  }
+
+  it should "fail when passed a `null` password" in {
+    an [IllegalArgumentException] should be thrownBy {
+      UserInfo.option("user", null: Option[String])
+    }
+  }
+
+  "`StringUserInfo.toString`" should "succeed when passed a string" in {
+    StringUserInfo("userInfo").toString should equal("userInfo@")
+  }
+
+  "`StringUserInfo.apply`" should "succeed when passed a string" in {
+    val userInfo = StringUserInfo("userInfo")
+    userInfo.userInfoString should equal("userInfo")
+  }
+
+  it should "fail when passed a n empty string" in {
+    an [IllegalArgumentException] should be thrownBy {
+      StringUserInfo("")
+    }
+  }
+
+  it should "fail when passed `null`" in {
+    an [IllegalArgumentException] should be thrownBy {
+      StringUserInfo(null)
+    }
+  }
+
+  "`StringUserInfo.option`" should "succeed when passed an empty string" in {
+    StringUserInfo.option("") should equal(None)
+  }
+
+  it should "succeed when passed `null`" in {
+    StringUserInfo.option(null) should equal(None)
+  }
+
+  "`UserPasswordUserInfo.copy`" should "succeed with user and password" in {
+    val userInfo = UserPasswordUserInfo("user").copy("user2", Some("password2"))
     userInfo.user should equal("user2")
     userInfo.password.value should equal("password2")
   }
 
   it should "succeed with user, and without password" in {
-    val userInfo = UserInfo("user").copy("user2")
+    val userInfo = UserPasswordUserInfo("user").copy("user2")
     userInfo.user should equal("user2")
     userInfo.password should equal(None)
   }
 
   it should "succeed with user, and without password (with existing password)" in {
-    val userInfo = UserInfo("user", "password").copy("user2")
+    val userInfo = UserPasswordUserInfo("user", "password").copy("user2")
     userInfo.user should equal("user2")
     userInfo.password.value should equal("password")
   }
 
   it should "succeed with password, and without user" in {
-    val userInfo = UserInfo("user").copy(password = Some("password2"))
+    val userInfo = UserPasswordUserInfo("user").copy(password = Some("password2"))
     userInfo.user should equal("user")
     userInfo.password.value should equal("password2")
   }
 
   it should "fail when passed `null` user" in {
-    intercept[IllegalArgumentException] {
-      UserInfo("user").copy(null)
+    an [IllegalArgumentException] should be thrownBy {
+      UserPasswordUserInfo("user").copy(null)
     }
   }
 
-  "`UserInfo.toStringRaw`" should "succeed" in {
-    UserInfo("user", Some("password")).toStringRaw(UriConfig.DEFAULT) should equal("user:password@")
+  "`UserPasswordUserInfo.apply`" should "succeed when passed a `null` user and a password" in {
+    val userInfo = UserPasswordUserInfo(null, "password")
+    userInfo.user should equal("")
+    userInfo.password.value should equal("password")
+  }
+
+  it should "fail when passed a `null` password" in {
+    an [IllegalArgumentException] should be thrownBy {
+      UserPasswordUserInfo("user", null: Option[String])
+    }
+  }
+
+  it should "fail when passed an empty user and `None` password" in {
+    an [IllegalArgumentException] should be thrownBy {
+      UserPasswordUserInfo("", None)
+    }
+  }
+
+  "`UserPasswordUserInfo.option`" should "succeed when passed a `null` user and password" in {
+    UserPasswordUserInfo.option(null, null: String) should equal(None)
   }
 
   "`Host.host`" should "succeed when it is a `registeredName`" in {
-    Host("www.test.com").host should equal("www.test.com")
+    Host("www.test.com").hostString should equal("www.test.com")
   }
 
   it should "succeed when it is an `ipv4Address`" in {
-    Host(ipv4Address = "192.168.203.46").host should equal("192.168.203.46")
+    Host(ipv4Address = "192.168.203.46").hostString should equal("192.168.203.46")
   }
 
-  it should "succeed when it is an `ipLiteralAddress`" in {
-    Host(ipLiteralAddress = "[54d8::2586]").host should equal("[54d8::2586]")
-  }
-
-  "`Host.copy`" should "fail as it is not supported" in {
-    intercept[UnsupportedOperationException] {
-      Host("www.example.com").copy(Some("www.example2.com"))
-    }
+  it should "succeed when it is an `ipLiteral`" in {
+    Host(ipLiteral = "[54d8::2586]").hostString should equal("[54d8::2586]")
   }
 
   "`Host.toString`" should "succeed when it is a `registeredName`" in {
-    Host("www.Test.com").toString(UriConfig.DEFAULT) should equal("www.test.com")
+    Host("www.Test.com").toString should equal("www.test.com")
   }
 
   it should "succeed when it is an `ipv4Address`" in {
-    Host(ipv4Address = "192.168.203.46").toString(UriConfig.DEFAULT) should equal("192.168.203.46")
+    Host(ipv4Address = "192.168.203.46").toString should equal("192.168.203.46")
   }
 
-  it should "succeed when it is an `ipLiteralAddress`" in {
-    Host(ipLiteralAddress = "[54D8::2586]").toString(UriConfig.DEFAULT) should equal("[54d8::2586]")
+  it should "succeed when it is an `ipLiteral`" in {
+    Host(ipLiteral = "[54D8::2586]").toString should equal("[54d8::2586]")
   }
 
-  "`Host.toStringRaw`" should "succeed when it is a `registeredName`" in {
-    Host("www.Test.com").toStringRaw(UriConfig.DEFAULT) should equal("www.Test.com")
+  it should "succeed when it is an `ipLiteral` and case normalization disabled" in {
+    Host(ipLiteral = "[54D8::2586]").toString(UriConfig(caseNormalization = false)) should equal("[54D8::2586]")
   }
 
-  it should "succeed when it is an `ipv4Address`" in {
-    Host(ipv4Address = "192.168.203.46").toStringRaw(UriConfig.DEFAULT) should equal("192.168.203.46")
+  "`Host.apply` with `Option` arguments" should "fail when registeredName is `null`" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Host(null, None, None)
+    }
   }
 
-  it should "succeed when it is an `ipLiteralAddress`" in {
-    Host(ipLiteralAddress = "[54D8::2586]").toStringRaw(UriConfig.DEFAULT) should equal("[54D8::2586]")
+  it should "fail when registeredName is an empty string" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Host(Some(""), None, None)
+    }
   }
 
-  "`Host.apply` with `Option` arguments" should "fail when all arguments are `None`" in {
-    intercept[IllegalArgumentException] {
-      Host(None, None, None)
+  it should "fail when ipv4Address is `null`" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Host(None, null, None)
+    }
+  }
+
+  it should "fail when ipLiteral is `null`" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Host(None, None, null)
     }
   }
 
   it should "fail when passed registeredName and ipv4Address" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Host(Some("www.example.com"), Some("192.168.203.46"), None)
     }
   }
 
-  it should "fail when passed registeredName and ipLiteralAddress" in {
-    intercept[IllegalArgumentException] {
+  it should "fail when passed registeredName and ipLiteral" in {
+    an [IllegalArgumentException] should be thrownBy {
       Host(Some("www.example.com"), None, Some("[54D8::2586]"))
     }
   }
 
-  it should "fail when passed ipv4Address and ipLiteralAddress" in {
-    intercept[IllegalArgumentException] {
+  it should "fail when passed ipv4Address and ipLiteral" in {
+    an [IllegalArgumentException] should be thrownBy {
       Host(None, Some("192.168.203.46"), Some("[54D8::2586]"))
     }
   }
 
   it should "fail when passed ipv4Address as registeredName" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Host(Some("192.168.203.46"), None, None)
     }
   }
 
-  it should "fail when passed an invalid registeredName" in {
-    intercept[IllegalArgumentException] {
-      Host(Some("[54D8::2586]"), None, None)
-    }
-  }
-
   it should "fail when passed an invalid ipv4Address" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Host(None, Some("www.example.com"), None)
     }
   }
 
-  it should "fail when passed an invalid ipLiteralAddress" in {
-    intercept[IllegalArgumentException] {
+  it should "fail when passed an invalid ipLiteral" in {
+    an [IllegalArgumentException] should be thrownBy {
       Host(None, None, Some("192.168.203.46"))
     }
+  }
+
+  it should "fail when all arguments are `None`" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Host(None, None, None)
+    }
+  }
+
+  "`Host.parse`" should "succeed when passed `null`" in {
+    Host.parse(null) should equal(None)
+  }
+
+  it should "succeed when passed an empty string" in {
+    Host.parse("") should equal(None)
   }
 }

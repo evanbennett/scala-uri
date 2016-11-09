@@ -18,7 +18,7 @@ sealed case class SchemeDsl(scheme: Option[Scheme]) {
 
   def `:///?`(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, Some(EmptyAuthority), Some(EmptyAbsolutePath), Query(firstQueryParameter))
 
-  def `:///?`(firstQueryKey: String): QueryDsl = QueryDsl(scheme, Some(EmptyAuthority), Some(EmptyAbsolutePath), EmptyQuery.append(firstQueryKey))
+  def `:///?`(queryString: String): QueryDsl = QueryDsl(scheme, Some(EmptyAuthority), Some(EmptyAbsolutePath), Query(queryString))
 
   def `:///?#`: FragmentDsl = FragmentDsl(scheme, Some(EmptyAuthority), Some(EmptyAbsolutePath), Some(EmptyQuery), Some(EmptyFragment))
 
@@ -32,7 +32,7 @@ sealed case class SchemeDsl(scheme: Option[Scheme]) {
 
   def `://?`(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, Some(EmptyAuthority), None, Query(firstQueryParameter))
 
-  def `://?`(firstQueryKey: String): QueryDsl = QueryDsl(scheme, Some(EmptyAuthority), None, EmptyQuery.append(firstQueryKey))
+  def `://?`(queryString: String): QueryDsl = QueryDsl(scheme, Some(EmptyAuthority), None, Query(queryString))
 
   def `://?#`: FragmentDsl = FragmentDsl(scheme, Some(EmptyAuthority), None, Some(EmptyQuery), Some(EmptyFragment))
 
@@ -50,7 +50,7 @@ sealed case class SchemeDsl(scheme: Option[Scheme]) {
 
   def :/?(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, None, Some(EmptyAbsolutePath), Query(firstQueryParameter))
 
-  def :/?(firstQueryKey: String): QueryDsl = QueryDsl(scheme, None, Some(EmptyAbsolutePath), EmptyQuery.append(firstQueryKey))
+  def :/?(queryString: String): QueryDsl = QueryDsl(scheme, None, Some(EmptyAbsolutePath), Query(queryString))
 
   def :/?# : FragmentDsl = FragmentDsl(scheme, None, Some(EmptyAbsolutePath), Some(EmptyQuery), Some(EmptyFragment))
 
@@ -61,7 +61,7 @@ sealed case class SchemeDsl(scheme: Option[Scheme]) {
   def :/#(fragment: String): FragmentDsl = FragmentDsl(scheme, None, Some(EmptyAbsolutePath), None, Fragment.option(fragment))
 
   /**
-   * TODO: This method CANNOT be used using operator notation, as it reverses the arguments, and when it does not provide a compilation error, it will provide a "runtime" error.
+   * THEON: This method CANNOT be used using operator notation, as it reverses the arguments, and when it does not provide a compilation error, it will provide a "runtime" error.
    * I have tried:
    *  * adding a `DummyImplicit` argument
    *  * adding a dummy argument with a default value
@@ -73,7 +73,7 @@ sealed case class SchemeDsl(scheme: Option[Scheme]) {
 
   def :?(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, None, None, Query(firstQueryParameter))
 
-  def :?(firstQueryKey: String): QueryDsl = QueryDsl(scheme, None, None, EmptyQuery.append(firstQueryKey))
+  def :?(queryString: String): QueryDsl = QueryDsl(scheme, None, None, Query(queryString))
 
   def :?# : FragmentDsl = FragmentDsl(scheme, None, None, Some(EmptyQuery), Some(EmptyFragment))
 
@@ -83,5 +83,7 @@ sealed case class SchemeDsl(scheme: Option[Scheme]) {
 
   def :#(fragment: String): FragmentDsl = FragmentDsl(scheme, None, None, None, Fragment.option(fragment))
 
-  def toUri: Uri = Uri(scheme, None, None, None, None)
+  def toUri(implicit config: UriConfig): Uri = Uri(scheme, None, None, None, None)
+
+  def toString(implicit config: UriConfig): String = toUri.toString
 }

@@ -1,20 +1,19 @@
 package com.netaporter.uri
 
-import com.netaporter.uri.config.UriConfig
-
+/**
+ * URI Fragment, based on RFC 3986 section 3.5.
+ *
+ * @param fragment the fragment contents
+ */
 sealed abstract case class Fragment(fragment: String) {
 
   def copy(fragment: String = fragment): Fragment = Fragment(fragment)
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  def toString(implicit c: UriConfig): String =
-    "#" + c.fragmentEncoder.encode(fragment, c.charset)
-
-  def toStringRaw(implicit c: UriConfig): String = toString(c.withNoEncoding)
+  def toString(implicit config: UriConfig): String =
+    "#" + config.fragmentEncoder.encode(fragment)
 }
-
-// TODO: Make `Fragment` abstract, and add `StringFragment` and `ParameterFragment`? GitHub Issue 14; https://en.wikipedia.org/wiki/Fragment_identifier
 
 object Fragment {
 

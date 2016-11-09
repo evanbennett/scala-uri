@@ -1,8 +1,7 @@
 package com.netaporter.uri
 
-import com.netaporter.uri.encoding.UriEncoder
-
 /**
+ * TODO: This comment can be removed with the deprecation:
  * Regular Expression used to replace existing `"???" -> Some("???")`:
  *   ("[^"]+") -> ("[^"]*"|None|Some\("[^"]*"\)|Option\("[^"]*"\))
  *   Parameter($1, $2)
@@ -19,22 +18,21 @@ sealed abstract case class Parameter(key: String, value: Option[String]) {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  def toString(encoder: UriEncoder, charset: String): String =
-    encoder.encode(key, charset) + value.map("=" + encoder.encode(_, charset)).getOrElse("")
+  def toString(encoder: encoding.UriEncoder)(implicit config: UriConfig): String =
+    encoder.encode(key) + value.map("=" + encoder.encode(_)).getOrElse("")
 }
 
 object Parameter {
 
   def apply(key: String, value: Option[String] = None): Parameter = {
-    if (key == null || key.isEmpty) throw new IllegalArgumentException("`key` cannot be `null` and cannot be empty.")
+    if (key == null) throw new IllegalArgumentException("`key` cannot be `null`.")
     if (value == null) throw new IllegalArgumentException("`value` cannot be `null`.")
     new Parameter(key, value) {}
   }
 
   def apply(key: String, value: Any): Parameter = {
     val newValue = value match {
-      case null => None
-      case None => None
+      case null | None => None
       case Some(value) => Option(value.toString)
       case value => Option(value.toString)
     }

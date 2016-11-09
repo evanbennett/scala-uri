@@ -1,7 +1,6 @@
 package com.netaporter.uri
 
 import org.scalatest.{Matchers, FlatSpec}
-import com.netaporter.uri.config.UriConfig
 
 class OldEncodingTests extends FlatSpec with Matchers {
 
@@ -47,7 +46,7 @@ class OldEncodingTests extends FlatSpec with Matchers {
 
   "Querystring parameters" should "be percent encoded" in {
     val uri = "http://theon.github.com/uris-in-scala.html" ? ("càsh" -> "+£50") & ("©opyright" -> "false")
-    uri.toString should equal ("http://theon.github.com/uris-in-scala.html?c%C3%A0sh=%2B%C2%A350&%C2%A9opyright=false")
+    uri.toString should equal ("http://theon.github.com/uris-in-scala.html?c%C3%A0sh=+%C2%A350&%C2%A9opyright=false") // THEON: Changed '%2B' in query parameter 1 value to "+" due to functional changes.
   }
 
   "Querystring double quotes" should "be percent encoded when using conservative encoder" in {
@@ -96,11 +95,11 @@ class OldEncodingTests extends FlatSpec with Matchers {
   "Percent encoding with a few extra reserved characters on top of the defaults" should "be easy" in {
     implicit val config = UriConfig(encoder = percentEncode() ++ ('a', 'b'))
     val uri: Uri = "http://theon.github.com/abcde"
-    uri.toString should equal ("http://theon.githu%62.com/%61%62cde") // TODO: Changed 'b' in host to "%62" due to functional changes.
+    uri.toString should equal ("http://theon.github.com/%61%62cde")
   }
 
   "URI path pchars" should "not be encoded by default" in {
-    val uri: Uri = "http://example.com" / "-._~!$&'()*+,;=:@" / "test"
+    val uri: Uri = "http://example.com" / "-._~!$&'()*+,;=:@" / "test" // THEON: Updated due to functional changes.
     uri.toString should equal("http://example.com/-._~!$&'()*+,;=:@/test")
   }
 

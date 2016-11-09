@@ -1,16 +1,48 @@
 package com.netaporter.uri
 
-import com.netaporter.uri.config.UriConfig
 import com.netaporter.uri.decoding._
-import com.netaporter.uri.dsl.{ encoderToChainedEncoder, uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString }
+import com.netaporter.uri.dsl.{ encoderToChainedEncoder, uriToUriDsl, stringToUri, stringToUriDsl, queryParamToUriDsl, uriToString, UriDsl }
 import com.netaporter.uri.encoding._
 import com.netaporter.uri.parsing._
 import Parameters._
 
 class DeprecatedTests extends TestSpec {
 
-  "`@deprecated` code" should "`dsl.encoderToChainedEncoder`" in {
-    val chainedUriEncoder: ChainedUriEncoder = PercentEncoder.DEFAULT
+  "`@deprecated` code" should "UriConfig.apply(userInfoEncoder: UriEncoder, pathEncoder: UriEncoder, queryEncoder: UriEncoder, fragmentEncoder: UriEncoder, userInfoDecoder: UriDecoder, pathDecoder: UriDecoder, queryDecoder: UriDecoder, fragmentDecoder: UriDecoder, matrixParams: Boolean, charset: String)" in {
+    UriConfig.apply(PercentEncoder(PercentEncoder.USER_INFO_CHARS_TO_ENCODE),
+                    PercentEncoder(PercentEncoder.PATH_CHARS_TO_ENCODE),
+                    PercentEncoder(PercentEncoder.QUERY_CHARS_TO_ENCODE),
+                    PercentEncoder(PercentEncoder.FRAGMENT_CHARS_TO_ENCODE),
+                    PercentDecoder, PercentDecoder, PercentDecoder, PercentDecoder,
+                    false, "UTF-8") shouldBe a[UriConfig]
+  }
+
+  it should "UriConfig.apply(encoder: UriEncoder, decoder: UriDecoder, matrixParams: Boolean, charset: String)" in {
+    UriConfig.apply(NoopEncoder, NoopDecoder, false, "UTF-8") shouldBe a[UriConfig]
+  }
+
+  it should "UriConfig.apply(encoder: UriEncoder, decoder: UriDecoder, matrixParams: Boolean)" in {
+    UriConfig.apply(NoopEncoder, NoopDecoder, false) shouldBe a[UriConfig]
+  }
+
+  it should "UriConfig.apply(encoder: UriEncoder, decoder: UriDecoder)" in {
+    UriConfig.apply(NoopEncoder, NoopDecoder) shouldBe a[UriConfig]
+  }
+
+  it should "UriConfig.apply(decoder: UriDecoder, matrixParams: Boolean, charset: String)" in {
+    UriConfig.apply(NoopDecoder, false, "UTF-8") shouldBe a[UriConfig]
+  }
+
+  it should "UriConfig.apply(decoder: UriDecoder, matrixParams: Boolean)" in {
+    UriConfig.apply(NoopDecoder, false) shouldBe a[UriConfig]
+  }
+
+  it should "UriConfig.apply(matrixParams: Boolean, charset: String)" in {
+    UriConfig.apply(false, "UTF-8") shouldBe a[UriConfig]
+  }
+
+  it should "`dsl.encoderToChainedEncoder`" in {
+    val chainedUriEncoder: ChainedUriEncoder = PercentEncoder()
   }
 
   it should "`dsl.uriToString`" in {
@@ -19,12 +51,19 @@ class DeprecatedTests extends TestSpec {
     uriString should equal(uri.toString)
   }
 
+  it should "`UriDsl.*`" in {
+    val uriDsl = new UriDsl(Uri("http://test.com?queryKey"))
+    uriDsl / Uri("path/?queryKey2") should not equal (null)
+    uriDsl ? Uri("?queryKey") should not equal (null)
+    new UriDsl(Uri("http://test.com/")) `#` Uri("path#fragment") should not equal (null)
+  }
+
   it should "`UriDecoder.decodeTuple`" in {
-    PercentDecoder.decodeTuple("key" -> Some("value"), "?key=value") should equal(parameterToParam(PercentDecoder.decodeParameter(Parameter("key", "value"), "?key=value")))
+    PercentDecoder.decodeTuple("key" -> Some("value"), "?key=value") should equal(parameterToParam(PercentDecoder.decodeParameter(Parameter("key", "value"), "?key=value")(UriConfig.DEFAULT)))
   }
 
   it should "`encoding.percentEncode`" in {
-    percentEncode should equal(PercentEncoder.DEFAULT)
+    percentEncode should equal(PercentEncoder())
   }
 
   it should "`encoding.percentEncode(...)`" in {
@@ -36,155 +75,233 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`encoding.spaceAsPlus`" in {
-    spaceAsPlus should equal(EncodeCharAs.spaceAsPlus)
+    spaceAsPlus should equal(EncodeCharAs.SPACE_AS_PLUS)
+  }
+
+  it should "`UriEncoder.encode(s: String, charset: String)`" in {
+    PercentEncoder().encode("s", "UTF-8") should equal("s")
+  }
+
+  it should "`NoopEncoder.encodeChar`" in {
+    an [UnsupportedOperationException] should be thrownBy {
+      NoopEncoder.encodeChar('e')
+    }
   }
 
   it should "`PercentEncoder.ascii`" in {
-    PercentEncoder.DEFAULT.ascii('c') should equal(true)
+    PercentEncoder().ascii('c') should equal(true)
+  }
+
+  it should "`UriParser.extractInt`" in {
+    val uriParser = new DefaultUriParser("", UriConfig.DEFAULT)
+    uriParser.extractInt("100") should equal(100)
   }
 
   it should "`UriParser.parse`" in {
-    val uriString = "http://www.example.com/"
-    UriParser.parse(uriString, UriConfig.DEFAULT) should equal(UriParser.parseUri(uriString, UriConfig.DEFAULT))
+    val uriString = "http://www.example.com:8080/"
+    UriParser.parse(uriString, UriConfig.default) should equal(Uri(uriString)(UriConfig.DEFAULT))
   }
 
-// TODO: I could not get this to fail:
+  it should "`UriParser.parse` `Failure(pe@ParseError`" in {
+    a [java.net.URISyntaxException] should be thrownBy {
+      UriParser.parse("http://test.net:8o8o", UriConfig.default)
+    }
+  }
+
+// TODO: I cannot get this to fail:
 //  it should "`UriParser.parseQuery` ParseError" in {
-//    intercept[java.net.URISyntaxException] {
-//      println("WOW:" + UriParser.parseQuery("queryParam#Key=queryParamValue", UriConfig.DEFAULT) + ":")
+//    a [java.net.URISyntaxException] should be thrownBy {
+//      UriParser.parseQuery("queryParam#Key=queryParam%Value", UriConfig.default)
 //    }
 //  }
 
   it should "`UriParser.parseQuery` exception" in {
-    intercept[java.net.URISyntaxException] {
-      UriParser.parseQuery("?queryParamKey=queryParam%Value", UriConfig.DEFAULT)
+    a [java.net.URISyntaxException] should be thrownBy {
+      UriParser.parseQuery("?queryParamKey=queryParam%Value", UriConfig.default)
     }
   }
 
   it should "`Parameters.params`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.params should equal(query.parameters.map(parameterToParam))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.params should equal(segment.parameters.map(parameterToParam))
   }
 
   it should "`Parameters.params(String)`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.params("queryParamKey") should equal(query.values("queryParamKey"))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.params("queryParamKey") should equal(segment.values("queryParamKey"))
   }
 
   it should "`Parameters.param`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.param("queryParamKey") should equal(query.valueFirst("queryParamKey"))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.param("queryParamKey") should equal(segment.valueFirst("queryParamKey"))
   }
 
   it should "`Parameters.paramMap`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.paramMap should equal(query.toMap)
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.paramMap should equal(segment.toMap)
   }
 
   it should "`Parameters.withParams`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
     val parameters = Seq(Parameter("queryParamKey1", Some("queryParamValue1")))
-    query.withParams(parameters) should equal(query.withParameters(parameters))
+    segment.withParams(parameters) should equal(segment.withParameters(parameters))
   }
 
   it should "`Parameters.addParam(String)`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.addParam("queryParamKey1") should equal(query.append("queryParamKey1"))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.addParam("queryParamKey1") should equal(segment.append("queryParamKey1"))
   }
 
   it should "`Parameters.addParam(String, String)`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.addParam("queryParamKey1", "queryParamValue1") should equal(query.append("queryParamKey1", "queryParamValue1"))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.addParam("queryParamKey1", "queryParamValue1") should equal(segment.append("queryParamKey1", "queryParamValue1"))
   }
 
   it should "`Parameters.addParam(String, Option[String])`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.addParam("queryParamKey1", Some("queryParamValue1")) should equal(query.append("queryParamKey1", Some("queryParamValue1")))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.addParam("queryParamKey1", Some("queryParamValue1")) should equal(segment.append("queryParamKey1", Some("queryParamValue1")))
   }
 
   it should "`Parameters.addParams(ParamSeq)`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
     val parameters = Seq(Parameter("queryParamKey1", Some("queryParamValue1")))
-    query.addParams(parameters) should equal(query.append(parameters))
+    segment.addParams(parameters) should equal(segment.append(parameters))
   }
 
   it should "`Parameters.addParams(Parameters)`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.addParams(query) should equal(query.appendParameters(query))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.addParams(segment) should equal(segment.append(segment))
   }
 
   it should "`Parameters.mapParams`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.mapParams(p => p) should equal(query.mapParameters(p => p))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.mapParams(p => p) should equal(segment.mapParameters(p => p))
   }
 
   it should "`Parameters.flatMapParams`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.flatMapParams(p => Seq(p)) should equal(query.flatMapParameters(p => Seq(p)))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.flatMapParams(p => Seq(p)) should equal(segment.flatMapParameters(p => Seq(p)))
   }
 
   it should "`Parameters.mapParamNames`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.mapParamNames(a => a) should equal(query.mapKeys(a => a))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.mapParamNames(a => a) should equal(segment.mapKeys(a => a))
   }
 
   it should "`Parameters.mapParamValues`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.mapParamValues(a => a) should equal(query.mapValues(a => a))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.mapParamValues(a => a) should equal(segment.mapValues(a => a))
   }
 
   it should "`Parameters.filterParams`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.filterParams(a => true) should equal(query.filterParameters(a => true))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.filterParams(a => true) should equal(segment.filterParameters(a => true))
   }
 
   it should "`Parameters.filterParamsNames`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.filterParamsNames(a => true) should equal(query.filterKeys(a => true))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.filterParamsNames(a => true) should equal(segment.filterKeys(a => true))
   }
 
   it should "`Parameters.filterParamsValues`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")), Parameter("queryParamKey2", None))
-    query.filterParamsValues(a => false) should equal(query.filterValues(a => false))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")), Parameter("queryParamKey2", None))
+    segment.filterParamsValues(a => false) should equal(segment.filterValues(a => false))
   }
 
   it should "`Parameters.filterParamsOptions`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.filterParamsOptions(a => true) should equal(query.filterValues(a => true))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.filterParamsOptions(a => true) should equal(segment.filterValues(a => true))
   }
 
   it should "`Parameters.replaceAll`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.replaceAll("queryParamKey", Some(true)) should equal(query.replaceMatching("queryParamKey", Some(true)))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.replaceAll("queryParamKey", Some(true)) should equal(segment.replaceMatching("queryParamKey", Some(true)))
   }
 
   it should "`Parameters.removeAll(String)`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.removeAll("queryParamKey") should equal(query.removeMatching("queryParamKey"))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.removeAll("queryParamKey") should equal(segment.removeMatching("queryParamKey"))
   }
 
   it should "`Parameters.removeAll(Seq[String])`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.removeAll(Seq("queryParamKey")) should equal(query.removeMatching(Seq("queryParamKey")))
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.removeAll(Seq("queryParamKey")) should equal(segment.removeMatching(Seq("queryParamKey")))
   }
 
   it should "`Parameters.removeAll()`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.removeAll should equal(query.withParameters())
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    segment.removeAll should equal(segment.withParameters())
   }
 
   it should "`Parameters.paramsToString`" in {
+    val segment = MatrixParametersSegment("segment", Parameter("queryParamKey", Some("queryParamValue")))
+    "segment;" + segment.paramsToString(UriConfig.default.queryEncoder, UriConfig.default.charset.displayName) should equal(segment.toString(UriConfig.DEFAULT))
+  }
+
+  it should "`Query.copy`" in {
     val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    "?" + query.paramsToString(UriConfig.DEFAULT.queryEncoder, UriConfig.DEFAULT.charset) should equal(query.toString(UriConfig.DEFAULT))
+    query.copy(Seq(Parameter("newQueryParamKey", Some("newQueryParamValue")))) should equal(query.withParameters(Seq(Parameter("newQueryParamKey", Some("newQueryParamValue")))))
   }
 
   it should "`Query.queryToString`" in {
     val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    query.queryToString(UriConfig.DEFAULT) should equal(query.toString(UriConfig.DEFAULT))
+    query.queryToString(UriConfig.default) should equal(query.toString(UriConfig.DEFAULT))
+  }
+
+  it should "`StringQuery.params`" in {
+    StringQuery("queryParam").params should equal(Seq.empty)
+  }
+
+  it should "`StringQuery.params(String)`" in {
+    StringQuery("queryParam").params("") should equal(Seq.empty)
+  }
+
+  it should "`StringQuery.param`" in {
+    StringQuery("queryParam").param("") should equal(None)
+  }
+
+  it should "`StringQuery.paramMap`" in {
+    StringQuery("queryParam").paramMap should equal(Map.empty)
+  }
+
+  it should "`StringQuery.withParams`" in {
+    val query = StringQuery("queryParam")
+    query.withParams(Seq(Parameter("newQueryParamKey", Some("newQueryParamValue")))) should equal(query.withParameters(Seq(Parameter("newQueryParamKey", Some("newQueryParamValue")))))
+  }
+
+  it should "`StringQuery.addParam(String)`" in {
+    val query = StringQuery("queryParam")
+    query.addParam("newQueryParamKey") should equal(query.append(Parameter("newQueryParamKey")))
+  }
+
+  it should "`StringQuery.addParam(String, String)`" in {
+    val query = StringQuery("queryParam")
+    query.addParam("newQueryParamKey", "newQueryParamValue") should equal(query.append(Parameter("newQueryParamKey", "newQueryParamValue")))
+  }
+
+  it should "`StringQuery.addParam(String, Option[String])`" in {
+    val query = StringQuery("queryParam")
+    query.addParam("newQueryParamKey", Some("newQueryParamValue")) should equal(query.append(Parameter("newQueryParamKey", Some("newQueryParamValue"))))
+  }
+
+  it should "`StringQuery.addParams(ParamSeq)`" in {
+    val query = StringQuery("queryParam")
+    val params = Seq("newQueryParamKey" -> Some("newQueryParamValue"))
+    query.addParams(params) should equal(query.append(paramsToSeqParameter(params)))
+  }
+
+  it should "`StringQuery.addParams(Parameters)`" in {
+    val query = StringQuery("queryParam")
+    val other = ParameterQuery(Parameter("newQueryParamKey", "newQueryParamValue"))
+    query.addParams(other) should equal(query.append(other))
+  }
+
+  it should "`StringQuery.paramsToString`" in {
+    StringQuery("queryParam").paramsToString(PercentEncoder(PercentEncoder.CharsetsToEncode.QUERY), "UTF-8") should equal("")
   }
 
   it should "`EmptyQuery.queryToString`" in {
-    ("?" + EmptyQuery.queryToString(UriConfig.DEFAULT)) should equal(EmptyQuery.toString(UriConfig.DEFAULT))
+    ("?" + EmptyQuery.queryToString(UriConfig.default)) should equal(EmptyQuery.toString(UriConfig.DEFAULT))
   }
 
   it should "`QueryString.apply`" in {
@@ -196,13 +313,12 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`QueryString.unapply`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    QueryString.unapply(query) should equal(Query.unapply(query).map(seqParametersToParamSeq))
+    val query = ParameterQuery(Parameter("queryParamKey", Some("queryParamValue")))
+    QueryString.unapply(query) should equal(ParameterQuery.unapply(query).map(seqParametersToParamSeq(_)))
   }
 
   it should "`QueryString.unapply` with `null`" in {
-    val query = Query(Parameter("queryParamKey", Some("queryParamValue")))
-    QueryString.unapply(null) should equal(Query.unapply(null))
+    QueryString.unapply(null) should equal(ParameterQuery.unapply(null))
   }
 
   it should "`Segment.part`" in {
@@ -212,7 +328,7 @@ class DeprecatedTests extends TestSpec {
 
   it should "`Segment.map`" in {
     val segment = StringSegment("segment")
-    segment.map(s => s) should equal(segment.mapSegments(s => s))
+    segment.map(s => s) should equal(segment.mapSegment(s => s))
   }
 
   it should "`Segment.addParam`" in {
@@ -223,12 +339,12 @@ class DeprecatedTests extends TestSpec {
 
   it should "`Segment.partToString`" in {
     val segment = StringSegment("segment")
-    segment.partToString(UriConfig.DEFAULT) should equal(segment.toString(UriConfig.DEFAULT))
+    segment.partToString(UriConfig.default) should equal(segment.toString(UriConfig.DEFAULT))
   }
 
   it should "`StringSegment.params`" in {
     val segment = StringSegment("segment")
-    segment.params should equal(segment.parameters)
+    segment.params should equal(Seq.empty)
   }
 
   it should "`PathPart.apply` as `StringSegment`" in {
@@ -253,7 +369,7 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`MatrixParams.apply`" in {
-    MatrixParams("path") should equal(MatrixParametersSegment("path"))
+    MatrixParams("path", Seq.empty) should equal(MatrixParametersSegment("path"))
   }
 
   it should "`MatrixParams.unapply`" in {
@@ -296,12 +412,12 @@ class DeprecatedTests extends TestSpec {
   }
 
   it should "`Uri.matrixParams` empty" in {
-    EmptyRelativeReference.matrixParams should equal(EmptyRelativeReference.matrixParametersOfLastSegment)
+    EmptyReference.matrixParams should equal(EmptyReference.matrixParametersOfLastSegment)
   }
 
   it should "`Uri.queryValue`" in {
     val uri = Uri(None, None, AbsolutePath.option(Segment("path", Seq(Parameter("parameterKey", "parameterValue")))), None, None)
-    uri.queryValue should equal(uri.query.getOrElse(EmptyQueryString))
+    uri.queryValue should equal(uri.query.getOrElse(EmptyQuery))
   }
 
   it should "`Uri.fragmentString`" in {
@@ -396,17 +512,18 @@ class DeprecatedTests extends TestSpec {
 
   it should "`Uri.pathRaw`" in {
     val uri = Uri.parse("/path")
-    uri.pathRaw should equal(uri.pathToStringRaw)
-  }
-
-  it should "`Uri.queryString`" in {
-    val uri = Uri.parse("?queryParamKey=queryParamValue")
-    uri.queryString should equal(uri.queryToString)
+    uri.pathRaw should equal(uri.pathToString(UriConfig.DEFAULT.withNoEncoding))
   }
 
   it should "`Uri.queryStringRaw`" in {
     val uri = Uri.parse("?queryParamKey=queryParamValue")
-    uri.queryStringRaw should equal(uri.queryToStringRaw)
+    uri.queryStringRaw should equal(uri.queryToString(UriConfig.DEFAULT.withNoEncoding))
+  }
+
+  it should "`Uri.toStringRaw`" in {
+    implicit val config = UriConfig(registeredNameMustBeDomainName = false)
+    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.exämple.com"), None, None, None)
+    uri.toStringRaw should equal("http://www.exämple.com")
   }
 
   it should "`Uri.apply` old case class generated" in {

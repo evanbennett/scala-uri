@@ -4,9 +4,9 @@ import com.netaporter.uri._
 
 sealed case class PathDsl(scheme: Option[Scheme], authority: Option[Authority], path: Path) {
 
-  def / : PathDsl = PathDsl(scheme, authority, path.appendSegment(EmptySegment))
+  def / : PathDsl = copy(path = path.appendSegment(EmptySegment))
 
-  def /(nextSegment: Segment): PathDsl = PathDsl(scheme, authority, path.appendSegment(nextSegment))
+  def /(nextSegment: Segment): PathDsl = copy(path = path.appendSegment(nextSegment))
 
   def /(nextSegmentAndQuery: SegmentAndQuery): QueryDsl = QueryDsl(scheme, authority, Option(path.appendSegment(nextSegmentAndQuery.segment)), nextSegmentAndQuery.query)
 
@@ -18,7 +18,7 @@ sealed case class PathDsl(scheme: Option[Scheme], authority: Option[Authority], 
 
   def /?(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, authority, Option(path.appendSegment(EmptySegment)), Query(firstQueryParameter))
 
-  def /?(firstQueryKey: String): QueryDsl = QueryDsl(scheme, authority, Option(path.appendSegment(EmptySegment)), EmptyQuery.append(firstQueryKey))
+  def /?(queryString: String): QueryDsl = QueryDsl(scheme, authority, Option(path.appendSegment(EmptySegment)), Query(queryString))
 
   def /?# : FragmentDsl = FragmentDsl(scheme, authority, Option(path.appendSegment(EmptySegment)), Some(EmptyQuery), Some(EmptyFragment))
 
@@ -32,7 +32,7 @@ sealed case class PathDsl(scheme: Option[Scheme], authority: Option[Authority], 
 
   def ?(firstQueryParameter: Parameter): QueryDsl = QueryDsl(scheme, authority, Option(path), Query(firstQueryParameter))
 
-  def ?(firstQueryKey: String): QueryDsl = QueryDsl(scheme, authority, Option(path), EmptyQuery.append(firstQueryKey))
+  def ?(queryString: String): QueryDsl = QueryDsl(scheme, authority, Option(path), Query(queryString))
 
   def ?# : FragmentDsl = FragmentDsl(scheme, authority, Option(path), Some(EmptyQuery), Some(EmptyFragment))
 
@@ -42,5 +42,7 @@ sealed case class PathDsl(scheme: Option[Scheme], authority: Option[Authority], 
 
   def `#`(fragment: String): FragmentDsl = FragmentDsl(scheme, authority, Option(path), None, Fragment.option(fragment))
 
-  def toUri: Uri = Uri(scheme, authority, Some(path), None, None)
+  def toUri(implicit config: UriConfig): Uri = Uri(scheme, authority, Some(path), None, None)
+
+  def toString(implicit config: UriConfig): String = toUri.toString
 }

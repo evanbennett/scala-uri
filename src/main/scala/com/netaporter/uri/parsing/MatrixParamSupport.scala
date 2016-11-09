@@ -1,38 +1,34 @@
 package com.netaporter.uri.parsing
 
-import com.netaporter.uri._
-import MatrixParamSupport._
 import org.parboiled2._
+import com.netaporter.uri.PathPart
+import com.netaporter.uri.Parameters._
 
+@deprecated("Convert to the new DSL.", "1.0.0")
 trait MatrixParamSupport {
-  self: UriParser =>
+  this: Parser with UriParser =>
 
-  protected def _matrixParam: Rule1[Parameter] = rule {
-    capture(oneOrMore(MATRIX_PARAMETER_KEY)) ~ optional("=" ~ capture(zeroOrMore(MATRIX_PARAMETER_VALUE))) ~> extractParam
+  @deprecated("Convert to the new DSL.", "1.0.0")
+  def _plainPathPart: Rule1[String] = rule {
+    capture(zeroOrMore(!anyOf(";/?#") ~ ANY))
   }
 
-  protected override def _segment: Rule1[Segment] = rule {
-    capture(zeroOrMore(SEGMENT_WITH_MATRIX_PARAMETER)) ~ zeroOrMore(";") ~ zeroOrMore(_matrixParam).separatedBy(oneOrMore(";")) ~ zeroOrMore(";") ~> extractSegmentWithMatrixParams
+  @deprecated("Convert to the new DSL.", "1.0.0")
+  def _matrixParam: Rule1[Param] = rule {
+    capture(zeroOrMore(!anyOf(";/=?#") ~ ANY)) ~ "=" ~ capture(zeroOrMore(!anyOf(";/=?#") ~ ANY)) ~> extractTuple
   }
 
-  protected override def _segmentNz: Rule1[Segment] = rule {
-    capture(oneOrMore(SEGMENT_WITH_MATRIX_PARAMETER)) ~ zeroOrMore(";") ~ zeroOrMore(_matrixParam).separatedBy(oneOrMore(";")) ~ zeroOrMore(";") ~> extractSegmentWithMatrixParams
+  @deprecated("Convert to the new DSL.", "1.0.0")
+  override def _pathSegment: Rule1[PathPart] = rule {
+    _plainPathPart ~ zeroOrMore(";") ~
+    zeroOrMore(_matrixParam).separatedBy(oneOrMore(";")) ~
+    zeroOrMore(";") ~> extractPathPartWithMatrixParams
   }
 
-  protected override def _segmentNzNc: Rule1[Segment] = rule {
-    capture(oneOrMore(SEGMENT_WITH_MATRIX_PARAMETER -- ':')) ~ zeroOrMore(";") ~ zeroOrMore(_matrixParam).separatedBy(oneOrMore(";")) ~ zeroOrMore(";") ~> extractSegmentWithMatrixParams
+  @deprecated("Convert to the new DSL.", "1.0.0")
+  val extractPathPartWithMatrixParams = (pathPart: String, matrixParams: ParamSeq) => {
+    val decodedPathPart = pathDecoder.decode(pathPart, originalInput)
+    val decodedMatrixParams = matrixParams.map(pathDecoder.decodeTuple(_, originalInput))
+    PathPart(decodedPathPart, decodedMatrixParams.toVector)
   }
-
-  protected val extractSegmentWithMatrixParams: (String, Seq[Parameter]) => Segment = (segment: String, matrixParams: Seq[Parameter]) => {
-    val decodedSegment = c.pathDecoder.decode(segment, originalInput)
-    val decodedMatrixParams = matrixParams.map(c.pathDecoder.decodeParameter(_, originalInput))
-    Segment(decodedSegment, decodedMatrixParams.toVector)
-  }
-}
-
-object MatrixParamSupport {
-
-  val SEGMENT_WITH_MATRIX_PARAMETER = UriParser.SEGMENT -- ";"
-  val MATRIX_PARAMETER_KEY = SEGMENT_WITH_MATRIX_PARAMETER -- "="
-  val MATRIX_PARAMETER_VALUE = SEGMENT_WITH_MATRIX_PARAMETER
 }

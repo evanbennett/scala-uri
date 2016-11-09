@@ -33,7 +33,7 @@ class SchemeTests extends TestSpec {
   }
 
   it should "work without a scheme" in {
-    EmptyRelativeReference.schemeToString should equal("")
+    EmptyReference.schemeToString should equal("")
   }
 
   it should "always output in lowercase" in {
@@ -45,64 +45,30 @@ class SchemeTests extends TestSpec {
     uri3.schemeToString should equal("http:")
   }
 
-  "`Uri.schemeToStringRaw` and therefore `Scheme.toStringRaw`" should "work with a simple URI" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.schemeToStringRaw should equal("http:")
-  }
-
-  it should "work without a scheme" in {
-    EmptyRelativeReference.schemeToStringRaw should equal("")
-  }
-
-  it should "always output in input case" in {
-    val uri = Uri(Scheme.option("HTTP"), Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.schemeToStringRaw should equal("HTTP:")
-    val uri2 = Uri(Scheme.option("HtTp"), Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri2.schemeToStringRaw should equal("HtTp:")
-    val uri3 = Uri(Scheme.option("httP"), Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri3.schemeToStringRaw should equal("httP:")
-  }
-
-  "`Scheme.copy`" should "succeed" in {
-    Scheme("http").copy("https").scheme should equal("https")
-  }
-
-  it should "fail when passed an empty string" in {
-    intercept[IllegalArgumentException] {
-      Scheme("http").copy("")
-    }
-  }
-
-  it should "fail when passed `null`" in {
-    intercept[IllegalArgumentException] {
-      Scheme("http").copy(null)
-    }
-  }
-
   "`Scheme.apply`" should "succeed" in {
     Scheme("https").scheme should equal("https")
   }
 
   it should "fail when passed an invalid string (trailing ':')" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Scheme("https:")
     }
   }
 
   it should "fail when passed an invalid string (illegal characters)" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Scheme("ht$p")
     }
   }
 
   it should "fail when passed an empty string" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Scheme("")
     }
   }
 
   it should "fail when passed `null`" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       Scheme(null)
     }
   }
@@ -117,5 +83,9 @@ class SchemeTests extends TestSpec {
 
   it should "return None when passed `null`" in {
     Scheme.option(null) should equal(None)
+  }
+
+  "`Scheme.unapply`" should "succeed" in {
+    Scheme.unapply(Scheme("https")).value should equal("https")
   }
 }

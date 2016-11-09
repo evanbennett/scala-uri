@@ -3,30 +3,30 @@ package com.netaporter.uri
 class UriTests extends TestSpec {
 
   // NOTE: Uri.toString(...) tested in ParsingTests.
+  // NOTE: Uri.apply(uriString: String) tested in DecodingTests.
   // NOTE: Uri.apply(...) tested in EncodingTests.
-  // NOTE: Uri.parse(...) tested in ParsingTests and DecodingTests.
 
   "`Uri.copy`" should "should work" in {
     val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri shouldBe an[AbsoluteUri]
-    uri.scheme should not equal(None)
-    uri.authority should not equal(None)
+    uri shouldBe a[SchemeWithAuthorityUri]
+    uri.scheme should not equal (None)
+    uri.authority should not equal (None)
     uri.path should equal(None)
     uri.fragment should equal(None)
     val uri2 = uri.copy(path = AbsolutePath.option(StringSegment("path")))
-    uri2 shouldBe an[AbsoluteUri]
-    uri2.path should not equal(None)
+    uri2 shouldBe a[SchemeWithAuthorityUri]
+    uri2.path should not equal (None)
     val uri3 = uri2.copy(None)
-    uri3 shouldBe an[AuthorityRelativeReference]
+    uri3 shouldBe a[NetworkPathReference]
     uri3.scheme should equal(None)
     val uri4 = uri3.copy(authority = None, fragment = Fragment.option("fragment"))
-    uri4 shouldBe an[AbsolutePathRelativeReference]
+    uri4 shouldBe an[AbsolutePathReference]
     uri4.authority should equal(None)
-    uri4.fragment should not equal(None)
+    uri4.fragment should not equal (None)
     val uri5Path = RootlessPath.option(StringSegment("rootlessPath"))
     val uri5 = uri4.copy(Scheme.option("test"), path = uri5Path)
     uri5 shouldBe a[SchemeWithRootlessPathUri]
-    uri5.scheme should not equal(None)
+    uri5.scheme should not equal (None)
     uri5.path should equal(uri5Path)
   }
 
@@ -65,11 +65,6 @@ class UriTests extends TestSpec {
   "`Uri.toString`" should "handle simple URI" in {
     val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
     uri.toString() should equal("http://www.example.com")
-  }
-
-  "`Uri.toStringRaw`" should "handle simple URI" in {
-    val uri = Uri(Scheme.option("http"), Authority.option(registeredName = "www.example.com"), None, None, None)
-    uri.toStringRaw should equal("http://www.example.com")
   }
 
   "`Uri.toUri` and `Uri.apply(java.net.URI)`" should "handle simple URI" in {
@@ -129,28 +124,12 @@ class UriTests extends TestSpec {
     uriFromJava should equal(uriFromJava)
   }
 
-  "`AbsoluteUri`" should "`apply` with mandatory arguments" in {
-    AbsoluteUri(Scheme("http"), Authority(registeredName = "test.com"), None, None)
+  "`SchemeWithAuthorityUri`" should "`apply` with mandatory arguments" in {
+    SchemeWithAuthorityUri(Scheme("http"), Authority(registeredName = "test.com"), None, None, None)
   }
 
   it should "`apply` with all arguments" in {
-    AbsoluteUri(Scheme("http"), Authority(registeredName = "test.com"), AbsolutePath.option(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))))
-  }
-
-  it should "be creatable from `Uri.apply` with `Option` arguments" in {
-    val scheme = Scheme.option("http")
-    val authority = Authority.option(registeredName = "test.com")
-    val path = AbsolutePath.option(StringSegment("path"))
-    val query = Query.option(Parameter("queryKey", Some("queryValue")))
-    AbsoluteUri(scheme.get, authority.get, path, query) should equal(Uri(scheme, authority, path, query, None))
-  }
-
-  "`SchemeWithAuthorityAndFragmentUri`" should "`apply` with mandatory arguments" in {
-    SchemeWithAuthorityAndFragmentUri(Scheme("http"), Authority(registeredName = "test.com"), None, None, Fragment("fragment"))
-  }
-
-  it should "`apply` with all arguments" in {
-    SchemeWithAuthorityAndFragmentUri(Scheme("http"), Authority(registeredName = "test.com"), AbsolutePath.option(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment("fragment"))
+    SchemeWithAuthorityUri(Scheme("http"), Authority(registeredName = "test.com"), AbsolutePath.option(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
   }
 
   it should "be creatable from `Uri.apply` with `Option` arguments" in {
@@ -159,7 +138,7 @@ class UriTests extends TestSpec {
     val path = AbsolutePath.option(StringSegment("path"))
     val query = Query.option(Parameter("queryKey", Some("queryValue")))
     val fragment = Fragment.option("fragment")
-    SchemeWithAuthorityAndFragmentUri(scheme.get, authority.get, path, query, fragment.get) should equal(Uri(scheme, authority, path, query, fragment))
+    SchemeWithAuthorityUri(scheme.get, authority.get, path, query, fragment) should equal(Uri(scheme, authority, path, query, fragment))
   }
 
   "`SchemeWithAbsolutePathUri`" should "`apply` with mandatory arguments" in {
@@ -179,7 +158,7 @@ class UriTests extends TestSpec {
   }
 
   it should "fail `apply` with invalid arguments" in {
-    intercept[IllegalArgumentException] {
+    an [IllegalArgumentException] should be thrownBy {
       SchemeWithAbsolutePathUri(Scheme("http"), AbsolutePath(StringSegment(""), StringSegment("path2")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
     }
   }
@@ -234,12 +213,12 @@ class UriTests extends TestSpec {
     SchemeUri(scheme.get) should equal(Uri(scheme, None, None, None, None))
   }
 
-  "`AuthorityRelativeReference`" should "`apply` with mandatory arguments" in {
-    AuthorityRelativeReference(Authority(registeredName = "test.com"), None, None, None)
+  "`NetworkPathReference`" should "`apply` with mandatory arguments" in {
+    NetworkPathReference(Authority(registeredName = "test.com"), None, None, None)
   }
 
   it should "`apply` with all arguments" in {
-    AuthorityRelativeReference(Authority(registeredName = "test.com"), AbsolutePath.option(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
+    NetworkPathReference(Authority(registeredName = "test.com"), AbsolutePath.option(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
   }
 
   it should "be creatable from `Uri.apply` with `Option` arguments" in {
@@ -247,87 +226,92 @@ class UriTests extends TestSpec {
     val path = AbsolutePath.option(StringSegment("path"))
     val query = Query.option(Parameter("queryKey", Some("queryValue")))
     val fragment = Fragment.option("fragment")
-    AuthorityRelativeReference(authority.get, path, query, fragment) should equal(Uri(None, authority, path, query, fragment))
+    NetworkPathReference(authority.get, path, query, fragment) should equal(Uri(None, authority, path, query, fragment))
   }
 
-  "`AbsolutePathRelativeReference`" should "`apply` with mandatory arguments" in {
-    AbsolutePathRelativeReference(AbsolutePath(StringSegment("path")), None, None)
+  "`AbsolutePathReference`" should "`apply` with mandatory arguments" in {
+    AbsolutePathReference(AbsolutePath(StringSegment("path")), None, None)
   }
 
   it should "`apply` with all arguments" in {
-    AbsolutePathRelativeReference(AbsolutePath(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
+    AbsolutePathReference(AbsolutePath(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
   }
 
   it should "be creatable from `Uri.apply` with `Option` arguments" in {
     val path = AbsolutePath.option(StringSegment("path"))
     val query = Query.option(Parameter("queryKey", Some("queryValue")))
     val fragment = Fragment.option("fragment")
-    AbsolutePathRelativeReference(path.get, query, fragment) should equal(Uri(None, None, path, query, fragment))
+    AbsolutePathReference(path.get, query, fragment) should equal(Uri(None, None, path, query, fragment))
   }
 
   it should "fail `apply` with invalid arguments" in {
-    intercept[IllegalArgumentException] {
-      AbsolutePathRelativeReference(AbsolutePath(StringSegment(""), StringSegment("path2")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
+    an [IllegalArgumentException] should be thrownBy {
+      AbsolutePathReference(AbsolutePath(StringSegment(""), StringSegment("path2")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
     }
   }
 
-  "`RootlessPathRelativeReference`" should "`apply` with mandatory arguments" in {
-    RootlessPathRelativeReference(RootlessPath(StringSegment("path")), None, None)
+  "`RelativePathReference`" should "`apply` with mandatory arguments" in {
+    RelativePathReference(RootlessPath(StringSegment("path")), None, None)
   }
 
   it should "`apply` with all arguments" in {
-    RootlessPathRelativeReference(RootlessPath(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
+    RelativePathReference(RootlessPath(StringSegment("path")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
   }
 
   it should "be creatable from `Uri.apply` with `Option` arguments" in {
     val path = RootlessPath.option(StringSegment("path"))
     val query = Query.option(Parameter("queryKey", Some("queryValue")))
     val fragment = Fragment.option("fragment")
-    RootlessPathRelativeReference(path.get, query, fragment) should equal(Uri(None, None, path, query, fragment))
+    RelativePathReference(path.get, query, fragment) should equal(Uri(None, None, path, query, fragment))
   }
 
-  it should "fail `apply` with invalid arguments" in {
-    intercept[IllegalArgumentException] {
-      RootlessPathRelativeReference(RootlessPath(StringSegment("pathWith:isNotAllowed")), Query.option(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
-    }
+  it should "prepend a \".\" segment when the first provided segment contains ':'" in {
+    val uri = RelativePathReference(RootlessPath(StringSegment("pathwith:")), None, None)
+    uri.path.value.segments should equal(Seq(StringSegment("."), StringSegment("pathwith:")))
   }
 
-  "`QueryRelativeReference`" should "`apply` with mandatory arguments" in {
-    QueryRelativeReference(Query(Parameter("queryKey", Some("queryValue"))), None)
+  "`QueryReference`" should "`apply` with mandatory arguments" in {
+    QueryReference(Query(Parameter("queryKey", Some("queryValue"))), None)
   }
 
   it should "`apply` with all arguments" in {
-    QueryRelativeReference(Query(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
+    QueryReference(Query(Parameter("queryKey", Some("queryValue"))), Fragment.option("fragment"))
   }
 
   it should "be creatable from `Uri.apply` with `Option` arguments" in {
     val query = Query.option(Parameter("queryKey", Some("queryValue")))
     val fragment = Fragment.option("fragment")
-    QueryRelativeReference(query.get, fragment) should equal(Uri(None, None, None, query, fragment))
+    QueryReference(query.get, fragment) should equal(Uri(None, None, None, query, fragment))
   }
 
-  "`FragmentRelativeReference`" should "`apply` with mandatory arguments" in {
-    FragmentRelativeReference(Fragment("fragment"))
+  "`FragmentReference`" should "`apply` with mandatory arguments" in {
+    FragmentReference(Fragment("fragment"))
   }
 
   it should "be creatable from `Uri.apply` with `Option` arguments" in {
     val fragment = Fragment.option("fragment")
-    FragmentRelativeReference(fragment.get) should equal(Uri(None, None, None, None, fragment))
+    FragmentReference(fragment.get) should equal(Uri(None, None, None, None, fragment))
   }
 
-  "`EmptyRelativeReference`" should "be creatable from `Uri.apply` with `Option` arguments" in {
-    EmptyRelativeReference should equal(Uri(None, None, None, None, None))
+  "`EmptyReference`" should "be creatable from `Uri.apply` with `Option` arguments" in {
+    EmptyReference should equal(Uri(None, None, None, None, None))
   }
 
-  "`Uri.apply` with `Option` arguments" should "fail with an invalid argument set" in {
-    intercept[IllegalArgumentException] {
+  "`Uri.apply` with `Option` arguments" should "fail with an invalid argument set (scheme and authority with rootless path)" in {
+    an [IllegalArgumentException] should be thrownBy {
       Uri(Scheme.option("http"), Authority.option(registeredName = "www.test.com"), RootlessPath.option(StringSegment("path")), None, None)
+    }
+  }
+
+  it should "fail with an invalid argument set (authority with rootless path)" in {
+    an [IllegalArgumentException] should be thrownBy {
+      Uri(None, Authority.option(registeredName = "www.test.com"), RootlessPath.option(StringSegment("path")), None, None)
     }
   }
 
   "`Uri.apply` with `null` default arguments" should "accept String scheme, String host and path" in {
     val uri = Uri(scheme = "http", host = "theon.github.com", port = 8080, pathParts = Seq(StringSegment("blah")))
-    uri shouldBe an[AbsoluteUri]
+    uri shouldBe a[SchemeWithAuthorityUri]
     uri.scheme.value should equal(Scheme("http"))
     uri.port.value should equal(8080)
     uri.pathSegments should equal(Seq(StringSegment("blah")))
@@ -335,18 +319,18 @@ class UriTests extends TestSpec {
   }
 
   it should "accept String scheme, String host and query" in {
-    val qs = Query(Vector(Parameter("testKey", Some("testVal"))))
+    val qs = Query(Seq(Parameter("testKey", Some("testVal"))))
     val uri = Uri(scheme = "http", host = "theon.github.com", query = qs)
-    uri shouldBe an[AbsoluteUri]
+    uri shouldBe a[SchemeWithAuthorityUri]
     uri.scheme.value should equal(Scheme("http"))
-    uri.host.value should equal("theon.github.com")
+    uri.hostString.value should equal("theon.github.com")
     uri.query.value should equal(qs)
   }
 
   it should "accept query" in {
-    val qs = Query(Vector(Parameter("testKey", Some("testVal"))))
+    val qs = Query(Seq(Parameter("testKey", Some("testVal"))))
     val uri = Uri(query = qs)
-    uri shouldBe a[QueryRelativeReference]
+    uri shouldBe a[QueryReference]
     uri.query.value should equal(qs)
   }
 
