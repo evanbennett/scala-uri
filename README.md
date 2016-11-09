@@ -1,7 +1,7 @@
 # scala-uri
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/NET-A-PORTER/scala-uri?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netaporter/scala-uri_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netaporter/scala-uri_2.11)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.netaporter/scala-uri_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.netaporter/scala-uri_2.12)
 [![Build Status](https://travis-ci.org/NET-A-PORTER/scala-uri.svg?branch=master)](https://travis-ci.org/NET-A-PORTER/scala-uri)
 [![codecov.io](http://codecov.io/github/NET-A-PORTER/scala-uri/coverage.svg?branch=master)](http://codecov.io/github/NET-A-PORTER/scala-uri?branch=master)
 
@@ -46,12 +46,12 @@ For SBT users just add the following dependency:
 "com.netaporter" %% "scala-uri" % "1.0.0-RC1"
 ```
 
-For Maven users you should use (for 2.11):
+For Maven users you should use (for 2.12):
 
 ```xml
 <dependency>
     <groupId>com.netaporter</groupId>
-    <artifactId>scala-uri_2.11</artifactId>
+    <artifactId>scala-uri_2.12</artifactId>
     <version>1.0.0-RC1</version>
 </dependency>
 ```
@@ -432,7 +432,7 @@ Contributions to **scala-uri** are always welcome. Good ways to contribute inclu
 
 The unit tests can be run from the sbt console by running the `test` command. Checking the unit tests all pass before sending pull requests will be much appreciated.
 
-Generate code coverage reports from the sbt console by running the `coverage`, `clean`, `test` and then `coverageReport` commands. The HTML reports should be generated at "target/scala-2.11/scoverage-report/index.html". Ideally pull requests shouldn't significantly decrease code coverage, but it's not the end of the world if they do. Contributions with no tests are better than no contributions. :)
+Generate code coverage reports from the sbt console by running the `coverage`, `clean`, `test` and then `coverageReport` commands. The HTML reports should be generated at "target/scala-2.12/scoverage-report/index.html". Ideally pull requests shouldn't significantly decrease code coverage, but it's not the end of the world if they do. Contributions with no tests are better than no contributions. :)
 
 ### Performance tests
 

@@ -2,7 +2,7 @@ name := "scala-uri"
 organization := "com.netaporter"
 version := "1.0.0-SNAPSHOT"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.0"
 crossScalaVersions := Seq("2.10.6", "2.11.8", "2.12.0")
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8", "-feature")
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
@@ -57,7 +57,3 @@ pomExtra := (
     </developer>
   </developers>
 )
-
-// TODO: REMOVE:
-scalacOptions -= "-deprecation"
-testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oC")
