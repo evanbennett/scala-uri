@@ -738,8 +738,9 @@ object AbsoluteUri {
     UriWithScheme(scheme, authority, path, query, None).asInstanceOf[AbsoluteUri]
 }
 
-sealed abstract case class SchemeWithAuthorityUri(protected override val _scheme: Scheme, private val _authority: Authority, override val path: Option[AbsolutePath], override val query: Option[Query], override val fragment: Option[Fragment])
-  extends UriWithScheme(_scheme, Some(_authority), path, query, fragment)
+// TODO: When Scala 2.10 support is dropped, `protected val __scheme: Scheme` can be replaced with `protected override val _scheme: Scheme`:
+sealed abstract case class SchemeWithAuthorityUri(protected val __scheme: Scheme, private val _authority: Authority, override val path: Option[AbsolutePath], override val query: Option[Query], override val fragment: Option[Fragment])
+  extends UriWithScheme(__scheme, Some(_authority), path, query, fragment)
 
 object SchemeWithAuthorityUri {
 
@@ -752,8 +753,9 @@ object SchemeWithAuthorityUri {
   }
 }
 
-sealed abstract case class SchemeWithAbsolutePathUri(protected override val _scheme: Scheme, private val _path: AbsolutePath, override val query: Option[Query], override val fragment: Option[Fragment])
-  extends UriWithScheme(_scheme, None, Some(_path), query, fragment)
+// TODO: When Scala 2.10 support is dropped, `protected val __scheme: Scheme` can be replaced with `protected override val _scheme: Scheme`:
+sealed abstract case class SchemeWithAbsolutePathUri(protected val __scheme: Scheme, private val _path: AbsolutePath, override val query: Option[Query], override val fragment: Option[Fragment])
+  extends UriWithScheme(__scheme, None, Some(_path), query, fragment)
 
 object SchemeWithAbsolutePathUri {
 
@@ -767,8 +769,9 @@ object SchemeWithAbsolutePathUri {
   }
 }
 
-sealed abstract case class SchemeWithRootlessPathUri(protected override val _scheme: Scheme, private val _path: RootlessPath, override val query: Option[Query], override val fragment: Option[Fragment])
-  extends UriWithScheme(_scheme, None, Some(_path), query, fragment)
+// TODO: When Scala 2.10 support is dropped, `protected val __scheme: Scheme` can be replaced with `protected override val _scheme: Scheme`:
+sealed abstract case class SchemeWithRootlessPathUri(protected val __scheme: Scheme, private val _path: RootlessPath, override val query: Option[Query], override val fragment: Option[Fragment])
+  extends UriWithScheme(__scheme, None, Some(_path), query, fragment)
 
 object SchemeWithRootlessPathUri {
 
@@ -781,8 +784,9 @@ object SchemeWithRootlessPathUri {
   }
 }
 
-sealed abstract case class SchemeWithQueryUri(protected override val _scheme: Scheme, private val _query: Query, override val fragment: Option[Fragment])
-  extends UriWithScheme(_scheme, None, None, Some(_query), fragment)
+// TODO: When Scala 2.10 support is dropped, `protected val __scheme: Scheme` can be replaced with `protected override val _scheme: Scheme`:
+sealed abstract case class SchemeWithQueryUri(protected val __scheme: Scheme, private val _query: Query, override val fragment: Option[Fragment])
+  extends UriWithScheme(__scheme, None, None, Some(_query), fragment)
 
 object SchemeWithQueryUri {
 
@@ -794,8 +798,9 @@ object SchemeWithQueryUri {
   }
 }
 
-sealed abstract case class SchemeWithFragmentUri(protected override val _scheme: Scheme, private val _fragment: Fragment)
-  extends UriWithScheme(_scheme, None, None, None, Some(_fragment))
+// TODO: When Scala 2.10 support is dropped, `protected val __scheme: Scheme` can be replaced with `protected override val _scheme: Scheme`:
+sealed abstract case class SchemeWithFragmentUri(protected val __scheme: Scheme, private val _fragment: Fragment)
+  extends UriWithScheme(__scheme, None, None, None, Some(_fragment))
 
 object SchemeWithFragmentUri {
 
@@ -805,8 +810,9 @@ object SchemeWithFragmentUri {
 }
 
 /** Scheme only URI. (e.g. "dav:", "about:") */
-sealed abstract case class SchemeUri(protected override val _scheme: Scheme)
-  extends UriWithScheme(_scheme, None, None, None, None) with AbsoluteUri
+// TODO: When Scala 2.10 support is dropped, `protected val __scheme: Scheme` can be replaced with `protected override val _scheme: Scheme`:
+sealed abstract case class SchemeUri(protected val __scheme: Scheme)
+  extends UriWithScheme(__scheme, None, None, None, None) with AbsoluteUri
 
 object SchemeUri {
 

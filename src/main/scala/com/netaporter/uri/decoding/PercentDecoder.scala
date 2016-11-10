@@ -16,4 +16,8 @@ object PercentDecoder extends UriDecoder {
       case e: NumberFormatException => throw new java.net.URISyntaxException(originalInput, "Encountered '%' followed by a non hex number. It looks like this URI isn't Percent Encoded. If so, look at using the NoopDecoder")
     }
   }
+
+  override def hashCode: Int = 105899
+
+  override def toString = "PercentDecoder()"
 }

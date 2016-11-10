@@ -41,6 +41,14 @@ class DeprecatedTests extends TestSpec {
     UriConfig.apply(false, "UTF-8") shouldBe a[UriConfig]
   }
 
+  it should "UriConfig.unapply" in {
+    UriConfig.unapply(UriConfig.DEFAULT) should not be(None)
+  }
+
+  it should "UriConfig.unapply with `null`" in {
+    UriConfig.unapply(null) should be(None)
+  }
+
   it should "`dsl.encoderToChainedEncoder`" in {
     val chainedUriEncoder: ChainedUriEncoder = PercentEncoder()
   }

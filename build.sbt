@@ -16,6 +16,8 @@ coverageOutputXML := coverageAllowed(scalaVersion.value)
 coverageOutputCobertura := coverageAllowed(scalaVersion.value)
 coverageHighlighting := coverageAllowed(scalaVersion.value)
 
+addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full) // TODO: When Scala 2.10 support is dropped, this can be removed.
+
 libraryDependencies ++= Seq(
   "com.lihaoyi" %% "fastparse" % "0.4.2",
   "io.spray" %%  "spray-json" % "1.3.2",
